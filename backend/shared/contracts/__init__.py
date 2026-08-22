@@ -1,13 +1,20 @@
 """
-API request/response contracts.
+shared/contracts/__init__.py
 
-These are the schemas that cross component boundaries:
-  - Frontend → Backend API (APIRequest / APIResponse)
-  - Backend → AI/ML (AimlRequest)
-  - AI/ML → Backend (AimlResponse)
+Request/response schemas that cross component boundaries.
 
-Neither side should reach inside the other's internals.
-All inter-component communication goes through these schemas.
+Three boundaries defined here:
+  1. Frontend → Backend API     (CreateAnalysisRequest, AnalysisResponse, etc.)
+  2. Backend  → AI/ML           (AimlRequest)
+  3. AI/ML    → Backend         (AimlResponse, AimlFinding)
+
+Rules:
+  - The AI/ML response uses IDs to reference standards and evidence.
+    The backend's analysis layer resolves those IDs against the database.
+    This prevents LLM-hallucinated evidence text from reaching the API.
+  - Frontend receives fully assembled objects with evidence attached.
+  - These schemas are stable contracts — do not change without coordinating
+    with both the frontend team and Kshiraj.
 """
 
 from __future__ import annotations
@@ -26,93 +33,148 @@ from shared.models import (
 )
 
 
-# ---------------------------------------------------------------------------
-# Frontend ↔ Backend
-# ---------------------------------------------------------------------------
-
+# ===========================================================================
+# 1. Frontend ↔ Backend API contracts
+# ===========================================================================
 
 class CreateAnalysisRequest(BaseModel):
-    """POST /api/v1/analyses"""
+    """
+    POST /api/v1/analyses
 
+    The frontend sends either:
+      - input_type="text"     + text="<procurement description>"
+      - input_type="document" + document_id="<id from POST /documents/upload>"
+    """
     input_type: InputType
-    text: str | None = None          # used when input_type == "text"
-    document_id: str | None = None   # used when input_type == "document"
+    text: str | None = None             # required when input_type == "text"
+    document_id: str | None = None      # required when input_type == "document"
+
+    # Optional context the officer can provide
+    tender_id: str | None = None        # CPPP tender ID if known
+    tender_title: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
-class AnalysisStatusResponse(BaseModel):
-    """GET /api/v1/analyses/{id} — polling response."""
+class AnalysisResponse(BaseModel):
+    """
+    GET /api/v1/analyses/{id}
 
+    Returned at any lifecycle stage.
+    Fields are populated progressively as the pipeline advances.
+    Frontend should poll this until status == "completed" or "failed".
+
+    Status lifecycle:
+      queued → extracting → retrieving → analyzing → enriching → completed
+                                                               ↘ partially_completed
+                                                               ↘ failed
+    """
     id: str
     status: AnalysisStatus
-    created_at: str
-    updated_at: str
+    input_type: InputType
+    tender_id: str | None
+    tender_title: str | None
+
+    created_at: str   # ISO-8601
+    updated_at: str   # ISO-8601
+
+    # Populated after extraction step
     requirements: list[Requirement] = []
-    standards: list[Standard] = []
+    total_requirements: int = 0
+
+    # Populated after analysis + enrichment steps
+    standards: list[Standard] = []     # all unique standards referenced across findings
     findings: list[Finding] = []
-    evidence: list[Evidence] = []
+    issues_found: int = 0
+
+    # Populated after completion
     summary: str | None = None
+
+    # Set if status == "failed" or "partially_completed"
     error_message: str | None = None
 
 
 class UploadDocumentResponse(BaseModel):
     """POST /api/v1/documents/upload"""
-
     document_id: str
     filename: str
     size_bytes: int
+    content_type: str
     message: str
 
 
-# ---------------------------------------------------------------------------
-# Backend → AI/ML
-# ---------------------------------------------------------------------------
+class ErrorResponse(BaseModel):
+    """Standard error response shape returned by the global error handler."""
+    error: str    # machine-readable error code
+    message: str  # human-readable description
 
+
+# ===========================================================================
+# 2. Backend → AI/ML contract
+# ===========================================================================
 
 class AimlRequest(BaseModel):
     """
-    Input the backend sends to the AI/ML component.
+    What the backend sends to the AI/ML component.
 
-    The backend provides:
-      - raw extracted text (for context)
-      - normalized requirements
-      - pre-retrieved candidate standards (with text excerpts)
+    The backend is responsible for:
+      - extracting and normalizing requirements
+      - retrieving candidate standards from the knowledge base
+      - providing the full document text for context
 
-    The AI/ML component should NOT make its own database calls.
+    The AI/ML component should NOT make database calls.
+    All information it needs is provided here.
+
+    retrieved_standards: top-K standards from the knowledge base,
+    already filtered by relevance. Each includes text_excerpt so
+    the model can reason over actual standard content.
     """
-
     analysis_id: str
-    extracted_text: str
+    extracted_text: str                      # full extracted document/description text
     requirements: list[Requirement]
-    retrieved_standards: list[Standard]
+    retrieved_standards: list[Standard]      # includes text_excerpt from knowledge base
 
 
-# ---------------------------------------------------------------------------
-# AI/ML → Backend
-# ---------------------------------------------------------------------------
-
+# ===========================================================================
+# 3. AI/ML → Backend contract
+# ===========================================================================
 
 class AimlFinding(BaseModel):
     """
-    A single finding returned by the AI/ML component.
+    A single finding from the AI/ML component.
 
-    IMPORTANT: The backend assembles the final evidence records.
-    The AI/ML component returns IDs, not full evidence objects.
-    This prevents the LLM from hallucinating evidence text.
+    CRITICAL: AI/ML returns IDs only for standards and evidence.
+    It does NOT return full Standard or Evidence objects.
+
+    Reason: the backend resolves IDs against the database.
+    This ensures the final API response contains only real, database-verified
+    evidence — not LLM-generated text that could hallucinate citations.
+
+    If the AI/ML component identifies an evidence record relevant to a finding,
+    it must reference an evidence_id that already exists in the knowledge base.
+    If no matching evidence exists, it leaves evidence_ids empty and sets
+    confidence lower to signal lower certainty.
     """
-
     finding_id: str
     requirement_id: str
-    verdict: str                      # maps to shared.models.Verdict
-    reason: str
-    evidence_ids: list[str] = []      # references to evidence already in DB
-    applicable_standard_ids: list[str] = []
-    confidence: float                 # 0.0 – 1.0
+    verdict: str                             # must map to a shared.models.Verdict value
+    reason: str                              # explanation in plain English
     recommended_action: str | None = None
+    applicable_standard_ids: list[str] = [] # IDs of standards from AimlRequest.retrieved_standards
+    evidence_ids: list[str] = []            # IDs of evidence records in knowledge base
+    confidence: float                        # 0.0–1.0
 
 
 class AimlResponse(BaseModel):
-    """Response the AI/ML component returns to the backend."""
+    """
+    Full response from the AI/ML component for one analysis.
 
+    After receiving this, the backend:
+      1. Resolves applicable_standard_ids → actual Standard objects
+      2. Resolves evidence_ids → actual Evidence objects
+      3. Runs deterministic enrichment (version checks, QCO checks)
+      4. Assembles final Finding objects
+      5. Returns assembled findings via the API
+    """
     analysis_id: str
     findings: list[AimlFinding]
+    extraction_metadata: dict[str, Any] = Field(default_factory=dict)
