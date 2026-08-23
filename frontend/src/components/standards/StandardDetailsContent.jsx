@@ -116,7 +116,7 @@ export default function StandardDetailsContent({ detail = MOCK_STANDARD_DETAIL_S
             }}
           >
             <span className="block text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'var(--text-secondary)' }}>Status</span>
-            <span className="font-semibold" style={{ color: 'var(--status-success-text)' }}>Active &amp; Reaffirmed (2022)</span>
+            <span className="font-semibold" style={{ color: 'var(--status-success-text)' }}>{detail.statusBadge || 'Active'}</span>
           </div>
           <div
             className="p-3 rounded border"
@@ -126,7 +126,7 @@ export default function StandardDetailsContent({ detail = MOCK_STANDARD_DETAIL_S
             }}
           >
             <span className="block text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'var(--text-secondary)' }}>QCO Mandate</span>
-            <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>Mandatory BIS Registration</span>
+            <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>{detail.applicability}</span>
           </div>
           <div
             className="p-3 rounded border"
@@ -136,7 +136,37 @@ export default function StandardDetailsContent({ detail = MOCK_STANDARD_DETAIL_S
             }}
           >
             <span className="block text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'var(--text-secondary)' }}>International Adoption</span>
-            <span className="font-semibold" style={{ color: 'var(--text-main)' }}>IEC 60598-2-3 Identical</span>
+            <span className="font-semibold" style={{ color: 'var(--text-main)' }}>{detail.internationalEquivalent}</span>
+          </div>
+        </div>
+
+        {/* Technical Parameters */}
+        <div className="surface-card p-5 space-y-4 mt-6">
+          <h3
+            className="text-xs font-bold uppercase tracking-wider pb-3 border-b flex items-center gap-2"
+            style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
+          >
+            <FileText className="w-4 h-4" style={{ color: 'var(--brand-primary)' }} /> Technical Parameters & Amendments
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div>
+              <span className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>Operating Voltage</span>
+              <span className="font-semibold" style={{ color: 'var(--text-main)' }}>{detail.operatingVoltage}</span>
+            </div>
+            <div>
+              <span className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>IP Rating</span>
+              <span className="font-semibold" style={{ color: 'var(--text-main)' }}>{detail.ipRating}</span>
+            </div>
+            <div>
+              <span className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>Test Methods</span>
+              <span className="font-semibold" style={{ color: 'var(--text-main)' }}>{detail.testMethods}</span>
+            </div>
+            <div>
+              <span className="block text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>Amendments</span>
+              <span className="font-semibold" style={{ color: 'var(--text-main)' }}>
+                {detail.amendments?.length > 0 ? detail.amendments.join(', ') : 'None'}
+              </span>
+            </div>
           </div>
         </div>
       </div>

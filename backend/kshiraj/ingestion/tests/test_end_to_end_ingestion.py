@@ -34,9 +34,15 @@ class TestEndToEndGovernmentIngestion:
     def full_stack_pipeline(self):
         standards_store = StandardsStore()
         evidence_store = EvidenceStore()
-        
-        # Real in-memory Qdrant and fast sentence transformer
-        embedding_service = EmbeddingService()
+
+        # Keep this integration test deterministic and offline. Model loading is
+        # covered independently; this test covers ingestion through Qdrant.
+        model = MagicMock()
+        model.dimension = 384
+        model.encode.side_effect = lambda texts, **_: (
+            [0.1] * 384 if isinstance(texts, str) else [[0.1] * 384 for _ in texts]
+        )
+        embedding_service = EmbeddingService(model=model)
         vector_store = VectorStore(location=":memory:", dimension=384)
         vector_indexer = VectorIndexer(embedding_service=embedding_service, vector_store=vector_store)
 

@@ -14,8 +14,15 @@ class BhashiniAdapter:
     from the Bhashini dashboard.
     """
     def __init__(self):
-        self.client = genai.Client()
+        self.client = None
         self.model_name = "gemini-3.6-flash"
+
+    def _get_client(self):
+        if self.client is None:
+            from shared.config import settings
+            api_key = settings.google_api_key
+            self.client = genai.Client(api_key=api_key)
+        return self.client
 
     async def translate(self, text: str, source_lang: str, target_lang: str) -> str:
         """
@@ -24,6 +31,12 @@ class BhashiniAdapter:
         """
         if not text or not text.strip():
             return ""
+        
+        # Lazy check for API key before calling
+        from shared.config import settings
+        if not settings.google_api_key:
+            logger.warning("BhashiniAdapter: GOOGLE_API_KEY is not set. Skipping translation.")
+            return text
             
         prompt = f"""
         You are a highly accurate translation engine representing Bhashini.
@@ -36,9 +49,10 @@ class BhashiniAdapter:
         """
         
         try:
+            client = self._get_client()
             # We use asyncio.to_thread to keep the async pipeline non-blocking
             response = await asyncio.to_thread(
-                self.client.models.generate_content,
+                client.models.generate_content,
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=0.1)

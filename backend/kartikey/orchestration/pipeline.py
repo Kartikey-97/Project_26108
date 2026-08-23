@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import asyncio
 import traceback
+from collections.abc import Awaitable, Callable
 
 from shared.models import Analysis, AnalysisStatus, InputType, Requirement, RequirementCategory
 from shared.utils import AnalysisError, get_logger, utcnow
@@ -49,6 +50,7 @@ logger = get_logger(__name__)
 async def run_analysis_pipeline(
     analysis_id: str,
     store: dict[str, Analysis],
+    persist: Callable[[Analysis], Awaitable[None]] | None = None,
 ) -> None:
     """
     Coordinate the full analysis pipeline for one analysis job.
@@ -66,6 +68,14 @@ async def run_analysis_pipeline(
         logger.error("Pipeline started for unknown analysis_id=%s — aborting.", analysis_id)
         return
 
+    async def checkpoint() -> None:
+        if persist is None:
+            return
+        try:
+            await persist(analysis)
+        except Exception as exc:
+            logger.error("Could not persist analysis %s: %s", analysis.id, exc)
+
     logger.info(
         "Pipeline started: analysis_id=%s input_type=%s",
         analysis_id,
@@ -81,24 +91,28 @@ async def run_analysis_pipeline(
         # Step 1: Extract text + preliminary requirement scan
         # ----------------------------------------------------------------
         _transition(analysis, AnalysisStatus.EXTRACTING)
+        await checkpoint()
         extracted_text = await _step_extract(analysis)
 
         # ----------------------------------------------------------------
         # Step 2: Retrieve relevant standards from knowledge base
         # ----------------------------------------------------------------
         _transition(analysis, AnalysisStatus.RETRIEVING)
+        await checkpoint()
         retrieved_standards = await _step_retrieve(analysis, extracted_text)
 
         # ----------------------------------------------------------------
         # Step 3: AI/ML analysis
         # ----------------------------------------------------------------
         _transition(analysis, AnalysisStatus.ANALYZING)
+        await checkpoint()
         aiml_response = await _step_analyze(analysis, extracted_text, retrieved_standards)
 
         # ----------------------------------------------------------------
         # Step 4: Enrich — version checks, QCO, compliance, findings assembly
         # ----------------------------------------------------------------
         _transition(analysis, AnalysisStatus.ENRICHING)
+        await checkpoint()
         await _step_enrich(analysis, retrieved_standards, aiml_response)
 
         # ----------------------------------------------------------------
@@ -120,6 +134,8 @@ async def run_analysis_pipeline(
         else:
             _transition(analysis, AnalysisStatus.COMPLETED)
 
+        await checkpoint()
+
         logger.info(
             "Pipeline finished: analysis_id=%s status=%s requirements=%d issues=%d",
             analysis_id,
@@ -136,6 +152,7 @@ async def run_analysis_pipeline(
         )
         analysis.error_message = f"[{exc.code}] {exc.message}"
         _transition(analysis, AnalysisStatus.FAILED)
+        await checkpoint()
 
     except Exception:
         # Unexpected errors — log full traceback, never let background task crash silently
@@ -146,6 +163,7 @@ async def run_analysis_pipeline(
         )
         analysis.error_message = "An unexpected internal error occurred."
         _transition(analysis, AnalysisStatus.FAILED)
+        await checkpoint()
 
 
 # ===========================================================================
@@ -211,12 +229,17 @@ async def _step_extract(analysis: Analysis) -> str:
     from kartikey.analysis.requirement_extractor import extract_requirements
     from kartikey.document_processing.extractor import scan_is_references
     from shared.utils import AnalysisError as _AnalysisError
+    from shared.config import settings
 
     ai_extraction_succeeded = False
     try:
-        ai_requirements = extract_requirements(
-            analysis_id=analysis.id,
-            document_text=extracted_text,
+        ai_requirements = await asyncio.wait_for(
+            asyncio.to_thread(
+                extract_requirements,
+                analysis_id=analysis.id,
+                document_text=extracted_text,
+            ),
+            timeout=settings.aiml_timeout_seconds,
         )
         analysis.requirements = ai_requirements
         analysis.total_requirements = len(ai_requirements)
@@ -225,6 +248,14 @@ async def _step_extract(analysis: Analysis) -> str:
             "_step_extract: AI extraction succeeded — %d requirements found. analysis_id=%s",
             len(ai_requirements), analysis.id,
         )
+    except asyncio.TimeoutError:
+        logger.warning(
+            "_step_extract: LLM extraction exceeded %ss; using regex fallback for analysis_id=%s.",
+            settings.aiml_timeout_seconds,
+            analysis.id,
+        )
+        analysis.metadata["extraction_fallback"] = True
+        analysis.metadata["extraction_fallback_reason"] = "LLM_TIMEOUT"
     except _AnalysisError as exc:
         if exc.code in ("LLM_NOT_CONFIGURED", "LLM_QUOTA_EXHAUSTED", "LLM_NO_MODEL_AVAILABLE"):
             # LLM unavailable — fall back to regex scan gracefully
@@ -357,6 +388,7 @@ async def _step_analyze(
     from shared.contracts import AimlRequest
     from kshiraj.aiml_client.client import AimlClient
     from shared.utils import AnalysisError as _AnalysisError
+    from shared.config import settings
     
     request = AimlRequest(
         analysis_id=analysis.id,
@@ -366,8 +398,11 @@ async def _step_analyze(
     )
     
     try:
-        client = AimlClient()
+        client = AimlClient(timeout=settings.aiml_timeout_seconds)
         response = await client.run_analysis(request)
+        analysis.metadata["analysis_mode"] = "remote" if not client.is_mock else "fallback"
+        if client.is_mock:
+            analysis.metadata["degraded_reason"] = "No AI/ML service is configured; deterministic analysis was used."
         return response
     except _AnalysisError as exc:
         logger.warning(
@@ -375,6 +410,8 @@ async def _step_analyze(
             "Falling back to compliance-only logic. analysis_id=%s",
             exc.code, analysis.id,
         )
+        analysis.metadata["analysis_mode"] = "fallback"
+        analysis.metadata["degraded_reason"] = f"AI/ML service unavailable: {exc.message}"
         return None
 
 

@@ -42,11 +42,8 @@ logger = get_logger(__name__)
 # This list is ordered: stable → lite → preview.
 # Update when Google deprecates models, but always keep at least 2 entries.
 _MODEL_PRIORITY = [
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
     "gemini-3.6-flash",
-    "gemini-3.5-flash",
-    "gemini-3.1-flash-lite",
+    "gemini-3.6-flash-lite",
     "gemini-flash-latest",
     "gemini-flash-lite-latest",
 ]
@@ -58,7 +55,7 @@ _RETRY_WAIT_SECONDS = 2.0
 
 class GeminiClient:
     """
-    Gemini API client with automatic model selection and retry logic.
+    Gemini API client with automatic model selection, retry logic, and API key rotation.
 
     Usage:
         client = GeminiClient()
@@ -66,27 +63,43 @@ class GeminiClient:
     """
 
     def __init__(self) -> None:
-        self._api_key = settings.google_api_key
-        if not self._api_key:
+        # Collect all available API keys for rotation (load balancing across team members)
+        import os
+        raw_keys = [
+            settings.google_api_key,
+            os.getenv("GOOGLE_API_KEY_2", ""),
+            os.getenv("GOOGLE_API_KEY_3", ""),
+        ]
+        self._api_keys = [k for k in raw_keys if k and k.strip()]
+        if not self._api_keys:
             raise AnalysisError(
                 "GOOGLE_API_KEY is not set. Add it to backend/.env.",
                 code="LLM_NOT_CONFIGURED",
             )
-        self._client = None
+        self._key_index = 0
+        self._clients: dict[str, Any] = {}
         self._working_model: str | None = None
 
-    def _get_client(self):
-        """Lazy-initialize the Gemini client."""
-        if self._client is None:
+    @property
+    def _api_key(self) -> str:
+        """Current API key — rotates on each call to spread quota usage."""
+        key = self._api_keys[self._key_index % len(self._api_keys)]
+        self._key_index += 1
+        return key
+
+    def _get_client(self, api_key: str | None = None):
+        """Return (or lazily create) a Gemini client for the given key."""
+        key = api_key or self._api_keys[0]
+        if key not in self._clients:
             try:
                 from google import genai
-                self._client = genai.Client(api_key=self._api_key)
+                self._clients[key] = genai.Client(api_key=key)
             except ImportError as exc:
                 raise AnalysisError(
                     "google-genai is not installed. Run: pip install google-genai",
                     code="LLM_NOT_CONFIGURED",
                 ) from exc
-        return self._client
+        return self._clients[key]
 
     def _resolve_model(self) -> str:
         """
@@ -166,7 +179,9 @@ class GeminiClient:
         from google.genai import types
 
         model = self._resolve_model()
-        client = self._get_client()
+        # Rotate through API keys on each call to distribute quota usage
+        current_key = self._api_key
+        client = self._get_client(current_key)
 
         # Build contents
         contents = prompt

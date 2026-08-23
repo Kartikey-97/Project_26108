@@ -1,26 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, BookOpen, ExternalLink, ShieldAlert, CheckCircle2 } from 'lucide-react';
-import { MOCK_BIS_CATALOG_FULL, PRODUCT_CATEGORIES } from '../../data/mockData';
+import { listStandards, searchStandards, toUiStandard } from '../../services/api';
 
 export default function StandardsExplorerGrid() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [catalog, setCatalog] = useState([]);
+  const [error, setError] = useState('');
 
-  const filteredCatalog = useMemo(() => {
-    return MOCK_BIS_CATALOG_FULL.filter((item) => {
-      const matchesSearch =
-        item.standardCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.scope.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesCategory =
-        selectedCategory === 'ALL' || item.category === selectedCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchTerm, selectedCategory]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const loader = searchTerm.trim() ? searchStandards(searchTerm.trim()) : listStandards();
+      loader.then((items) => setCatalog(items.map(toUiStandard))).catch((err) => setError(err.message));
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -36,7 +31,7 @@ export default function StandardsExplorerGrid() {
           </p>
         </div>
 
-        {/* Search Input & Category Filter Chips */}
+        {/* Search Input */}
         <div className="space-y-3">
           
           {/* Search Box */}
@@ -57,47 +52,16 @@ export default function StandardsExplorerGrid() {
             />
           </div>
 
-          {/* Category Chips */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <button
-              type="button"
-              onClick={() => setSelectedCategory('ALL')}
-              className="text-xs px-3 py-1 rounded transition-colors cursor-pointer border"
-              style={{
-                backgroundColor: selectedCategory === 'ALL' ? 'var(--brand-primary)' : 'var(--bg-surface-secondary)',
-                color: selectedCategory === 'ALL' ? '#FFFFFF' : 'var(--text-secondary)',
-                borderColor: selectedCategory === 'ALL' ? 'var(--brand-primary)' : 'var(--border-subtle)',
-                fontWeight: selectedCategory === 'ALL' ? 600 : 500
-              }}
-            >
-              All Categories
-            </button>
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className="text-xs px-3 py-1 rounded transition-colors cursor-pointer border"
-                style={{
-                  backgroundColor: selectedCategory === cat ? 'var(--brand-primary)' : 'var(--bg-surface-secondary)',
-                  color: selectedCategory === cat ? '#FFFFFF' : 'var(--text-secondary)',
-                  borderColor: selectedCategory === cat ? 'var(--brand-primary)' : 'var(--border-subtle)',
-                  fontWeight: selectedCategory === cat ? 600 : 500
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
         </div>
       </div>
 
+      {error && <p className="text-xs text-red-600">{error}</p>}
+
       {/* Catalog Standards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredCatalog.map((item) => (
+        {catalog.map((item) => (
           <div
-            key={item.standardCode}
+            key={item.id}
             className="surface-card p-5 flex flex-col justify-between space-y-3 transition-colors"
           >
             <div className="space-y-2">
@@ -122,12 +86,12 @@ export default function StandardsExplorerGrid() {
               style={{ borderColor: 'var(--border-subtle)' }}
             >
               <span className="font-mono text-[10px]" style={{ color: 'var(--text-secondary)' }}>
-                {item.reaffirmedYear} Reaffirmed
+                {item.currentVersion}
               </span>
               
               <button
                 type="button"
-                onClick={() => navigate(`/standards/${encodeURIComponent(item.standardCode)}`)}
+                onClick={() => navigate(`/standards/${encodeURIComponent(item.id)}`)}
                 className="text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 style={{ color: 'var(--brand-primary)' }}
               >

@@ -18,9 +18,10 @@ export default function RecommendedStandards({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      {standards.map((std) => {
+      {standards.map((std, index) => {
         const isSelectedForCompare = selectedCompareIds.includes(std.id);
-        const isBestMatch = std.rank === 1;
+        const rank = std.rank ?? index + 1;
+        const isBestMatch = rank === 1;
 
         return (
           <div
@@ -51,7 +52,7 @@ export default function RecommendedStandards({
                     borderColor: isBestMatch ? 'var(--brand-primary)' : 'var(--border-subtle)'
                   }}
                 >
-                  #{std.rank}
+                  #{rank}
                 </div>
 
                 <div>
@@ -85,7 +86,8 @@ export default function RecommendedStandards({
 
               {/* Match Score & Compare Button */}
               <div className="flex items-center gap-4 shrink-0">
-                <div className="text-right">
+                {std.matchPercentage !== undefined && std.matchPercentage !== null && (
+                  <div className="text-right">
                   <div className="flex items-center justify-end gap-2">
                     <span
                       className="text-xs font-bold font-mono"
@@ -106,7 +108,8 @@ export default function RecommendedStandards({
                       }}
                     />
                   </div>
-                </div>
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -134,12 +137,12 @@ export default function RecommendedStandards({
             <div className="py-4 space-y-3">
               <p className="text-xs leading-relaxed font-sans" style={{ color: 'var(--text-main)' }}>
                 <span className="font-semibold" style={{ color: 'var(--text-main)' }}>Why it matches: </span>
-                {std.aiExplanation}
+                {std.aiExplanation || 'Retrieved from the local BIS catalog for this analysis.'}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <span className="text-[11px] font-semibold" style={{ color: 'var(--text-secondary)' }}>Matched Specifications:</span>
-                {std.matchedRequirements.map((req, idx) => (
+                {(std.matchedRequirements || []).map((req, idx) => (
                   <span
                     key={idx}
                     className="badge badge-current text-[11px] font-mono lowercase"
@@ -156,12 +159,12 @@ export default function RecommendedStandards({
               style={{ borderColor: 'var(--border-subtle)' }}
             >
               <span className="text-[11px] font-mono" style={{ color: 'var(--text-secondary)' }}>
-                Category: {std.category}
+                Category: {std.category || 'BIS catalog'}
               </span>
               
               <button
                 type="button"
-                onClick={() => navigate(`/standards/${encodeURIComponent(std.standardCode)}`)}
+                onClick={() => navigate(`/standards/${encodeURIComponent(std.id)}`)}
                 className="text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 style={{ color: 'var(--brand-primary)' }}
               >

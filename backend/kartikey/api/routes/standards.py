@@ -21,6 +21,21 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/standards", tags=["standards"])
 
 
+@router.get("", response_model=list[Standard])
+async def list_standards(
+    offset: int = Query(0, ge=0),
+    limit: int = Query(24, ge=1, le=100),
+) -> list[Standard]:
+    """Return a stable page of the canonical local BIS catalog."""
+    from kartikey.orchestration.knowledge_registry import get_registry
+
+    standards = sorted(
+        get_registry().standards_store.list_all(),
+        key=lambda standard: (standard.is_number, standard.year or 0),
+    )
+    return standards[offset : offset + limit]
+
+
 @router.get("/search", response_model=list[Standard])
 async def search_standards(
     q: str = Query(..., min_length=2, description="Search query — product description, IS number, etc."),

@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, AlertTriangle, ArrowRight, RotateCcw, Edit2, Check } from 'lucide-react';
 
 export default function ExtractedRequirements({
   summary,
   requirements,
-  onReAnalyze
+  onReAnalyze,
+  onViewRecommendations
 }) {
   const navigate = useNavigate();
   const [reqList, setReqList] = useState(requirements);
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
+
+  useEffect(() => {
+    setReqList(requirements);
+  }, [requirements]);
 
   const handleStartEdit = (id, currentVal) => {
     setEditingId(id);
@@ -62,7 +67,7 @@ export default function ExtractedRequirements({
 
           <button
             type="button"
-            onClick={() => navigate('/recommendations')}
+            onClick={onViewRecommendations}
             className="btn-accent text-xs py-2.5 px-4 flex items-center gap-2 cursor-pointer text-white"
           >
             <span>View BIS Recommendations</span>

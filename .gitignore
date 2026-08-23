@@ -89,5 +89,11 @@ node_modules/
 dist/
 .cache/
 ML_200_standards_dataset.json
-.gitignore
+
 ML_50_standards_dataset.json
+project_context.md
+code_base.txt
+
+# Ensure .env everywhere is ignored
+**/.env
+**/.env.local

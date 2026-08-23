@@ -12,11 +12,13 @@ import {
   ChevronRight,
   Inbox
 } from 'lucide-react';
-import { MOCK_FULL_HISTORY_LIST, PRODUCT_CATEGORIES } from '../../data/mockData';
+import { PRODUCT_CATEGORIES } from '../../data/mockData';
 
-export default function AnalysisHistoryTable() {
+export default function AnalysisHistoryTable({ analyses = [] }) {
   const navigate = useNavigate();
-  const [historyList, setHistoryList] = useState(MOCK_FULL_HISTORY_LIST);
+  const [historyList, setHistoryList] = useState(analyses);
+
+  React.useEffect(() => setHistoryList(analyses), [analyses]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
@@ -255,7 +257,7 @@ export default function AnalysisHistoryTable() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           type="button"
-                          onClick={() => navigate('/recommendations')}
+                          onClick={() => navigate(`/recommendations?analysis=${item.id}`)}
                           className="btn-accent text-[11px] py-1 px-2.5 flex items-center gap-1 cursor-pointer text-white"
                         >
                           <span>Report</span>

@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import pytest
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,6 +12,7 @@ from kartikey.orchestration.knowledge_registry import initialize_knowledge_regis
 
 logging.basicConfig(level=logging.INFO)
 
+@pytest.mark.asyncio
 async def test_e2e():
     print("==================================================")
     print("STEP 10: END-TO-END PIPELINE TEST")

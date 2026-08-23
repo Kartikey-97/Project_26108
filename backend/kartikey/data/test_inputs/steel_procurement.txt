@@ -1,0 +1,5 @@
+Procurement of Medium and High Tensile Structural Steel for Railway Bridge Construction.
+The structural steel shall conform strictly to IS 2062.
+The steel plates should be hot rolled and have a minimum yield strength of 250 MPa.
+Impact testing at sub-zero temperatures is required for high-altitude deployment.
+The manufacturer must possess a valid BIS license for the specified grade.

@@ -91,6 +91,9 @@ class AnalysisResponse(BaseModel):
 
     # Set if status == "failed" or "partially_completed"
     error_message: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    analysis_mode: str = "fallback"
+    degraded_reason: str | None = None
 
 
 class UploadDocumentResponse(BaseModel):

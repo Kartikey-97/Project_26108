@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, Loader2, Terminal, ShieldCheck } from 'lucide-react';
 
 const PIPELINE_STEPS = [
-  { id: 1, label: 'Specification Received & Text Parsed', detail: 'Tokenizing parameters, electrical ratings, and environmental clauses.' },
-  { id: 2, label: 'Technical Requirements Extracted', detail: 'Identified 7 parameters (Wattage, Efficacy, IP Rating, SPD, THD, CCT).' },
-  { id: 3, label: 'Product Category & Domain Mapped', detail: 'Category: Electrical & Lighting | Domain: Highway Infrastructure.' },
-  { id: 4, label: 'BIS Database & QCO Mandates Queried', detail: 'Matching against 384 active Indian Standards and DPIIT QCO orders.' },
+  { id: 1, label: 'Specification Received & Text Parsed', detail: 'Tokenizing parameters and clauses.' },
+  { id: 2, label: 'Technical Requirements Extracted', detail: 'Identifying key technical parameters.' },
+  { id: 3, label: 'Product Category & Domain Mapped', detail: 'Mapping to corresponding BIS domain.' },
+  { id: 4, label: 'BIS Database & QCO Mandates Queried', detail: 'Matching against active Indian Standards.' },
   { id: 5, label: 'Applicable Standards Ranked', detail: 'Ranking standards by clause coverage and Quality Control Order mandates.' },
-  { id: 6, label: 'Completeness Scorecard Generated', detail: 'Auditing tender completeness and detecting missing material clauses.' }
+  { id: 6, label: 'Completeness Scorecard Generated', detail: 'Auditing tender completeness and detecting missing clauses.' }
 ];
 
 export default function AiProcessingScreen({ onCompleteProcessing }) {
@@ -17,13 +17,20 @@ export default function AiProcessingScreen({ onCompleteProcessing }) {
     '[SYSTEM] Initializing BIS Recommendation Engine v2.4...',
     '[PIPELINE] Parsing tender specification input string...'
   ]);
+  const logsEndRef = useRef(null);
+
+  // Autoscroll to bottom whenever new logs arrive
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStepIndex((prev) => {
         if (prev < PIPELINE_STEPS.length - 1) {
           const nextIndex = prev + 1;
-          const nextPercent = Math.round(((nextIndex + 1) / PIPELINE_STEPS.length) * 100);
+          // Cap at 95% while waiting for backend to actually finish
+          const nextPercent = Math.min(95, Math.round(((nextIndex + 1) / PIPELINE_STEPS.length) * 100));
           setProgressPercent(nextPercent);
           
           setLogs((prevLogs) => [
@@ -174,10 +181,11 @@ export default function AiProcessingScreen({ onCompleteProcessing }) {
           <Terminal className="w-3.5 h-3.5" style={{ color: 'var(--brand-primary)' }} />
           <span>Execution Console Log</span>
         </div>
-        <div className="space-y-1 max-h-24 overflow-y-auto">
+        <div className="space-y-1 max-h-40 overflow-y-auto">
           {logs.map((log, i) => (
             <p key={i} className="leading-tight">{log}</p>
           ))}
+          <div ref={logsEndRef} />
         </div>
       </div>
 

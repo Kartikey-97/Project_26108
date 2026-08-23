@@ -17,8 +17,9 @@ this can be moved to a background task. Do not optimise prematurely.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
+from pathlib import Path
 
 from kartikey.document_processing.extractor import extract_text, scan_is_references
 from kartikey.document_processing.storage import (
@@ -33,6 +34,19 @@ from shared.utils import DocumentError, get_logger
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/documents", tags=["documents"])
+
+
+@router.get("/samples/led-street-lighting")
+async def get_led_street_lighting_sample() -> FileResponse:
+    """Serve the bundled tender used by the demo upload flow."""
+    sample_path = Path(__file__).resolve().parents[2] / "data" / "Tendernotice_1.pdf"
+    if not sample_path.exists():
+        raise HTTPException(status_code=404, detail="Bundled sample document is unavailable.")
+    return FileResponse(
+        sample_path,
+        media_type="application/pdf",
+        filename="LED_Street_Lighting_Tender.pdf",
+    )
 
 
 @router.post("/upload", response_model=UploadDocumentResponse, status_code=201)

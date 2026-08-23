@@ -2,15 +2,16 @@ import os
 import uuid
 from src.ml.classifier import RequirementClassifier
 from src.reasoning.providers.mock import MockReasoner
+from src.reasoning.providers.gemini import GeminiReasoner
 
 class Analyzer:
     def __init__(self):
         self.classifier = RequirementClassifier()
-        mode = os.getenv("AI_MODE", "mock")
+        mode = os.getenv("AI_MODE", "gemini")
         if mode == "mock":
             self.provider = MockReasoner()
         else:
-            self.provider = MockReasoner() # Fallback for now
+            self.provider = GeminiReasoner()
 
     def process(self, request):
         findings = []

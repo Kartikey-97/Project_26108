@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, X, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { getSampleDocument } from '../../services/api';
 
 export default function FileUploadZone({ onStartFileAnalysis }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -36,19 +37,18 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
     setSelectedFile(null);
   };
 
-  const handleSampleSelect = (filename, size) => {
-    setSelectedFile({
-      name: filename,
-      size: size,
-      type: 'application/pdf',
-      isSample: true
-    });
+  const handleSampleSelect = async () => {
+    try {
+      setSelectedFile(await getSampleDocument());
+    } catch (error) {
+      alert(`Could not load the bundled sample: ${error.message}`);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedFile) return;
-    if (onStartFileAnalysis) onStartFileAnalysis();
+    if (onStartFileAnalysis) onStartFileAnalysis(selectedFile);
   };
 
   return (
@@ -60,7 +60,7 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
           Upload Procurement Tender Document
         </h2>
         <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-          Upload tender PDF, DOCX, or TXT specification documents for automated AI requirement extraction.
+          Upload tender PDF or DOCX specification documents for automated AI requirement extraction.
         </p>
 
         {/* Sample Document Chips */}
@@ -68,7 +68,7 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
           <span className="text-[11px] font-semibold" style={{ color: 'var(--text-secondary)' }}>Sample Documents:</span>
           <button
             type="button"
-            onClick={() => handleSampleSelect('LED_Street_Lighting_Tender_2026.pdf', 2450000)}
+            onClick={handleSampleSelect}
             className="text-xs px-3 py-1 rounded transition-colors cursor-pointer border"
             style={{
               backgroundColor: 'var(--brand-tint)',
@@ -77,18 +77,6 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
             }}
           >
             LED_Street_Lighting_Tender_2026.pdf (2.4 MB)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSampleSelect('Solar_Water_Pump_Specs.docx', 1850000)}
-            className="text-xs px-3 py-1 rounded transition-colors cursor-pointer border"
-            style={{
-              backgroundColor: 'var(--brand-tint)',
-              borderColor: 'var(--brand-tint-border)',
-              color: 'var(--brand-primary)'
-            }}
-          >
-            Solar_Water_Pump_Specs.docx (1.8 MB)
           </button>
         </div>
       </div>
@@ -122,7 +110,7 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
               Drag and drop your specification document here
             </p>
             <p className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
-              Supports PDF, DOCX, and TXT files up to 25MB
+              Supports PDF and DOCX files up to 20MB
             </p>
           </div>
 
@@ -131,7 +119,7 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
               <span>Browse Local Files</span>
               <input
                 type="file"
-                accept=".pdf,.docx,.txt"
+                accept=".pdf,.docx"
                 onChange={handleFileSelect}
                 className="hidden"
               />
@@ -166,7 +154,7 @@ export default function FileUploadZone({ onStartFileAnalysis }) {
                 </span>
               </div>
               <p className="text-[11px] font-mono mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {selectedFile.isSample ? 'Sample Demo File' : 'Uploaded File'}
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {selectedFile.name.startsWith('LED_Street') ? 'Bundled Sample File' : 'Uploaded File'}
               </p>
             </div>
           </div>

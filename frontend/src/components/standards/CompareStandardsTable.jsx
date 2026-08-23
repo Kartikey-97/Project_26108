@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_COMPARISON_MATRIX } from '../../data/mockData';
 import { Check, X, ShieldAlert, Award, ArrowLeft, RotateCcw } from 'lucide-react';
 
-export default function CompareStandardsTable() {
+export default function CompareStandardsTable({ initialStandards = [] }) {
   const navigate = useNavigate();
-  const [standards, setStandards] = useState(MOCK_COMPARISON_MATRIX.standards);
+  const [standards, setStandards] = useState(initialStandards);
+  useEffect(() => setStandards(initialStandards), [initialStandards]);
 
   const handleRemoveStandard = (code) => {
     setStandards((prev) => prev.filter((std) => std.standardCode !== code));
   };
 
   const handleResetComparison = () => {
-    setStandards(MOCK_COMPARISON_MATRIX.standards);
+    setStandards(initialStandards);
   };
 
   if (standards.length === 0) {

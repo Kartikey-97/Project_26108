@@ -25,7 +25,7 @@ from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 # ===========================================================================
@@ -206,7 +206,7 @@ class Standard(BaseModel):
     year: int | None = None                 # year of publication/revision, e.g. 2015
     amendments: list[Amendment] = []        # list of applied amendments
 
-    @property
+    @computed_field
     def designation(self) -> str:
         """
         Return the canonical IS designation string.
@@ -263,6 +263,15 @@ class Standard(BaseModel):
     # ------------------------------------------------------------------
     relevance_score: float | None = None   # set by retrieval service, not stored
     text_excerpt: str | None = None        # relevant excerpt for evidence
+
+    # ------------------------------------------------------------------
+    # Dynamic hallucinated/extracted fields for demo
+    # ------------------------------------------------------------------
+    demo_operating_voltage: str | None = None
+    demo_ip_rating: str | None = None
+    demo_surge_protection: str | None = None
+    demo_thermal_dissipation: str | None = None
+    demo_test_methods: str | None = None
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import CompareStandardsTable from '../components/standards/CompareStandardsTable';
-import { MOCK_COMPARISON_MATRIX } from '../data/mockData';
+import { getStandard, toUiStandard } from '../services/api';
 
 export default function Compare() {
-  return <CompareStandardsTable initialStandards={MOCK_COMPARISON_MATRIX} />;
+  const [searchParams] = useSearchParams();
+  const [standards, setStandards] = useState([]);
+  useEffect(() => {
+    const ids = searchParams.get('ids')?.split(',').filter(Boolean) || [];
+    Promise.all(ids.map(getStandard)).then((items) => setStandards(items.map(toUiStandard))).catch(() => setStandards([]));
+  }, [searchParams]);
+  return <CompareStandardsTable initialStandards={standards} />;
 }

@@ -65,7 +65,7 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 # Uncomment each router as it is implemented.
 # ---------------------------------------------------------------------------
 
-from kartikey.api.routes import documents, analyses, standards, reports, simulator, translation
+from kartikey.api.routes import documents, analyses, standards, reports, simulator, translation, procurement
 
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(analyses.router,  prefix="/api/v1")
@@ -73,6 +73,7 @@ app.include_router(standards.router, prefix="/api/v1")
 app.include_router(reports.router,   prefix="/api/v1")
 app.include_router(simulator.router, prefix="/api/v1")
 app.include_router(translation.router, prefix="/api/v1")
+app.include_router(procurement.router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------
@@ -84,11 +85,15 @@ async def health() -> dict:
     Health check — confirms the server is up and returns basic stack info.
     Frontend and DevOps can poll this to verify the backend is reachable.
     """
+    from kartikey.orchestration.knowledge_registry import get_registry
+
     return {
         "status": "ok",
         "service": "sih26108-backend",
         "version": "0.1.0",
         "environment": settings.app_env,
+        "retrieval_mode": get_registry().retrieval_mode,
+        "retrieval_reason": get_registry().retrieval_reason,
     }
 
 
@@ -105,6 +110,9 @@ async def on_startup() -> None:
     
     from kartikey.orchestration.knowledge_registry import initialize_knowledge_registry
     from shared.seed_data import get_seed_standards, get_seed_evidence
+    from kartikey.api.routes.analyses import initialize_persistence
+
+    await initialize_persistence()
     
     registry = initialize_knowledge_registry()
     

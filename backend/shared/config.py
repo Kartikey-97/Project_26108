@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     # Document storage
     # ------------------------------------------------------------------
     upload_dir: str = Field(default="./uploads")
+    analysis_database_path: str = Field(default="./data/sih26108.db")
 
     # ------------------------------------------------------------------
     # LLM / AI
@@ -52,6 +53,8 @@ class Settings(BaseSettings):
     openai_api_key: str = Field(default="")
     google_api_key: str = Field(default="")        # Gemini
     aiml_service_url: str = Field(default="")      # if ML team runs as HTTP service
+    aiml_timeout_seconds: float = Field(default=30.0)
+    semantic_retrieval_enabled: bool = Field(default=False)
 
     # ------------------------------------------------------------------
     # Bhashini (low priority — wire in later)

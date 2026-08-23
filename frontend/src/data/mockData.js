@@ -4,33 +4,33 @@ export const MOCK_STATS = [
   {
     id: 'stat-1',
     title: 'Total Analyses Run',
-    value: '142',
-    change: '+12% this month',
+    value: '1',
+    change: '+1 this week',
     trend: 'up',
     description: 'Procurement specs processed'
   },
   {
     id: 'stat-2',
     title: 'Applicable Standards Mapped',
-    value: '384',
-    change: 'Covering 28 categories',
+    value: '0',
+    change: 'Covering 0 categories',
     trend: 'neutral',
     description: 'Active Indian Standards (BIS)'
   },
   {
     id: 'stat-3',
     title: 'Avg. Completeness Score',
-    value: '91.4%',
-    change: '+4.2% quality boost',
-    trend: 'up',
+    value: '0%',
+    change: 'No data',
+    trend: 'neutral',
     description: 'Tender specification quality'
   },
   {
     id: 'stat-4',
     title: 'Restrictive Clauses Flagged',
-    value: '18',
-    change: 'Prevented vendor lock-in',
-    trend: 'alert',
+    value: '0',
+    change: 'No warnings',
+    trend: 'neutral',
     description: 'Single-vendor bias warnings'
   }
 ];

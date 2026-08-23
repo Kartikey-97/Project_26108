@@ -17,21 +17,20 @@ import asyncio
 import pytest
 
 from shared.models import Analysis, AnalysisStatus, InputType, Standard, StandardStatus
-from kartikey.orchestration.pipeline import (
-    _evidence_store,
-    _standards_store,
-    run_analysis_pipeline,
-)
+from kartikey.orchestration.knowledge_registry import initialize_knowledge_registry
+from kartikey.orchestration.pipeline import run_analysis_pipeline
 
 
-@pytest.fixture(autouse=True)
-def clean_stores() -> None:
-    """Clear in-memory stores before each pipeline test."""
-    _standards_store.clear()
-    _evidence_store.clear()
+@pytest.fixture
+def registry():
+    """Initialize and clear the registry used by the current pipeline."""
+    registry = initialize_knowledge_registry()
+    registry.standards_store.clear()
+    registry.evidence_store.clear()
+    return registry
 
 
-def test_pipeline_text_input_end_to_end() -> None:
+def test_pipeline_text_input_end_to_end(registry) -> None:
     """Verify that a text input analysis runs through all steps to COMPLETED."""
     async def _run() -> None:
         std = Standard(
@@ -39,7 +38,7 @@ def test_pipeline_text_input_end_to_end() -> None:
             title="Specification for Luminaires - Street Lighting",
             status=StandardStatus.ACTIVE,
         )
-        _standards_store.add(std)
+        registry.standards_store.add(std)
 
         analysis_store: dict[str, Analysis] = {}
         analysis = Analysis(
@@ -63,7 +62,7 @@ def test_pipeline_text_input_end_to_end() -> None:
     asyncio.run(_run())
 
 
-def test_pipeline_missing_analysis_id() -> None:
+def test_pipeline_missing_analysis_id(registry) -> None:
     """Verify that running a pipeline for an unknown analysis ID aborts gracefully."""
     async def _run() -> None:
         analysis_store: dict[str, Analysis] = {}
@@ -73,7 +72,7 @@ def test_pipeline_missing_analysis_id() -> None:
     asyncio.run(_run())
 
 
-def test_pipeline_text_input_missing_text() -> None:
+def test_pipeline_text_input_missing_text(registry) -> None:
     """Verify that text input without raw_text transitions to FAILED."""
     async def _run() -> None:
         analysis_store: dict[str, Analysis] = {}

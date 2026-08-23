@@ -4,7 +4,7 @@ import {
   INDUSTRY_DOMAINS,
   PRESET_SPEC_SAMPLES
 } from '../../data/mockData';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw, ChevronDown } from 'lucide-react';
 
 export default function SpecInputForm({ onSubmitSpec }) {
   const [selectedCategory, setSelectedCategory] = useState(PRODUCT_CATEGORIES[0]);
@@ -79,57 +79,67 @@ export default function SpecInputForm({ onSubmitSpec }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
-          {/* Category Dropdown */}
+          {/* Product Category Dropdown */}
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-main)' }}>
+            <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-main)' }}>
               Product Category <span style={{ color: 'var(--status-error-text)' }}>*</span>
             </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full rounded px-3 py-2 text-xs font-medium cursor-pointer focus:outline-none transition-colors"
-              style={{
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--input-border)',
-                borderWidth: '1px',
-                color: 'var(--text-main)'
-              }}
-            >
-              {PRODUCT_CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full rounded-lg px-4 py-2.5 text-xs font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#087F73]/20 transition-all appearance-none shadow-sm hover:border-[#087F73]"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--input-border)',
+                  borderWidth: '1px',
+                  color: 'var(--text-main)'
+                }}
+              >
+                {PRODUCT_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#087F73]">
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </div>
           </div>
 
           {/* Industry Domain Dropdown */}
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-main)' }}>
+            <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-main)' }}>
               Industry Domain <span style={{ color: 'var(--status-error-text)' }}>*</span>
             </label>
-            <select
-              value={selectedDomain}
-              onChange={(e) => setSelectedDomain(e.target.value)}
-              className="w-full rounded px-3 py-2 text-xs font-medium cursor-pointer focus:outline-none transition-colors"
-              style={{
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--input-border)',
-                borderWidth: '1px',
-                color: 'var(--text-main)'
-              }}
-            >
-              {INDUSTRY_DOMAINS.map((dom) => (
-                <option key={dom} value={dom}>
-                  {dom}
-                </option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                value={selectedDomain}
+                onChange={(e) => setSelectedDomain(e.target.value)}
+                className="w-full rounded-lg px-4 py-2.5 text-xs font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#087F73]/20 transition-all appearance-none shadow-sm hover:border-[#087F73]"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--input-border)',
+                  borderWidth: '1px',
+                  color: 'var(--text-main)'
+                }}
+              >
+                {INDUSTRY_DOMAINS.map((dom) => (
+                  <option key={dom} value={dom}>
+                    {dom}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#087F73]">
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </div>
           </div>
 
           {/* Department Name Input */}
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-main)' }}>
+            <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-main)' }}>
               Procuring Department / Authority
             </label>
             <input
@@ -137,7 +147,7 @@ export default function SpecInputForm({ onSubmitSpec }) {
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               placeholder="e.g. Ministry of Jal Shakti, PWD"
-              className="w-full rounded px-3 py-2 text-xs font-medium focus:outline-none transition-colors"
+              className="w-full rounded-lg px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#087F73]/20 transition-all shadow-sm hover:border-[#087F73]"
               style={{
                 backgroundColor: 'var(--input-bg)',
                 borderColor: 'var(--input-border)',

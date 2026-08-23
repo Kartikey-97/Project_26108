@@ -143,6 +143,7 @@ export default function TopNavigation() {
             {/* Notification Bell */}
             <button
               type="button"
+              onClick={() => alert('No new notifications.')}
               className="p-2 rounded-lg relative transition-colors duration-150 cursor-pointer"
               style={{
                 color: 'var(--text-secondary)'
@@ -259,7 +260,7 @@ export default function TopNavigation() {
 
                   <button
                     onClick={() => {
-                      navigate('/settings');
+                      navigate('/app/settings');
                       setProfileDropdownOpen(false);
                     }}
                     className="w-full px-3.5 py-2 text-left flex items-center gap-2 cursor-pointer font-medium hover:opacity-80 transition-opacity"

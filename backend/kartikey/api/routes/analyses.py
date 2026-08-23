@@ -23,8 +23,10 @@ from __future__ import annotations
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from kartikey.orchestration.pipeline import run_analysis_pipeline
+from kartikey.persistence.analysis_repository import AnalysisRepository
 from shared.contracts import AnalysisResponse, CreateAnalysisRequest
 from shared.models import Analysis, AnalysisStatus, InputType
+from shared.config import settings
 from shared.utils import get_logger
 
 logger = get_logger(__name__)
@@ -37,6 +39,14 @@ router = APIRouter(prefix="/analyses", tags=["analyses"])
 # Safe for single-process uvicorn. Replace with DB queries in later step.
 # ---------------------------------------------------------------------------
 _analyses: dict[str, Analysis] = {}
+repository = AnalysisRepository(settings.analysis_database_path)
+
+
+async def initialize_persistence() -> None:
+    """Restore saved analyses so dashboard and history survive restarts."""
+    await repository.initialize()
+    for analysis in await repository.list():
+        _analyses[analysis.id] = analysis
 
 
 # ===========================================================================
@@ -98,6 +108,7 @@ async def create_analysis(
         metadata=body.metadata,
     )
     _analyses[analysis.id] = analysis
+    await repository.save(analysis)
 
     logger.info(
         "Analysis created: id=%s input_type=%s",
@@ -109,7 +120,7 @@ async def create_analysis(
     # Dispatch pipeline as a background task
     # BackgroundTasks runs after the response is sent.
     # ----------------------------------------------------------------
-    background_tasks.add_task(run_analysis_pipeline, analysis.id, _analyses)
+    background_tasks.add_task(run_analysis_pipeline, analysis.id, _analyses, repository.save)
 
     return {
         "analysis_id": analysis.id,
@@ -172,6 +183,9 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
         issues_found=analysis.issues_found,
         summary=analysis.summary,
         error_message=analysis.error_message,
+        metadata=analysis.metadata,
+        analysis_mode=analysis.metadata.get("analysis_mode", "fallback"),
+        degraded_reason=analysis.metadata.get("degraded_reason"),
     )
 
 
@@ -196,6 +210,10 @@ async def list_analyses() -> list[dict]:
             "updated_at": a.updated_at.isoformat(),
             "total_requirements": a.total_requirements,
             "issues_found": a.issues_found,
+            "metadata": a.metadata,
+            "summary": a.summary,
+            "analysis_mode": a.metadata.get("analysis_mode", "fallback"),
+            "degraded_reason": a.metadata.get("degraded_reason"),
         }
         for a in sorted(_analyses.values(), key=lambda x: x.created_at, reverse=True)
     ]

@@ -11,6 +11,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 
 from kartikey.api.routes.analyses import _analyses
+from shared.contracts import AnalysisResponse
 from shared.utils import get_logger
 
 logger = get_logger(__name__)
@@ -36,7 +37,7 @@ async def get_report(analysis_id: str) -> dict:
             },
         )
 
-    if analysis.status != "completed":
+    if analysis.status not in {"completed", "partially_completed"}:
         raise HTTPException(
             status_code=400,
             detail={
@@ -45,11 +46,34 @@ async def get_report(analysis_id: str) -> dict:
             },
         )
 
-    # TODO(Step 9): Generate and return a proper PDF or structured export format.
-    raise HTTPException(
-        status_code=501,
-        detail={
-            "error": "NOT_IMPLEMENTED",
-            "message": "Report generation (Step 9) is not yet implemented.",
-        },
-    )
+    standards = []
+    seen_standard_ids: set[str] = set()
+    for finding in analysis.findings:
+        for standard in finding.applicable_standards:
+            if standard.id not in seen_standard_ids:
+                standards.append(standard)
+                seen_standard_ids.add(standard.id)
+
+    return {
+        "report_type": "procurement_compliance_report",
+        "generated_at": analysis.updated_at.isoformat(),
+        "analysis": AnalysisResponse(
+            id=analysis.id,
+            status=analysis.status,
+            input_type=analysis.input_type,
+            tender_id=analysis.tender_id,
+            tender_title=analysis.tender_title,
+            created_at=analysis.created_at.isoformat(),
+            updated_at=analysis.updated_at.isoformat(),
+            requirements=analysis.requirements,
+            total_requirements=analysis.total_requirements,
+            standards=standards,
+            findings=analysis.findings,
+            issues_found=analysis.issues_found,
+            summary=analysis.summary,
+            error_message=analysis.error_message,
+            metadata=analysis.metadata,
+            analysis_mode=analysis.metadata.get("analysis_mode", "fallback"),
+            degraded_reason=analysis.metadata.get("degraded_reason"),
+        ).model_dump(mode="json"),
+    }

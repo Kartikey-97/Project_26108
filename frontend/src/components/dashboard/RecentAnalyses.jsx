@@ -137,7 +137,7 @@ export default function RecentAnalyses({ analyses = MOCK_RECENT_ANALYSES }) {
                 </td>
                 <td className="p-3 text-right">
                   <button
-                    onClick={() => navigate('/recommendations')}
+                    onClick={() => navigate(`/recommendations?analysis=${item.id}`)}
                     className="btn-secondary text-[11px] py-1 px-2.5"
                   >
                     Inspect Report

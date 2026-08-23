@@ -63,6 +63,8 @@ def get_seed_standards() -> list[Standard]:
         _is_2062(),
         _is_694(),
         _is_1255(),
+        _is_456(),
+        _is_800(),
     ]
 
 
@@ -340,4 +342,48 @@ def _qco_dpiit_steel_gazette() -> Evidence:
         gazette_so_number="S.O. 3075(E)",
         publication_date=date(2018, 8, 1),
         retrieval_date=_SEED_RETRIEVED_AT,
+    )
+
+# ===========================================================================
+# IS 456 — Plain and Reinforced Concrete
+# ===========================================================================
+
+def _is_456() -> Standard:
+    return Standard(
+        is_number="IS 456",
+        year=2000,
+        title="Plain and Reinforced Concrete - Code of Practice",
+        scope=(
+            "Deals with the general structural use of plain and reinforced concrete. "
+            "It covers design, materials, workmanship, inspection and testing."
+        ),
+        status=StandardStatus.ACTIVE,
+        technical_committee="CED 2",
+        division_council="Civil Engineering Division Council",
+        ics_code="91.100.30",
+        source_url="https://standardsbis.gov.in",
+        qco_notified=False,
+        retrieved_at=_SEED_RETRIEVED_AT,
+    )
+
+# ===========================================================================
+# IS 800 — General Construction in Steel
+# ===========================================================================
+
+def _is_800() -> Standard:
+    return Standard(
+        is_number="IS 800",
+        year=2007,
+        title="General Construction in Steel - Code of Practice",
+        scope=(
+            "General construction in steel. Applies to general building construction "
+            "and other structures made of structural steel."
+        ),
+        status=StandardStatus.ACTIVE,
+        technical_committee="CED 7",
+        division_council="Civil Engineering Division Council",
+        ics_code="91.080.10",
+        source_url="https://standardsbis.gov.in",
+        qco_notified=False,
+        retrieved_at=_SEED_RETRIEVED_AT,
     )
