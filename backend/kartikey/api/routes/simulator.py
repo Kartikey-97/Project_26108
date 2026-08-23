@@ -113,7 +113,7 @@ async def run_simulation(
         # For modification, we need to re-run the pipeline logic for this single requirement.
         # To avoid duplicating pipeline logic, we'll invoke the AI/ML client directly.
         from shared.contracts import AimlRequest
-        from kshiraj.aiml_client.client import analyze_requirements
+        from kshiraj.aiml_client.client import AimlClient
         from kartikey.analysis.findings import assemble_findings
         
         # 1. Create a dummy requirement
@@ -138,7 +138,8 @@ async def run_simulation(
         )
         
         try:
-            aiml_resp = analyze_requirements(aiml_req)
+            client = AimlClient()
+            aiml_resp = await client.run_analysis(aiml_req)
             
             # 4. Enrich
             standards_lookup = {std.id: std for std in registry.standards_store.list_all()}

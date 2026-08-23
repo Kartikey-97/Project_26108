@@ -355,7 +355,7 @@ async def _step_analyze(
     )
     
     from shared.contracts import AimlRequest
-    from kshiraj.aiml_client.client import analyze_requirements
+    from kshiraj.aiml_client.client import AimlClient
     from shared.utils import AnalysisError as _AnalysisError
     
     request = AimlRequest(
@@ -366,8 +366,9 @@ async def _step_analyze(
     )
     
     try:
-        aiml_response = analyze_requirements(request)
-        return aiml_response
+        client = AimlClient()
+        response = await client.run_analysis(request)
+        return response
     except _AnalysisError as exc:
         logger.warning(
             "_step_analyze: AI/ML call failed (%s). "
