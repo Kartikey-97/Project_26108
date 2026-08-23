@@ -65,12 +65,13 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 # Uncomment each router as it is implemented.
 # ---------------------------------------------------------------------------
 
-from kartikey.api.routes import documents, analyses, standards, reports
+from kartikey.api.routes import documents, analyses, standards, reports, simulator
 
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(analyses.router,  prefix="/api/v1")
 app.include_router(standards.router, prefix="/api/v1")
 app.include_router(reports.router,   prefix="/api/v1")
+app.include_router(simulator.router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------
