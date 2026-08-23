@@ -1,211 +1,313 @@
 """
 kshiraj/aiml_client/client.py
 
-AI/ML client that orchestrates the LLM interaction for analyzing requirements
-against retrieved standards.
+Client adapter and integration layer for the AI/ML component.
 
-This module implements the backend → AI/ML boundary.
-It receives an AimlRequest, formats the context for the LLM, parses the
-structured response, and returns an AimlResponse.
-
-CRITICAL GUARDRAIL:
-The LLM returns only standard_ids and evidence_ids. The backend resolves these
-into actual objects in the enrichment step. This is how we prevent the LLM
-from hallucinating evidence text.
+Responsibilities:
+  1. `adapt_retrieved_standards`: Adapts CandidateStandard / RetrievalResult objects from
+     kshiraj.knowledge.retrieval_service into a deduplicated list[Standard] suitable
+     for AimlRequest.retrieved_standards.
+  2. `AimlClient`: Async client for sending AimlRequest payloads to either:
+       - a mock execution engine (for local development and offline testing)
+       - an HTTP service endpoint (when `settings.aiml_service_url` is configured)
 """
 
 from __future__ import annotations
 
-import json
-from datetime import datetime, timezone
+from typing import Iterable, List, Optional, Union
 
+import httpx
+from pydantic import ValidationError
+
+from shared.config import settings
 from shared.contracts import AimlFinding, AimlRequest, AimlResponse
-from shared.models import Verdict
-from shared.utils import AnalysisError, get_logger
+from shared.models import Standard, Verdict
+from shared.utils import get_logger
 
-from kartikey.analysis.llm_client import get_llm_client
+from kshiraj.aiml_client.schemas import (
+    AimlClientError,
+    AimlResponseError,
+    AimlTimeoutError,
+)
+from kshiraj.knowledge.retrieval_service import CandidateStandard, RetrievalResult
 
 logger = get_logger(__name__)
 
 
 # ===========================================================================
-# Prompts
+# Retrieval output adapter
 # ===========================================================================
 
-_SYSTEM_PROMPT = """You are an expert Indian procurement and standardization officer.
-Your job is to evaluate procurement tender requirements against authoritative BIS (Bureau of Indian Standards) data.
+def adapt_retrieved_standards(
+    retrieved: Union[RetrievalResult, List[CandidateStandard], List[Standard], None],
+) -> List[Standard]:
+    """
+    Transform candidate retrieval results into a deduplicated, deterministically-ordered
+    list of Standard objects suitable for `AimlRequest.retrieved_standards`.
 
-You will be provided with:
-1. A list of REQUIREMENTS extracted from a tender document.
-2. A list of RETRIEVED STANDARDS from the knowledge base.
+    Requirements fulfilled:
+      - Extracts `CandidateStandard.standard`.
+      - Preserves `relevance_score`.
+      - Deduplicates by `Standard.id`.
+      - Preserves deterministic ordering.
+      - Populates `Standard.text_excerpt` only if a defensible source exists
+        (existing text_excerpt, candidate evidence excerpts, or scope). Does not invent content.
+      - Isolated from HTTP transport.
+    """
+    if retrieved is None:
+        return []
 
-For EACH requirement, you must return a structured evaluation.
-
-EVALUATION RULES:
-1. Compare the requirement against the retrieved standards.
-2. Determine if the requirement cites the correct, current standard, or if it is outdated, missing mandatory certifications (like QCOs), or completely wrong.
-3. If the requirement cites an IS number, look it up in the retrieved standards.
-4. If the requirement does NOT cite an IS number but describes a product/test (e.g. "IP65", "Power factor > 0.9"), check if any of the retrieved standards cover that.
-5. If you cannot determine the answer from the retrieved standards, use "unable_to_determine".
-6. DO NOT invent or guess. Only rely on the provided retrieved standards.
-
-OUTPUT FORMAT:
-Return a JSON array of objects, one for each requirement, matching exactly this structure:
-[
-  {
-    "requirement_id": "string (copy from input)",
-    "verdict": "string (must be one of the exact verdict codes below)",
-    "reason": "string (brief explanation)",
-    "applicable_standard_ids": ["string (copy standard IDs from retrieved standards that apply)"],
-    "confidence": 0.0 to 1.0
-  }
-]
-
-VERDICT CODES:
-- justified: The requirement is correct and current.
-- outdated_reference: The requirement cites an older year of a standard that has been updated or superseded.
-- missing_requirement: The tender completely missed a mandatory standard (e.g. QCO).
-- ambiguous: Unclear or missing year.
-- potentially_over_restrictive: Requires something beyond normal standards without clear need.
-- incorrect_standard: Cites a withdrawn standard or one that does not apply.
-- unable_to_determine: Not enough information in the retrieved standards to judge.
-"""
-
-
-def _format_request_prompt(request: AimlRequest) -> str:
-    """Format the AimlRequest into a prompt string for the LLM."""
-    prompt_parts = []
-    
-    prompt_parts.append("=== RETRIEVED STANDARDS (KNOWLEDGE BASE) ===")
-    if not request.retrieved_standards:
-        prompt_parts.append("None retrieved.")
+    raw_items: List[Union[CandidateStandard, Standard]]
+    if isinstance(retrieved, RetrievalResult):
+        raw_items = list(retrieved.candidates)
+    elif isinstance(retrieved, list):
+        raw_items = list(retrieved)
     else:
-        for std in request.retrieved_standards:
-            prompt_parts.append(
-                f"Standard ID: {std.id}\n"
-                f"Designation: {std.designation}\n"
-                f"Title: {std.title}\n"
-                f"Status: {std.status.value}\n"
-                f"QCO Notified: {std.qco_notified}\n"
-                f"Scope: {std.scope}\n"
-                "---"
+        return []
+
+    adapted: List[Standard] = []
+    seen_ids: set[str] = set()
+
+    for item in raw_items:
+        if isinstance(item, CandidateStandard):
+            std = item.standard
+            score = std.relevance_score if std.relevance_score is not None else item.score
+            evidence_excerpts = [
+                ev.excerpt.strip()
+                for ev in item.evidence
+                if ev.excerpt and ev.excerpt.strip()
+            ]
+        elif isinstance(item, Standard):
+            std = item
+            score = std.relevance_score
+            evidence_excerpts = []
+        else:
+            continue
+
+        if std.id in seen_ids:
+            continue
+        seen_ids.add(std.id)
+
+        # Determine defensible text_excerpt without inventing data
+        text_excerpt: Optional[str] = None
+        if std.text_excerpt and std.text_excerpt.strip():
+            text_excerpt = std.text_excerpt.strip()
+        elif evidence_excerpts:
+            text_excerpt = "\n---\n".join(evidence_excerpts)
+        elif std.scope and std.scope.strip():
+            text_excerpt = std.scope.strip()
+
+        updated_std = std.model_copy(
+            update={
+                "relevance_score": score,
+                "text_excerpt": text_excerpt,
+            }
+        )
+        adapted.append(updated_std)
+
+    return adapted
+
+
+# ===========================================================================
+# AI/ML Client
+# ===========================================================================
+
+class AimlClient:
+    """
+    Async client for sending AimlRequest objects to the AI/ML engine.
+
+    Supports both:
+      - Mock execution (default when `settings.aiml_service_url` is empty)
+      - HTTP execution (when `settings.aiml_service_url` is configured)
+    """
+
+    def __init__(
+        self,
+        service_url: Optional[str] = None,
+        timeout: float = 30.0,
+        force_mock: bool = False,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        service_url:
+            Optional override for AI/ML HTTP service URL. Defaults to `settings.aiml_service_url`.
+        timeout:
+            Request timeout in seconds for HTTP requests.
+        force_mock:
+            If True, forces mock execution even if service_url is set.
+        """
+        configured_url = service_url if service_url is not None else settings.aiml_service_url
+        self.service_url = configured_url.strip() if configured_url else ""
+        self.timeout = timeout
+        self.force_mock = force_mock
+
+    @property
+    def is_mock(self) -> bool:
+        """Return True if running in mock execution mode."""
+        return self.force_mock or not bool(self.service_url)
+
+    async def run_analysis(self, request: AimlRequest) -> AimlResponse:
+        """
+        Execute AI/ML analysis for the provided AimlRequest.
+
+        Parameters
+        ----------
+        request:
+            The AimlRequest payload.
+
+        Returns
+        -------
+        AimlResponse
+            The validated AI/ML response.
+
+        Raises
+        ------
+        AimlClientError
+            If request is invalid.
+        AimlTimeoutError
+            If HTTP request times out.
+        AimlResponseError
+            If HTTP request fails or response payload cannot be parsed as AimlResponse.
+        """
+        if not isinstance(request, AimlRequest):
+            raise AimlClientError(
+                f"Invalid request object type: {type(request)}. Expected AimlRequest.",
+                code="INVALID_REQUEST",
             )
 
-    prompt_parts.append("\n=== TENDER REQUIREMENTS ===")
-    if not request.requirements:
-        prompt_parts.append("No requirements extracted.")
-    else:
-        for req in request.requirements:
-            prompt_parts.append(
-                f"Requirement ID: {req.id}\n"
-                f"Text: {req.text}\n"
-                f"Cited Reference: {req.is_reference or 'None'}\n"
-                f"Cited Year: {req.cited_year or 'None'}\n"
-                "---"
+        if self.is_mock:
+            return self._run_mock_analysis(request)
+        else:
+            return await self._run_http_analysis(request)
+
+    # ------------------------------------------------------------------
+    # Mock execution engine
+    # ------------------------------------------------------------------
+
+    def _run_mock_analysis(self, request: AimlRequest) -> AimlResponse:
+        """
+        Generate a deterministic, structurally valid AimlResponse for testing and development.
+        """
+        logger.info(
+            "Executing MOCK AI/ML analysis for analysis_id=%s (requirements=%d, standards=%d)",
+            request.analysis_id,
+            len(request.requirements),
+            len(request.retrieved_standards),
+        )
+
+        findings: List[AimlFinding] = []
+        retrieved_ids = [s.id for s in request.retrieved_standards]
+
+        for idx, req in enumerate(request.requirements):
+            matched_std_ids: List[str] = []
+
+            # Check if any retrieved standard matches cited IS reference
+            if req.is_reference:
+                ref_lower = req.is_reference.strip().casefold()
+                for std in request.retrieved_standards:
+                    if ref_lower in std.is_number.strip().casefold():
+                        matched_std_ids.append(std.id)
+
+            if not matched_std_ids and retrieved_ids:
+                # Assign first candidate standard if available
+                matched_std_ids = [retrieved_ids[0]]
+
+            verdict_val = (
+                Verdict.JUSTIFIED.value
+                if matched_std_ids
+                else Verdict.REQUIRES_HUMAN_VERIFICATION.value
             )
-            
-    return "\n".join(prompt_parts)
+            reason_str = (
+                f"Mock analysis: requirement evaluated against {len(request.retrieved_standards)} candidate standard(s)."
+            )
+            rec_action = (
+                "Verify standard compliance details."
+                if matched_std_ids
+                else "Manually verify specification against applicable standards."
+            )
 
+            finding = AimlFinding(
+                finding_id=f"mock-finding-{idx + 1}-{req.id[:8]}",
+                requirement_id=req.id,
+                verdict=verdict_val,
+                reason=reason_str,
+                recommended_action=rec_action,
+                applicable_standard_ids=matched_std_ids,
+                evidence_ids=[],
+                confidence=0.90 if matched_std_ids else 0.65,
+            )
+            findings.append(finding)
 
-# ===========================================================================
-# Public API
-# ===========================================================================
-
-def analyze_requirements(request: AimlRequest) -> AimlResponse:
-    """
-    Analyze extracted requirements against retrieved standards using the LLM.
-    
-    This runs synchronously but could be made async if needed.
-    """
-    logger.info(
-        "analyze_requirements: starting analysis for analysis_id=%s "
-        "(%d requirements, %d retrieved standards)",
-        request.analysis_id,
-        len(request.requirements),
-        len(request.retrieved_standards),
-    )
-    
-    if not request.requirements:
         return AimlResponse(
             analysis_id=request.analysis_id,
-            findings=[],
-            extraction_metadata={"note": "No requirements provided"}
+            findings=findings,
+            extraction_metadata={
+                "execution_mode": "mock",
+                "requirements_count": len(request.requirements),
+                "retrieved_standards_count": len(request.retrieved_standards),
+            },
         )
 
-    # 1. Format prompt
-    user_prompt = _format_request_prompt(request)
-    
-    # 2. Call LLM
-    client = get_llm_client()
-    start_time = datetime.now(tz=timezone.utc)
-    
-    try:
-        raw_json = client.generate_json(
-            prompt=user_prompt,
-            system_prompt=_SYSTEM_PROMPT,
-            temperature=0.1,  # Low temp for deterministic logic
+    # ------------------------------------------------------------------
+    # HTTP execution transport
+    # ------------------------------------------------------------------
+
+    async def _run_http_analysis(self, request: AimlRequest) -> AimlResponse:
+        """
+        Send AimlRequest via async HTTP POST to configured AI/ML service URL.
+        """
+        logger.info(
+            "Executing HTTP AI/ML analysis for analysis_id=%s at service_url=%s",
+            request.analysis_id,
+            self.service_url,
         )
-    except AnalysisError as e:
-        logger.error("AI/ML call failed: %s", e)
-        raise
 
-    end_time = datetime.now(tz=timezone.utc)
-    duration_ms = int((end_time - start_time).total_seconds() * 1000)
+        payload_json = request.model_dump_json()
+        headers = {"Content-Type": "application/json"}
 
-    # 3. Parse and validate response
-    if not isinstance(raw_json, list):
-        logger.error("AI/ML returned non-list JSON: %s", type(raw_json))
-        raw_json = [raw_json] if isinstance(raw_json, dict) else []
-
-    findings: list[AimlFinding] = []
-    
-    # Valid verdict strings mapping
-    valid_verdicts = {v.value for v in Verdict}
-
-    for item in raw_json:
-        if not isinstance(item, dict):
-            continue
-            
-        req_id = item.get("requirement_id")
-        if not req_id:
-            continue
-            
-        raw_verdict = str(item.get("verdict", "")).lower()
-        if raw_verdict not in valid_verdicts:
-            raw_verdict = Verdict.UNABLE_TO_DETERMINE.value
-            
-        std_ids = item.get("applicable_standard_ids", [])
-        if not isinstance(std_ids, list):
-            std_ids = []
-            
-        confidence = item.get("confidence", 0.5)
         try:
-            confidence = float(confidence)
-            confidence = max(0.0, min(1.0, confidence))
-        except (ValueError, TypeError):
-            confidence = 0.5
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    self.service_url,
+                    content=payload_json,
+                    headers=headers,
+                )
+                response.raise_for_status()
+                raw_json = response.json()
+                return AimlResponse.model_validate(raw_json)
 
-        finding = AimlFinding(
-            finding_id=f"fnd_{req_id[:8]}",  # Deterministic ID for tracing
-            requirement_id=req_id,
-            verdict=raw_verdict,
-            reason=str(item.get("reason", "No reason provided by AI.")),
-            applicable_standard_ids=[str(s) for s in std_ids],
-            evidence_ids=[],  # We rely on backend enrichment to supply evidence
-            confidence=confidence,
-        )
-        findings.append(finding)
+        except httpx.TimeoutException as exc:
+            logger.error("HTTP request to AI/ML service timed out (%s s): %s", self.timeout, exc)
+            raise AimlTimeoutError(
+                f"AI/ML service request timed out after {self.timeout}s."
+            ) from exc
 
-    logger.info(
-        "analyze_requirements: finished in %dms. Generated %d findings.",
-        duration_ms, len(findings),
-    )
+        except httpx.HTTPStatusError as exc:
+            logger.error(
+                "HTTP error from AI/ML service status=%s: %s",
+                exc.response.status_code,
+                exc.response.text,
+            )
+            raise AimlResponseError(
+                f"AI/ML service returned HTTP error status {exc.response.status_code}: {exc.response.text}",
+                code=f"HTTP_{exc.response.status_code}",
+            ) from exc
 
-    return AimlResponse(
-        analysis_id=request.analysis_id,
-        findings=findings,
-        extraction_metadata={
-            "duration_ms": duration_ms,
-            "model_used": client._working_model,
-        }
-    )
+        except httpx.RequestError as exc:
+            logger.error(
+                "Network connection error calling AI/ML service at %s: %s",
+                self.service_url,
+                exc,
+            )
+            raise AimlResponseError(
+                f"Failed to connect to AI/ML service at {self.service_url}: {exc}",
+                code="CONNECTION_ERROR",
+            ) from exc
+
+        except (ValueError, KeyError, ValidationError) as exc:
+            logger.error("Invalid/malformed response payload from AI/ML service: %s", exc)
+            raise AimlResponseError(
+                f"Invalid response payload from AI/ML service: {exc}",
+                code="INVALID_RESPONSE_PAYLOAD",
+            ) from exc
