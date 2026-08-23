@@ -65,12 +65,13 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 # Uncomment each router as it is implemented.
 # ---------------------------------------------------------------------------
 
-from kartikey.api.routes import documents, analyses, standards, reports
+from kartikey.api.routes import documents, analyses, standards, reports, simulator
 
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(analyses.router,  prefix="/api/v1")
 app.include_router(standards.router, prefix="/api/v1")
 app.include_router(reports.router,   prefix="/api/v1")
+app.include_router(simulator.router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------
@@ -99,6 +100,23 @@ async def on_startup() -> None:
         "SIH 26108 backend starting up — env=%s debug=%s",
         settings.app_env,
         settings.app_debug,
+    )
+    
+    from kartikey.orchestration.knowledge_registry import initialize_knowledge_registry
+    from shared.seed_data import get_seed_standards, get_seed_evidence
+    
+    registry = initialize_knowledge_registry()
+    
+    # Load seed data (MVP vertical slice)
+    for std in get_seed_standards():
+        registry.standards_store.add(std)
+    for ev in get_seed_evidence():
+        registry.evidence_store.add(ev)
+        
+    logger.info(
+        "Loaded seed data: %d standards, %d evidence records.",
+        registry.standards_store.count(),
+        registry.evidence_store.count(),
     )
 
 
