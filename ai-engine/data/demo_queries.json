@@ -1,0 +1,22 @@
+[
+  {
+    "query": "We need to procure LED street lights for highway roads.",
+    "expected_category": "Lighting & LED"
+  },
+  {
+    "query": "We need electrical safety standards for household appliances.",
+    "expected_category": "Electrical Installation & Safety"
+  },
+  {
+    "query": "We need to procure electric motors for industrial equipment.",
+    "expected_category": "Motors & Rotating Machines"
+  },
+  {
+    "query": "We need testing standards for medical equipment.",
+    "expected_category": "Medical Electrical Equipment"
+  },
+  {
+    "query": "We need standards for electrical cables used in buildings.",
+    "expected_category": "Cables & Wires"
+  }
+]

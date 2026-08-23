@@ -1,0 +1,4732 @@
+[
+    {
+        "is_number": "IS 302 : Part 1",
+        "normalized_is_number": "IS 302: Part 1",
+        "edition_year": 2024,
+        "title": "Household and Similar Electrical Appliances - Safety - Part 1 General Requirements",
+        "raw_title": "Household and Similar Electrical Appliances - Safety - Part 1 General Requirements",
+        "clean_title": "Household and Similar Electrical Appliances - Safety - Part 1 General Requirements",
+        "price": 2500.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Household and Similar Electrical Appliances - Safety - Part 1 General Requirements",
+        "keywords": [
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 1",
+            "record_year": 2024,
+            "latest_known_edition": "IS 302: Part 1",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 1 Household and Similar Electrical Appliances - Safety - Part 1 General Requirements Derived summary: Household and Similar Electrical Appliances - Safety - Part 1 General Requirements Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 1",
+            "year": 2024,
+            "title": "Household and Similar Electrical Appliances - Safety - Part 1 General Requirements",
+            "price": 2500.0,
+            "scope": null,
+            "keywords": [
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Safety"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 1:2024",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 1",
+        "normalized_is_number": "IS 302: Part 1",
+        "edition_year": 2008,
+        "title": "Safety of household and similar electrical appliances : Part 1 General Requirements",
+        "raw_title": "Safety of household and similar electrical appliances : Part 1 General Requirements",
+        "clean_title": "Safety of household and similar electrical appliances : Part 1 General Requirements",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances : Part 1 General Requirements",
+        "keywords": [
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active (Concurrent)",
+            "concurrent_running": true,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 1",
+            "record_year": 2008,
+            "latest_known_edition": "IS 302: Part 1",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 1 Safety of household and similar electrical appliances : Part 1 General Requirements Derived summary: Safety of household and similar electrical appliances : Part 1 General Requirements Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 1",
+            "year": 2008,
+            "title": "Safety of household and similar electrical appliances : Part 1 General Requirements",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active (Concurrent)",
+            "latest_version": "IS 302 : Part 1:2008",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 26",
+        "normalized_is_number": "IS 302: Part 2: Sec 26",
+        "edition_year": 2026,
+        "title": "Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks",
+        "raw_title": "Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks",
+        "clean_title": "Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks",
+        "price": 370.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 26",
+            "record_year": 2026,
+            "latest_known_edition": "IS 302: Part 2: Sec 26",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 26 Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks Derived summary: Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 26",
+            "year": 2026,
+            "title": "Household and Similar Electrical Appliances - Safety - Part 2 Particular Requirements - Section 26 Clocks",
+            "price": 370.0,
+            "scope": null,
+            "keywords": [
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Safety",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 26:2026",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 26",
+        "normalized_is_number": "IS 302: Part 2: Sec 26",
+        "edition_year": 2014,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks -",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks - (Vaild upto 24 January 2027)",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks -",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks -",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 26",
+            "record_year": 2014,
+            "latest_known_edition": "IS 302: Part 2: Sec 26",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": "24 January 2027",
+        "search_text": "IS 302: Part 2: Sec 26 Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks - Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks - Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 26",
+            "year": 2014,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements Section 26 Clocks - (Vaild upto 24 January 2027)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 26:2014",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 7909",
+        "normalized_is_number": "IS 7909",
+        "edition_year": 2023,
+        "title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification",
+        "raw_title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification",
+        "clean_title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification",
+        "keywords": [
+            "Slaughter",
+            "Equipment",
+            "House",
+            "Electrical",
+            "General Electrical",
+            "Tongs",
+            "Stunning"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Product Specification",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 7909",
+            "record_year": 2023,
+            "latest_known_edition": "IS 7909",
+            "latest_known_year": 2023,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 7909 Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification Derived summary: Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification Slaughter Equipment House Electrical General Electrical Tongs Stunning General Electrical Product Specification",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 7909",
+            "year": 2023,
+            "title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs - Specification",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Slaughter",
+                "House",
+                "Equipment",
+                "Electrical",
+                "Stunning",
+                "Tongs"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 7909:2023",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 7909",
+        "normalized_is_number": "IS 7909",
+        "edition_year": 1993,
+        "title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs",
+        "raw_title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs",
+        "clean_title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Slaughter House Equipment - Electrical Stunning Tongs for Pigs",
+        "keywords": [
+            "Slaughter",
+            "Equipment",
+            "House",
+            "Electrical",
+            "General Electrical",
+            "Tongs",
+            "Stunning"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "verification_required",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active (Concurrent)",
+            "concurrent_running": true,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 7909",
+            "record_year": 1993,
+            "latest_known_edition": "IS 7909",
+            "latest_known_year": 2023,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 7909 Slaughter House Equipment - Electrical Stunning Tongs for Pigs Derived summary: Slaughter House Equipment - Electrical Stunning Tongs for Pigs Slaughter Equipment House Electrical General Electrical Tongs Stunning General Electrical verification_required",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 7909",
+            "year": 1993,
+            "title": "Slaughter House Equipment - Electrical Stunning Tongs for Pigs",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Slaughter",
+                "House",
+                "Equipment",
+                "Electrical",
+                "Stunning",
+                "Tongs"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active (Concurrent)",
+            "latest_version": "IS 7909:1993",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 9335 : Part 1",
+        "normalized_is_number": "IS 9335: Part 1",
+        "edition_year": 2024,
+        "title": "Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements",
+        "raw_title": "Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements",
+        "clean_title": "Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements",
+        "keywords": [
+            "Cellulosic",
+            "Purposes",
+            "Papers",
+            "Electrical",
+            "General Electrical",
+            "Definitions"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Terminology",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 9335: Part 1",
+            "record_year": 2024,
+            "latest_known_edition": "IS 9335: Part 1",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 9335: Part 1 Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements Derived summary: Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements Cellulosic Purposes Papers Electrical General Electrical Definitions General Electrical Terminology",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 9335 : Part 1",
+            "year": 2024,
+            "title": "Cellulosic Papers for Electrical Purposes-Specification - Part 1 Definitions and General Requirements",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Cellulosic",
+                "Papers",
+                "Electrical",
+                "Purposes",
+                "Definitions"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 9335 : Part 1:2024",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 9335 : Part 1",
+        "normalized_is_number": "IS 9335: Part 1",
+        "edition_year": 1979,
+        "title": "Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements",
+        "raw_title": "Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements",
+        "clean_title": "Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements",
+        "keywords": [
+            "Cellulosic",
+            "Purposes",
+            "Papers",
+            "Electrical",
+            "General Electrical",
+            "Definitions"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Terminology",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active (Concurrent)",
+            "concurrent_running": true,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 9335: Part 1",
+            "record_year": 1979,
+            "latest_known_edition": "IS 9335: Part 1",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 9335: Part 1 Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements Derived summary: Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements Cellulosic Purposes Papers Electrical General Electrical Definitions General Electrical Terminology",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 9335 : Part 1",
+            "year": 1979,
+            "title": "Cellulosic papers for electrical purposes:Part 1 Definitions and general requirements",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Cellulosic",
+                "papers",
+                "electrical",
+                "purposes",
+                "Definitions"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active (Concurrent)",
+            "latest_version": "IS 9335 : Part 1:1979",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 9335 : Part 2",
+        "normalized_is_number": "IS 9335: Part 2",
+        "edition_year": 2024,
+        "title": "Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test",
+        "raw_title": "Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test",
+        "clean_title": "Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test",
+        "price": 580.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test",
+        "keywords": [
+            "Cellulosic",
+            "Purposes",
+            "Methods",
+            "Papers",
+            "Electrical",
+            "General Electrical",
+            "Test"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Testing Method",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 9335: Part 2",
+            "record_year": 2024,
+            "latest_known_edition": "IS 9335: Part 2",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 9335: Part 2 Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test Derived summary: Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test Cellulosic Purposes Methods Papers Electrical General Electrical Test General Electrical Testing Method",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 9335 : Part 2",
+            "year": 2024,
+            "title": "Cellulosic Papers for Electrical Purposes - Part 2 Methods of Test",
+            "price": 580.0,
+            "scope": null,
+            "keywords": [
+                "Cellulosic",
+                "Papers",
+                "Electrical",
+                "Purposes",
+                "Methods",
+                "Test"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 9335 : Part 2:2024",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 9335 : Part 2",
+        "normalized_is_number": "IS 9335: Part 2",
+        "edition_year": 1998,
+        "title": "Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test",
+        "raw_title": "Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test",
+        "clean_title": "Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test",
+        "price": 580.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test",
+        "keywords": [
+            "Cellulosic",
+            "Purposes",
+            "Methods",
+            "Papers",
+            "Electrical",
+            "General Electrical",
+            "Test"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Testing Method",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active (Concurrent)",
+            "concurrent_running": true,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 9335: Part 2",
+            "record_year": 1998,
+            "latest_known_edition": "IS 9335: Part 2",
+            "latest_known_year": 2024,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 9335: Part 2 Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test Derived summary: Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test Cellulosic Purposes Methods Papers Electrical General Electrical Test General Electrical Testing Method",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 9335 : Part 2",
+            "year": 1998,
+            "title": "Cellulosic Papers for Electrical Purposes - Part 2 : Methods of test",
+            "price": 580.0,
+            "scope": null,
+            "keywords": [
+                "Cellulosic",
+                "Papers",
+                "Electrical",
+                "Purposes",
+                "Methods",
+                "test"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active (Concurrent)",
+            "latest_version": "IS 9335 : Part 2:1998",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 12360",
+        "normalized_is_number": "IS 12360",
+        "edition_year": 2026,
+        "title": "Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency",
+        "raw_title": "Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency",
+        "clean_title": "Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency",
+        "keywords": [
+            "Preferred",
+            "Frequency",
+            "Bands",
+            "Electrical",
+            "Voltage",
+            "Installations",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Installation",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 12360",
+            "record_year": 2026,
+            "latest_known_edition": "IS 12360",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 12360 Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency Derived summary: Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency Preferred Frequency Bands Electrical Voltage Installations Electrical Installation & Safety Electrical Installation & Safety Installation",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 12360",
+            "year": 2026,
+            "title": "Voltage Bands for Electrical Installations Including Preferred Voltage and Frequency",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Voltage",
+                "Bands",
+                "Electrical",
+                "Installations",
+                "Preferred",
+                "Frequency"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 12360:2026",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 12360",
+        "normalized_is_number": "IS 12360",
+        "edition_year": 1988,
+        "title": "Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency -",
+        "raw_title": "Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency - (Vaild upto 27 August 2026)",
+        "clean_title": "Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency -",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency -",
+        "keywords": [
+            "Preferred",
+            "Voltages",
+            "Bands",
+            "Electrical",
+            "Voltage",
+            "Installations",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Installation",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 12360",
+            "record_year": 1988,
+            "latest_known_edition": "IS 12360",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": "27 August 2026",
+        "search_text": "IS 12360 Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency - Derived summary: Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency - Preferred Voltages Bands Electrical Voltage Installations Electrical Installation & Safety Electrical Installation & Safety Installation",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 12360",
+            "year": 1988,
+            "title": "Voltage Bands for Electrical Installations Including Preferred Voltages and Frequency - (Vaild upto 27 August 2026)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Voltage",
+                "Bands",
+                "Electrical",
+                "Installations",
+                "Preferred",
+                "Voltages"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 12360:1988",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": "27 August 2026",
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 13450 : Part 2 : Sec 6",
+        "normalized_is_number": "IS 13450: Part 2: Sec 6",
+        "edition_year": 2026,
+        "title": "Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD)",
+        "raw_title": "Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD)",
+        "clean_title": "Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD)",
+        "price": 430.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD)",
+        "keywords": [
+            "Particular",
+            "Medical",
+            "Equipment",
+            "Safety",
+            "Electrical",
+            "Electrical Installation & Safety",
+            "Basic",
+            "Medical Electrical Equipment"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety",
+            "Medical Electrical Equipment"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 13450: Part 2: Sec 6",
+            "record_year": 2026,
+            "latest_known_edition": "IS 13450: Part 2: Sec 6",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 13450: Part 2: Sec 6 Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD) Derived summary: Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD) Particular Medical Equipment Safety Electrical Electrical Installation & Safety Basic Medical Electrical Equipment Electrical Installation & Safety Medical Electrical Equipment Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 13450 : Part 2 : Sec 6",
+            "year": 2026,
+            "title": "Medical Electrical Equipment - Part 2 Particular Requirements for Basic Safety and Essential Performance - Section 6 Microwave Therapy Equipment - (IEC 60601-2-6 : 2012+AMD1 : 2016+AMD2 : 2022 CSV, MOD)",
+            "price": 430.0,
+            "scope": null,
+            "keywords": [
+                "Medical",
+                "Electrical",
+                "Equipment",
+                "Particular",
+                "Basic",
+                "Safety"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 13450 : Part 2 : Sec 6:2026",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 13450 : Part 2 : Sec 6",
+        "normalized_is_number": "IS 13450: Part 2: Sec 6",
+        "edition_year": 2018,
+        "title": "Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment -",
+        "raw_title": "Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment - (Vaild upto 03 February 2027)",
+        "clean_title": "Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment -",
+        "price": 370.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment -",
+        "keywords": [
+            "Particular",
+            "Medical",
+            "Equipment",
+            "Safety",
+            "Electrical",
+            "Electrical Installation & Safety",
+            "Basic",
+            "Medical Electrical Equipment"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety",
+            "Medical Electrical Equipment"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 13450: Part 2: Sec 6",
+            "record_year": 2018,
+            "latest_known_edition": "IS 13450: Part 2: Sec 6",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": "03 February 2027",
+        "search_text": "IS 13450: Part 2: Sec 6 Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment - Derived summary: Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment - Particular Medical Equipment Safety Electrical Electrical Installation & Safety Basic Medical Electrical Equipment Electrical Installation & Safety Medical Electrical Equipment Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 13450 : Part 2 : Sec 6",
+            "year": 2018,
+            "title": "Medical Electrical Equipment Part 2 Particular Requirements for the Basic Safety and Essential Performance Section 6 Microwave therapy equipment - (Vaild upto 03 February 2027)",
+            "price": 370.0,
+            "scope": null,
+            "keywords": [
+                "Medical",
+                "Electrical",
+                "Equipment",
+                "Particular",
+                "Basic",
+                "Safety"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 13450 : Part 2 : Sec 6:2018",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 16504 : Part 32",
+        "normalized_is_number": "IS 16504: Part 32",
+        "edition_year": 2026,
+        "title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines",
+        "raw_title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines",
+        "clean_title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines",
+        "price": 1785.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines",
+        "keywords": [
+            "Hoisting",
+            "Equipment",
+            "Safety",
+            "Electrical",
+            "Machines",
+            "Electrical Installation & Safety",
+            "Machinery"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 16504: Part 32",
+            "record_year": 2026,
+            "latest_known_edition": "IS 16504: Part 32",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 16504: Part 32 Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines Derived summary: Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines Hoisting Equipment Safety Electrical Machines Electrical Installation & Safety Machinery Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 16504 : Part 32",
+            "year": 2026,
+            "title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines",
+            "price": 1785.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "Machinery",
+                "Electrical",
+                "Equipment",
+                "Machines",
+                "Hoisting"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 16504 : Part 32:2026",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 16504 : Part 32",
+        "normalized_is_number": "IS 16504: Part 32",
+        "edition_year": 2017,
+        "title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines -",
+        "raw_title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines - (Vaild upto 18 August 2026)",
+        "clean_title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines -",
+        "price": 560.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines -",
+        "keywords": [
+            "Hoisting",
+            "Equipment",
+            "Safety",
+            "Electrical",
+            "Machines",
+            "Electrical Installation & Safety",
+            "Machinery"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 16504: Part 32",
+            "record_year": 2017,
+            "latest_known_edition": "IS 16504: Part 32",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": "18 August 2026",
+        "search_text": "IS 16504: Part 32 Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines - Derived summary: Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines - Hoisting Equipment Safety Electrical Machines Electrical Installation & Safety Machinery Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 16504 : Part 32",
+            "year": 2017,
+            "title": "Safety of Machinery - Electrical Equipment of Machines - Part 32 Requirements for Hoisting Machines - (Vaild upto 18 August 2026)",
+            "price": 560.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "Machinery",
+                "Electrical",
+                "Equipment",
+                "Machines",
+                "Hoisting"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 16504 : Part 32:2017",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 16724",
+        "normalized_is_number": "IS 16724",
+        "edition_year": 2026,
+        "title": "Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD)",
+        "raw_title": "Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD)",
+        "clean_title": "Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD)",
+        "price": 1763.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD)",
+        "keywords": [
+            "Explosive",
+            "Installation",
+            "Atmospheres",
+            "Design",
+            "Electrical",
+            "Electrical Installation & Safety",
+            "Selection"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Installation",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 16724",
+            "record_year": 2026,
+            "latest_known_edition": "IS 16724",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 16724 Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD) Derived summary: Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD) Explosive Installation Atmospheres Design Electrical Electrical Installation & Safety Selection Electrical Installation & Safety Installation",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 16724",
+            "year": 2026,
+            "title": "Explosive Atmospheres - Electrical Installation Design, Selection and Installation of Equipment, Including Initial Inspection (IEC 60079-14 : 2024, MOD)",
+            "price": 1763.0,
+            "scope": null,
+            "keywords": [
+                "Explosive",
+                "Atmospheres",
+                "Electrical",
+                "Installation",
+                "Design",
+                "Selection"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 16724:2026",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 16724",
+        "normalized_is_number": "IS 16724",
+        "edition_year": 2018,
+        "title": "Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection -",
+        "raw_title": "Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection - (Vaild upto 26 November 2026)",
+        "clean_title": "Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection -",
+        "price": 1400.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection -",
+        "keywords": [
+            "Explosive",
+            "Atmospheres",
+            "Design",
+            "Electrical",
+            "Installations",
+            "Electrical Installation & Safety",
+            "Selection"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Installation",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 16724",
+            "record_year": 2018,
+            "latest_known_edition": "IS 16724",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": "26 November 2026",
+        "search_text": "IS 16724 Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection - Derived summary: Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection - Explosive Atmospheres Design Electrical Installations Electrical Installation & Safety Selection Electrical Installation & Safety Installation",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 16724",
+            "year": 2018,
+            "title": "Explosive Atmospheres \u2014 Electrical Installations Design, Selection and Erection - (Vaild upto 26 November 2026)",
+            "price": 1400.0,
+            "scope": null,
+            "keywords": [
+                "Explosive",
+                "Atmospheres",
+                "Electrical",
+                "Installations",
+                "Design",
+                "Selection"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 16724:2018",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "SP 30",
+        "normalized_is_number": "SP 30",
+        "edition_year": 2023,
+        "title": "National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.)",
+        "raw_title": "National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.)",
+        "clean_title": "National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.)",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.)",
+        "keywords": [
+            "This",
+            "2023",
+            "National",
+            "India",
+            "Electrical",
+            "Code",
+            "General Electrical"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "verification_required",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "SP 30",
+            "record_year": 2023,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "SP 30 National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.) Derived summary: National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.) This 2023 National India Electrical Code General Electrical General Electrical verification_required",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "SP 30",
+            "year": 2023,
+            "title": "National Electrical Code Of India 2023 This standard is available as a pre- printed copy for purchase. However, if you still wish to download the soft copy of the Standard you may proceed with that. Print price :8330.00 INR (in India) (For Printed copies please contact BSBEdge.)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "National",
+                "Electrical",
+                "Code",
+                "India",
+                "2023",
+                "This"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "SP 30:2023",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "SP 62",
+        "normalized_is_number": "SP 62",
+        "edition_year": 1997,
+        "title": "Handbook on Building Construction Practices (Excluding Electrical Work)",
+        "raw_title": "Handbook on Building Construction Practices (Excluding Electrical Work)",
+        "clean_title": "Handbook on Building Construction Practices (Excluding Electrical Work)",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Handbook on Building Construction Practices (Excluding Electrical Work)",
+        "keywords": [
+            "Building",
+            "Practices",
+            "Electrical",
+            "General Electrical",
+            "Construction",
+            "Excluding",
+            "Handbook"
+        ],
+        "product_categories": [
+            "General Electrical"
+        ],
+        "standard_type": "Code of Practice",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "SP 62",
+            "record_year": 1997,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "SP 62 Handbook on Building Construction Practices (Excluding Electrical Work) Derived summary: Handbook on Building Construction Practices (Excluding Electrical Work) Building Practices Electrical General Electrical Construction Excluding Handbook General Electrical Code of Practice",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "SP 62",
+            "year": 1997,
+            "title": "Handbook on Building Construction Practices (Excluding Electrical Work)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Handbook",
+                "Building",
+                "Construction",
+                "Practices",
+                "Excluding",
+                "Electrical"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "SP 62:1997",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 2",
+        "normalized_is_number": "IS 302: Part 2: Sec 2",
+        "edition_year": 1997,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 2",
+            "record_year": 1997,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 2 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 2",
+            "year": 1997,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 2 Vacuum cleaners and water suction cleaning appliances",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 2:1997",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 4",
+        "normalized_is_number": "IS 302: Part 2: Sec 4",
+        "edition_year": 1993,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 4",
+            "record_year": 1993,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 4 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 4",
+            "year": 1993,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 4 Spin extractors",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 4:1993",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 6",
+        "normalized_is_number": "IS 302: Part 2: Sec 6",
+        "edition_year": 2009,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances",
+        "keywords": [
+            "Particuar",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 6",
+            "record_year": 2009,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 6 Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances Derived summary: Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances Particuar Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 6",
+            "year": 2009,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particuar requirements, Section 6 Cooking Ranges, Hobs, Ovens and Similar Appliances",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particuar"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 6:2009",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 9",
+        "normalized_is_number": "IS 302: Part 2: Sec 9",
+        "edition_year": 2009,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 9",
+            "record_year": 2009,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 9 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 9",
+            "year": 2009,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 9 Toasters, Grills, Roasters and similar appliances",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 9:2009",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 11",
+        "normalized_is_number": "IS 302: Part 2: Sec 11",
+        "edition_year": 1994,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 11",
+            "record_year": 1994,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 11 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 11",
+            "year": 1994,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 11 Tumbler dryers",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 11:1994",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 12",
+        "normalized_is_number": "IS 302: Part 2: Sec 12",
+        "edition_year": 1993,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 12",
+            "record_year": 1993,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 12 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 12",
+            "year": 1993,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 12 Warming plates and similar appliances",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 12:1993",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 14",
+        "normalized_is_number": "IS 302: Part 2: Sec 14",
+        "edition_year": 2009,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 14",
+            "record_year": 2009,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 14 Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 14",
+            "year": 2009,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements. Section 14 Electric kitchen machines",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 14:2009",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 15",
+        "normalized_is_number": "IS 302: Part 2: Sec 15",
+        "edition_year": 2009,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 15",
+            "record_year": 2009,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 15 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 15",
+            "year": 2009,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 15 Appliances for heating liquids",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 15:2009",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 24",
+        "normalized_is_number": "IS 302: Part 2: Sec 24",
+        "edition_year": 1994,
+        "title": "Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers",
+        "raw_title": "Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers",
+        "clean_title": "Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 24",
+            "record_year": 1994,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 24 Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers Derived summary: Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 24",
+            "year": 1994,
+            "title": "Safety of household and similar electrical appliances:Part 2 Particular requirements Sec 24 Refrigerators, food freezers and ice makers",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 24:1994",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 25",
+        "normalized_is_number": "IS 302: Part 2: Sec 25",
+        "edition_year": 2014,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 25",
+            "record_year": 2014,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 25 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 25",
+            "year": 2014,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 25 Microwave ovens",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 25:2014",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 30",
+        "normalized_is_number": "IS 302: Part 2: Sec 30",
+        "edition_year": 2007,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 30",
+            "record_year": 2007,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 30 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 30",
+            "year": 2007,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 30 Room Heaters",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 30:2007",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 32",
+        "normalized_is_number": "IS 302: Part 2: Sec 32",
+        "edition_year": 1994,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 32",
+            "record_year": 1994,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 32 Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 32",
+            "year": 1994,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements: Section 32 Massage appliances",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 32:1994",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 35",
+        "normalized_is_number": "IS 302: Part 2: Sec 35",
+        "edition_year": 2017,
+        "title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision)",
+        "raw_title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision)",
+        "clean_title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision)",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision)",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 35",
+            "record_year": 2017,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 35 Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision) Derived summary: Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision) Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 35",
+            "year": 2017,
+            "title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 35 Electric Instantaneous Water Heaters (Second Revision)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 35:2017",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 45",
+        "normalized_is_number": "IS 302: Part 2: Sec 45",
+        "edition_year": 1994,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 45",
+            "record_year": 1994,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 45 Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 45",
+            "year": 1994,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Sec 45 Electric heating tools",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 45:1994",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 46",
+        "normalized_is_number": "IS 302: Part 2: Sec 46",
+        "edition_year": 1993,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 46",
+            "record_year": 1993,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 46 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 46",
+            "year": 1993,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 46 Electric steam cookers",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 46:1993",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 75",
+        "normalized_is_number": "IS 302: Part 2: Sec 75",
+        "edition_year": 2018,
+        "title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines",
+        "raw_title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines",
+        "clean_title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 75",
+            "record_year": 2018,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 75 Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines Derived summary: Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 75",
+            "year": 2018,
+            "title": "Safety of Household and Similar Electrical Appliances Part 2 Particular Requirements Section 75 Commercial Dispensing Appliances and Vending Machines",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 75:2018",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 76",
+        "normalized_is_number": "IS 302: Part 2: Sec 76",
+        "edition_year": 1999,
+        "title": "Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers",
+        "raw_title": "Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers",
+        "clean_title": "Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 76",
+            "record_year": 1999,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 76 Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers Derived summary: Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 76",
+            "year": 1999,
+            "title": "Safety of Household and Similar Electrical Appliances - Part 2 : Particular Requirements - Section 76 : Electric Fence Energizers",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 76:1999",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 80",
+        "normalized_is_number": "IS 302: Part 2: Sec 80",
+        "edition_year": 2017,
+        "title": "Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision)",
+        "raw_title": "Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision)",
+        "clean_title": "Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision)",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision)",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 80",
+            "record_year": 2017,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 80 Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision) Derived summary: Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision) Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 80",
+            "year": 2017,
+            "title": "Household and Similar Electrical Appliances - Safety Part 2-80 Particular Requirements for Fans (First Revision)",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Household",
+                "Similar",
+                "Electrical",
+                "Appliances",
+                "Safety",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 80:2017",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 201",
+        "normalized_is_number": "IS 302: Part 2: Sec 201",
+        "edition_year": 2008,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 201",
+            "record_year": 2008,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 201 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 201",
+            "year": 2008,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 201 Electric immersion water heater",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 201:2008",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 302 : Part 2 : Sec 202",
+        "normalized_is_number": "IS 302: Part 2: Sec 202",
+        "edition_year": 1992,
+        "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves",
+        "raw_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves",
+        "clean_title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves",
+        "price": 0.0,
+        "scope": null,
+        "scope_summary": "Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves",
+        "keywords": [
+            "Particular",
+            "Safety",
+            "Similar",
+            "Electrical",
+            "Appliances",
+            "Household",
+            "Electrical Installation & Safety"
+        ],
+        "product_categories": [
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Safety",
+        "normative_references": [],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": null,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": false,
+            "source": null
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "verified": false,
+            "source": "BIS"
+        },
+        "version": {
+            "record_edition": "IS 302: Part 2: Sec 202",
+            "record_year": 1992,
+            "latest_known_edition": null,
+            "latest_known_year": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "not_verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "search_text": "IS 302: Part 2: Sec 202 Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves Derived summary: Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves Particular Safety Similar Electrical Appliances Household Electrical Installation & Safety Electrical Installation & Safety Safety",
+        "source": {
+            "organization": "BIS",
+            "source_type": "BIS standards catalogue",
+            "verified": false,
+            "url": null
+        },
+        "data_quality": {
+            "overall": "medium",
+            "verified_fields": [],
+            "unverified_fields": [
+                "scope",
+                "normative_references",
+                "certification",
+                "status",
+                "amendments"
+            ],
+            "needs_manual_verification": [
+                "certification",
+                "status",
+                "scope",
+                "version"
+            ]
+        },
+        "raw_record": {
+            "is_number": "IS 302 : Part 2 : Sec 202",
+            "year": 1992,
+            "title": "Safety of household and similar electrical appliances: Part 2 Particular requirements, Section 202 Electric stoves",
+            "price": 0.0,
+            "scope": null,
+            "keywords": [
+                "Safety",
+                "household",
+                "similar",
+                "electrical",
+                "appliances",
+                "Particular"
+            ],
+            "normative_references": [],
+            "related_standards": [],
+            "test_methods": [],
+            "certification_requirements": {
+                "applicable": null,
+                "details": "Not stated in source catalog; verify via BIS certification scheme lookup."
+            },
+            "status": "Active",
+            "latest_version": "IS 302 : Part 2 : Sec 202:1992",
+            "amendments": [],
+            "supersedes": null,
+            "superseded_by": null,
+            "valid_upto": null,
+            "source": "BIS"
+        }
+    },
+    {
+        "is_number": "IS 10322 : Part 1",
+        "normalized_is_number": "IS 10322: Part 1",
+        "edition_year": 2026,
+        "title": "Luminaires - Part 1: General requirements and tests",
+        "raw_title": "Luminaires - Part 1: General requirements and tests",
+        "clean_title": "Luminaires - Part 1: General requirements and tests",
+        "scope": "Specifies general requirements and tests applicable to most luminaires including LED.",
+        "scope_summary": "General safety and testing requirements for all luminaires.",
+        "keywords": [
+            "Luminaires",
+            "Lighting",
+            "LED",
+            "General requirements",
+            "Safety",
+            "Testing"
+        ],
+        "product_categories": [
+            "Lighting & LED"
+        ],
+        "standard_type": "Product Specification & Testing",
+        "normative_references": [],
+        "related_standards": [
+            "IS 10322 : Part 5 : Sec 3"
+        ],
+        "test_methods": [],
+        "certification": {
+            "mandatory": true,
+            "scheme": "CRS",
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 10322: Part 1",
+            "latest_known_year": 2026,
+            "supersedes": "IS 10322: Part 1: 2014",
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 10322: Part 1 Luminaires - Part 1: General requirements and tests Specifies general requirements and tests applicable to most luminaires including LED. Luminaires Lighting LED General requirements Safety Testing Lighting & LED Product Specification & Testing"
+    },
+    {
+        "is_number": "IS 10322 : Part 5 : Sec 3",
+        "normalized_is_number": "IS 10322: Part 5: Sec 3",
+        "edition_year": 2026,
+        "title": "Luminaires - Part 5: Particular requirements - Section 3: Luminaires for road and street lighting",
+        "raw_title": "Luminaires - Part 5: Particular requirements - Section 3: Luminaires for road and street lighting",
+        "clean_title": "Luminaires - Part 5: Particular requirements - Section 3: Luminaires for road and street lighting",
+        "scope": "Specifies particular safety, performance, and construction requirements for LED luminaires used in road and street lighting.",
+        "scope_summary": "Safety and performance standards for street lighting and road luminaires.",
+        "keywords": [
+            "Luminaires",
+            "Road lighting",
+            "Street lighting",
+            "LED",
+            "Outdoor lighting",
+            "Highway lighting"
+        ],
+        "product_categories": [
+            "Lighting & LED",
+            "Electrical Installation & Safety"
+        ],
+        "standard_type": "Product Specification",
+        "normative_references": [
+            "IS 10322 : Part 1"
+        ],
+        "related_standards": [
+            "IS 1944 : Part 1 and 2"
+        ],
+        "test_methods": [
+            "IPX9 ingress protection",
+            "photobiological safety"
+        ],
+        "certification": {
+            "mandatory": true,
+            "scheme": "CRS",
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 10322: Part 5: Sec 3",
+            "latest_known_year": 2026,
+            "supersedes": "IS 10322: Part 5: Sec 3: 2012",
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 10322: Part 5: Sec 3 Luminaires - Part 5: Particular requirements - Section 3: Luminaires for road and street lighting Specifies particular safety, performance, and construction requirements for LED luminaires used in road and street lighting. Luminaires Road lighting Street lighting LED Outdoor lighting Highway lighting Lighting & LED Electrical Installation & Safety Product Specification"
+    },
+    {
+        "is_number": "IS 10322 : Part 5 : Sec 1",
+        "normalized_is_number": "IS 10322: Part 5: Sec 1",
+        "edition_year": 2026,
+        "title": "Luminaires - Part 5: Particular requirements - Section 1: Fixed general purpose luminaires",
+        "raw_title": "Luminaires - Part 5: Particular requirements - Section 1: Fixed general purpose luminaires",
+        "clean_title": "Luminaires - Part 5: Particular requirements - Section 1: Fixed general purpose luminaires",
+        "scope": "Requirements for fixed general purpose luminaires including LED.",
+        "scope_summary": "Fixed general purpose luminaires requirements.",
+        "keywords": [
+            "Luminaires",
+            "Fixed lighting",
+            "LED",
+            "General purpose"
+        ],
+        "product_categories": [
+            "Lighting & LED"
+        ],
+        "standard_type": "Product Specification",
+        "normative_references": [
+            "IS 10322 : Part 1"
+        ],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": true,
+            "scheme": "CRS",
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 10322: Part 5: Sec 1",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 10322: Part 5: Sec 1 Luminaires - Part 5: Particular requirements - Section 1: Fixed general purpose luminaires Requirements for fixed general purpose luminaires including LED. Luminaires Fixed lighting LED General purpose Lighting & LED Product Specification"
+    },
+    {
+        "is_number": "IS 10322 : Part 5 : Sec 2",
+        "normalized_is_number": "IS 10322: Part 5: Sec 2",
+        "edition_year": 2026,
+        "title": "Luminaires - Part 5: Particular requirements - Section 2: Recessed luminaires",
+        "raw_title": "Luminaires - Part 5: Particular requirements - Section 2: Recessed luminaires",
+        "clean_title": "Luminaires - Part 5: Particular requirements - Section 2: Recessed luminaires",
+        "scope": "Requirements for recessed luminaires including LED.",
+        "scope_summary": "Recessed luminaires requirements.",
+        "keywords": [
+            "Luminaires",
+            "Recessed lighting",
+            "LED",
+            "Indoor lighting"
+        ],
+        "product_categories": [
+            "Lighting & LED"
+        ],
+        "standard_type": "Product Specification",
+        "normative_references": [
+            "IS 10322 : Part 1"
+        ],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": true,
+            "scheme": "CRS",
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 10322: Part 5: Sec 2",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 10322: Part 5: Sec 2 Luminaires - Part 5: Particular requirements - Section 2: Recessed luminaires Requirements for recessed luminaires including LED. Luminaires Recessed lighting LED Indoor lighting Lighting & LED Product Specification"
+    },
+    {
+        "is_number": "IS 10322 : Part 5 : Sec 5",
+        "normalized_is_number": "IS 10322: Part 5: Sec 5",
+        "edition_year": 2026,
+        "title": "Luminaires - Part 5: Particular requirements - Section 5: Flood lights",
+        "raw_title": "Luminaires - Part 5: Particular requirements - Section 5: Flood lights",
+        "clean_title": "Luminaires - Part 5: Particular requirements - Section 5: Flood lights",
+        "scope": "Requirements for flood lights including LED, used for outdoor and stadium lighting.",
+        "scope_summary": "Flood lights requirements.",
+        "keywords": [
+            "Luminaires",
+            "Flood lighting",
+            "LED",
+            "Outdoor lighting"
+        ],
+        "product_categories": [
+            "Lighting & LED"
+        ],
+        "standard_type": "Product Specification",
+        "normative_references": [
+            "IS 10322 : Part 1"
+        ],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": true,
+            "scheme": "CRS",
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 10322: Part 5: Sec 5",
+            "latest_known_year": 2026,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 10322: Part 5: Sec 5 Luminaires - Part 5: Particular requirements - Section 5: Flood lights Requirements for flood lights including LED, used for outdoor and stadium lighting. Luminaires Flood lighting LED Outdoor lighting Lighting & LED Product Specification"
+    },
+    {
+        "is_number": "IS 1944 : Part 1 and 2",
+        "normalized_is_number": "IS 1944: Part 1 and 2",
+        "edition_year": 1970,
+        "title": "Code of Practice for Lighting of Public Thoroughfares: Part 1 and 2 General Principles and Lighting for Main and Secondary Traffic Routes",
+        "raw_title": "Code of Practice for Lighting of Public Thoroughfares: Part 1 and 2 General Principles and Lighting for Main and Secondary Traffic Routes",
+        "clean_title": "Code of Practice for Lighting of Public Thoroughfares: Part 1 and 2 General Principles and Lighting for Main and Secondary Traffic Routes",
+        "scope": "Provides general principles and lighting guidelines for main and secondary traffic routes to ensure safety.",
+        "scope_summary": "General principles for public thoroughfare and traffic route lighting.",
+        "keywords": [
+            "Road lighting",
+            "Street lighting",
+            "Public Thoroughfares",
+            "Traffic routes",
+            "Lighting infrastructure"
+        ],
+        "product_categories": [
+            "Lighting & LED",
+            "Infrastructure"
+        ],
+        "standard_type": "Code of Practice",
+        "normative_references": [],
+        "related_standards": [
+            "IS 10322 : Part 5 : Sec 3"
+        ],
+        "test_methods": [],
+        "certification": {
+            "mandatory": false,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 1944: Part 1 and 2",
+            "latest_known_year": 1970,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 1944: Part 1 and 2 Code of Practice for Lighting of Public Thoroughfares: Part 1 and 2 General Principles and Lighting for Main and Secondary Traffic Routes Provides general principles and lighting guidelines for main and secondary traffic routes to ensure safety. Road lighting Street lighting Public Thoroughfares Traffic routes Lighting infrastructure Lighting & LED Infrastructure Code of Practice"
+    },
+    {
+        "is_number": "IS 1944 : Part 3",
+        "normalized_is_number": "IS 1944: Part 3",
+        "edition_year": 1970,
+        "title": "Code of Practice for Lighting of Public Thoroughfares: Part 3 Lighting for Residential Roads and Pedestrian Areas",
+        "raw_title": "Code of Practice for Lighting of Public Thoroughfares: Part 3 Lighting for Residential Roads and Pedestrian Areas",
+        "clean_title": "Code of Practice for Lighting of Public Thoroughfares: Part 3 Lighting for Residential Roads and Pedestrian Areas",
+        "scope": "Guidelines for lighting residential roads and pedestrian zones.",
+        "scope_summary": "Lighting guidelines for residential roads and pedestrians.",
+        "keywords": [
+            "Road lighting",
+            "Street lighting",
+            "Residential roads",
+            "Pedestrian areas",
+            "Lighting infrastructure"
+        ],
+        "product_categories": [
+            "Lighting & LED",
+            "Infrastructure"
+        ],
+        "standard_type": "Code of Practice",
+        "normative_references": [
+            "IS 1944 : Part 1 and 2"
+        ],
+        "related_standards": [
+            "IS 10322 : Part 5 : Sec 3"
+        ],
+        "test_methods": [],
+        "certification": {
+            "mandatory": false,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 1944: Part 3",
+            "latest_known_year": 1970,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 1944: Part 3 Code of Practice for Lighting of Public Thoroughfares: Part 3 Lighting for Residential Roads and Pedestrian Areas Guidelines for lighting residential roads and pedestrian zones. Road lighting Street lighting Residential roads Pedestrian areas Lighting infrastructure Lighting & LED Infrastructure Code of Practice"
+    },
+    {
+        "is_number": "IS 1944 : Part 5",
+        "normalized_is_number": "IS 1944: Part 5",
+        "edition_year": 1981,
+        "title": "Code of Practice for Lighting of Public Thoroughfares: Part 5 Lighting for Grade Separated Junctions, Bridges and Elevated Roads",
+        "raw_title": "Code of Practice for Lighting of Public Thoroughfares: Part 5 Lighting for Grade Separated Junctions, Bridges and Elevated Roads",
+        "clean_title": "Code of Practice for Lighting of Public Thoroughfares: Part 5 Lighting for Grade Separated Junctions, Bridges and Elevated Roads",
+        "scope": "Guidelines for lighting complex infrastructure such as grade-separated junctions, bridges, and elevated roads.",
+        "scope_summary": "Lighting guidelines for bridges and junctions.",
+        "keywords": [
+            "Road lighting",
+            "Street lighting",
+            "Bridges",
+            "Elevated roads",
+            "Junctions",
+            "Lighting infrastructure",
+            "Highway lighting"
+        ],
+        "product_categories": [
+            "Lighting & LED",
+            "Infrastructure"
+        ],
+        "standard_type": "Code of Practice",
+        "normative_references": [
+            "IS 1944 : Part 1 and 2"
+        ],
+        "related_standards": [
+            "IS 10322 : Part 5 : Sec 3"
+        ],
+        "test_methods": [],
+        "certification": {
+            "mandatory": false,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 1944: Part 5",
+            "latest_known_year": 1981,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 1944: Part 5 Code of Practice for Lighting of Public Thoroughfares: Part 5 Lighting for Grade Separated Junctions, Bridges and Elevated Roads Guidelines for lighting complex infrastructure such as grade-separated junctions, bridges, and elevated roads. Road lighting Street lighting Bridges Elevated roads Junctions Lighting infrastructure Highway lighting Lighting & LED Infrastructure Code of Practice"
+    },
+    {
+        "is_number": "IS 1944 : Part 6",
+        "normalized_is_number": "IS 1944: Part 6",
+        "edition_year": 1981,
+        "title": "Code of Practice for Lighting of Public Thoroughfares: Part 6 Lighting for Town Centres and Areas of Civic Importance",
+        "raw_title": "Code of Practice for Lighting of Public Thoroughfares: Part 6 Lighting for Town Centres and Areas of Civic Importance",
+        "clean_title": "Code of Practice for Lighting of Public Thoroughfares: Part 6 Lighting for Town Centres and Areas of Civic Importance",
+        "scope": "Guidelines for lighting town centers and civic areas.",
+        "scope_summary": "Lighting guidelines for town centers.",
+        "keywords": [
+            "Road lighting",
+            "Street lighting",
+            "Town centres",
+            "Civic areas",
+            "Lighting infrastructure"
+        ],
+        "product_categories": [
+            "Lighting & LED",
+            "Infrastructure"
+        ],
+        "standard_type": "Code of Practice",
+        "normative_references": [
+            "IS 1944 : Part 1 and 2"
+        ],
+        "related_standards": [],
+        "test_methods": [],
+        "certification": {
+            "mandatory": false,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 1944: Part 6",
+            "latest_known_year": 1981,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 1944: Part 6 Code of Practice for Lighting of Public Thoroughfares: Part 6 Lighting for Town Centres and Areas of Civic Importance Guidelines for lighting town centers and civic areas. Road lighting Street lighting Town centres Civic areas Lighting infrastructure Lighting & LED Infrastructure Code of Practice"
+    },
+    {
+        "is_number": "IS 16101",
+        "normalized_is_number": "IS 16101",
+        "edition_year": 2012,
+        "title": "General Lighting - LEDs and LED modules - Terms and Definitions",
+        "raw_title": "General Lighting - LEDs and LED modules - Terms and Definitions",
+        "clean_title": "General Lighting - LEDs and LED modules - Terms and Definitions",
+        "scope": "Specifies terms and definitions for LEDs and LED modules used in general lighting.",
+        "scope_summary": "LED terms and definitions.",
+        "keywords": [
+            "LED",
+            "Lighting",
+            "LED modules",
+            "Definitions"
+        ],
+        "product_categories": [
+            "Lighting & LED"
+        ],
+        "standard_type": "Terminology",
+        "normative_references": [],
+        "related_standards": [
+            "IS 10322 : Part 5 : Sec 3"
+        ],
+        "test_methods": [],
+        "certification": {
+            "mandatory": false,
+            "scheme": null,
+            "qco": null,
+            "qco_effective_date": null,
+            "verified": true,
+            "source": "bis.gov.in"
+        },
+        "status": {
+            "value": "Active",
+            "concurrent_running": null,
+            "latest_known_edition": "IS 16101",
+            "latest_known_year": 2012,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_status": "verified"
+        },
+        "amendments": [],
+        "valid_upto": null,
+        "source": {
+            "organization": "BIS",
+            "source_type": "bis.gov.in",
+            "verified": true,
+            "url": null
+        },
+        "search_text": "IS 16101 General Lighting - LEDs and LED modules - Terms and Definitions Specifies terms and definitions for LEDs and LED modules used in general lighting. LED Lighting LED modules Definitions Lighting & LED Terminology"
+    }
+]
