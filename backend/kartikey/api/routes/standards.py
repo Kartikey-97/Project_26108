@@ -30,27 +30,36 @@ async def search_standards(
     Search for relevant Indian Standards by natural language query or exact IS number.
     
     This provides a manual search capability for the frontend.
-    Delegates to kshiraj/knowledge/retrieval_service.py (wired in Step 7).
+    Delegates to kshiraj/knowledge/retrieval_service.py.
     """
     logger.info("Manual standards search: q='%s' limit=%d", q, limit)
     
-    # TODO(Step 7): wire retrieval_service.search_standards(query=q, limit=limit)
-    # For now, return an empty list as a stub until Kshiraj's retrieval layer is ready.
-    return []
+    from kartikey.orchestration.knowledge_registry import get_registry
+    from kshiraj.knowledge.retrieval_service import RetrievalQuery
+    
+    registry = get_registry()
+    query = RetrievalQuery(query_text=q, top_k=limit, include_evidence=False)
+    result = registry.retrieval_service.search_standards(query)
+    
+    # Return the Standard objects from the CandidateStandards
+    return [c.standard for c in result.candidates]
 
 
 @router.get("/{standard_id}", response_model=Standard)
 async def get_standard(standard_id: str) -> Standard:
     """
     Get the full details of a specific standard by its internal ID.
-    
-    TODO(Step 7): wire standards_store.get_by_id(standard_id)
     """
-    # For now, raise 404 until the DB and knowledge store are wired
-    raise HTTPException(
-        status_code=404,
-        detail={
-            "error": "STANDARD_NOT_FOUND",
-            "message": f"Standard lookup is not yet wired. Cannot find ID '{standard_id}'.",
-        },
-    )
+    from kartikey.orchestration.knowledge_registry import get_registry
+    registry = get_registry()
+    
+    standard = registry.standards_store.get_by_id(standard_id)
+    if not standard:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "STANDARD_NOT_FOUND",
+                "message": f"Cannot find ID '{standard_id}'.",
+            },
+        )
+    return standard

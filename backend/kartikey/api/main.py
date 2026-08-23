@@ -100,6 +100,23 @@ async def on_startup() -> None:
         settings.app_env,
         settings.app_debug,
     )
+    
+    from kartikey.orchestration.knowledge_registry import initialize_knowledge_registry
+    from shared.seed_data import get_seed_standards, get_seed_evidence
+    
+    registry = initialize_knowledge_registry()
+    
+    # Load seed data (MVP vertical slice)
+    for std in get_seed_standards():
+        registry.standards_store.add(std)
+    for ev in get_seed_evidence():
+        registry.evidence_store.add(ev)
+        
+    logger.info(
+        "Loaded seed data: %d standards, %d evidence records.",
+        registry.standards_store.count(),
+        registry.evidence_store.count(),
+    )
 
 
 @app.on_event("shutdown")
