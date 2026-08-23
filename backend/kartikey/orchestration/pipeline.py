@@ -33,13 +33,22 @@ import asyncio
 import traceback
 from typing import TYPE_CHECKING
 
-from shared.models import Analysis, AnalysisStatus, InputType
+from shared.models import Analysis, AnalysisStatus, InputType, Standard, StandardStatus
 from shared.utils import AnalysisError, get_logger, utcnow
+
+from kshiraj.knowledge.evidence_store import EvidenceStore
+from kshiraj.knowledge.requirement_extractor import extract_and_normalize
+from kshiraj.knowledge.retrieval_service import RetrievalQuery, RetrievalService
+from kshiraj.knowledge.standards_store import StandardsStore
 
 if TYPE_CHECKING:
     pass
 
 logger = get_logger(__name__)
+
+# Shared module-level store instances for candidate retrieval
+_standards_store = StandardsStore()
+_evidence_store = EvidenceStore()
 
 
 # ===========================================================================
@@ -136,8 +145,8 @@ async def _step_extract(analysis: Analysis) -> str:
     For TEXT input: the raw_text is used directly.
     For DOCUMENT input: text is loaded from storage (already extracted during upload).
 
-    Requirement extraction (AI/ML) is wired in Step 5.
-    For now, text is returned as-is so the pipeline can proceed end-to-end.
+    Structured requirements are extracted and normalized via
+    `kshiraj.knowledge.requirement_extractor` and stored on `analysis.requirements`.
     """
     if analysis.input_type == InputType.TEXT:
         if not analysis.raw_text:
@@ -173,31 +182,82 @@ async def _step_extract(analysis: Analysis) -> str:
             code="INVALID_INPUT_TYPE",
         )
 
-    # TODO(Step 5): Call AI/ML requirement extractor here.
-    # For now, log that extraction is a stub.
+    # Perform requirement extraction and normalization
+    requirements = extract_and_normalize(extracted_text, analysis.id)
+    analysis.requirements = requirements
+    analysis.total_requirements = len(requirements)
+
     logger.info(
-        "_step_extract: text ready (%d chars). "
-        "Requirement extraction AI/ML will be wired in Step 5.",
+        "_step_extract: text ready (%d chars), extracted %d requirement(s) for analysis_id=%s",
         len(extracted_text),
+        len(requirements),
+        analysis.id,
     )
 
     return extracted_text
 
 
-async def _step_retrieve(analysis: Analysis, extracted_text: str) -> list:
+async def _step_retrieve(analysis: Analysis, extracted_text: str) -> list[Standard]:
     """
-    Search the knowledge base for standards relevant to the extracted text.
+    Search the knowledge base for standards relevant to the extracted requirements.
+    Uses `kshiraj.knowledge.retrieval_service.RetrievalService`.
+    """
+    await asyncio.sleep(0)  # yield control
 
-    TODO(Step 7): Wire kshiraj/knowledge/retrieval_service here.
-    Interface: retrieval_service.search_standards(query, filters, top_k)
-    """
-    await asyncio.sleep(0)  # yield control (non-blocking stub)
+    service = RetrievalService(
+        standards_store=_standards_store,
+        evidence_store=_evidence_store,
+    )
+
+    retrieved_standards: list[Standard] = []
+    seen_ids: set[str] = set()
+
+    if analysis.requirements:
+        for req in analysis.requirements:
+            query_text = (req.normalized_text or req.text).strip()
+            if req.is_reference and req.is_reference not in query_text:
+                query_text = f"{req.is_reference} {query_text}"
+
+            q = RetrievalQuery(
+                query_text=query_text,
+                status_filter=[
+                    StandardStatus.ACTIVE,
+                    StandardStatus.REAFFIRMED,
+                    StandardStatus.UNDER_REVISION,
+                ],
+                include_evidence=True,
+                top_k=5,
+            )
+            res = service.search_standards(q)
+            for cand in res.candidates:
+                if cand.standard.id not in seen_ids:
+                    seen_ids.add(cand.standard.id)
+                    retrieved_standards.append(cand.standard)
+    else:
+        # Fallback to direct query on extracted_text if no requirements extracted
+        q = RetrievalQuery(
+            query_text=extracted_text,
+            status_filter=[
+                StandardStatus.ACTIVE,
+                StandardStatus.REAFFIRMED,
+                StandardStatus.UNDER_REVISION,
+            ],
+            include_evidence=True,
+            top_k=10,
+        )
+        res = service.search_standards(q)
+        for cand in res.candidates:
+            if cand.standard.id not in seen_ids:
+                seen_ids.add(cand.standard.id)
+                retrieved_standards.append(cand.standard)
+
     logger.info(
-        "_step_retrieve: stub — knowledge retrieval will be wired in Step 7. "
-        "analysis_id=%s",
+        "_step_retrieve: retrieved %d unique candidate standard(s) for analysis_id=%s",
+        len(retrieved_standards),
         analysis.id,
     )
-    return []   # returns list[Standard] once wired
+
+    return retrieved_standards
 
 
 async def _step_analyze(
