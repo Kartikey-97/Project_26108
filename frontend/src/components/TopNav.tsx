@@ -91,6 +91,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
   const isPublic = variant === 'public';
   const isAuth = variant === 'auth';
 
+  // Global shortcut for Search Palette (⌘K / Ctrl+K)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -102,12 +103,14 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Public Navigation Links
   const publicNavLinks: { label: string; route: Route; active: boolean }[] = [
     { label: 'StandIQ', route: { name: 'landing' }, active: route.name === 'landing' },
     { label: 'How It Works', route: { name: 'how-it-works' }, active: route.name === 'how-it-works' },
     { label: 'Standards', route: { name: 'standards' }, active: route.name === 'standards' || route.name === 'standard' },
   ];
 
+  // Authenticated Navigation Links
   const appNavLinks: { label: string; route: Route; active: boolean }[] = [
     { label: 'Workspace', route: { name: 'workspace' }, active: route.name === 'workspace' || route.name === 'analysis' },
     { label: 'Standards', route: { name: 'standards' }, active: route.name === 'standards' || route.name === 'standard' },
@@ -120,6 +123,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-ink-200/80 bg-ivory-50/90 backdrop-blur-md transition-colors dark:border-slate-800 dark:bg-[#090D16]/90">
       <div className="container-app flex h-14 items-center justify-between gap-4">
+        {/* Left: Brand + Nav */}
         <div className="flex items-center gap-7">
           <button
             onClick={() => navigate(isPublic || isAuth ? { name: 'landing' } : { name: 'workspace' })}
@@ -129,6 +133,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
             <Logo size="md" />
           </button>
 
+          {/* Desktop Navigation */}
           {!isAuth && (
             <nav className="hidden items-center gap-1 md:flex">
               {currentNavLinks.map((item) => (
@@ -155,7 +160,9 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
           )}
         </div>
 
+        {/* Right: Controls based on Public vs Authenticated */}
         <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Theme Toggle Button (Available everywhere) */}
           <button
             onClick={toggleTheme}
             className="flex h-8 w-8 items-center justify-center rounded-lg border border-ink-200 bg-white text-ink-600 transition-colors hover:border-ink-300 hover:bg-ivory-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-800 dark:bg-[#111827] dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
@@ -169,6 +176,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
             )}
           </button>
 
+          {/* PUBLIC NAVIGATION CONTROLS */}
           {isPublic && (
             <>
               <button
@@ -187,6 +195,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
             </>
           )}
 
+          {/* AUTH PAGE CONTROLS (Sign In only) */}
           {isAuth && (
             <button
               onClick={() => navigate({ name: 'landing' })}
@@ -196,8 +205,10 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
             </button>
           )}
 
+          {/* AUTHENTICATED APPLICATION CONTROLS */}
           {!isPublic && !isAuth && (
             <>
+              {/* Quick Search Button (Command Palette) */}
               <button
                 onClick={() => setSearchOpen(true)}
                 className="hidden items-center gap-2 rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs text-ink-500 shadow-soft transition-all hover:border-ink-300 hover:text-ink-700 sm:flex dark:border-slate-800 dark:bg-[#111827] dark:text-slate-400 dark:hover:border-slate-700 dark:hover:text-slate-200"
@@ -210,6 +221,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                 </kbd>
               </button>
 
+              {/* Notification Popover Button */}
               <div className="relative">
                 <button
                   onClick={() => {
@@ -226,6 +238,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                   )}
                 </button>
 
+                {/* Notification Dropdown Popover */}
                 <AnimatePresence>
                   {notifOpen && (
                     <>
@@ -294,6 +307,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                 </AnimatePresence>
               </div>
 
+              {/* New Analysis Primary Button */}
               <button
                 onClick={() => navigate({ name: 'new-analysis' })}
                 className="btn-primary hidden px-3 py-1.5 text-xs font-medium sm:inline-flex shadow-soft"
@@ -302,6 +316,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                 New Analysis
               </button>
 
+              {/* User Profile Dropdown (Cleaned & Non-Duplicative) */}
               <div className="relative">
                 <button
                   onClick={() => {
@@ -327,12 +342,14 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                         transition={{ duration: 0.18 }}
                         className="absolute right-0 top-11 z-50 w-64 rounded-xl border border-ink-200 bg-white p-1.5 shadow-pop overflow-hidden dark:border-slate-800 dark:bg-[#111827]"
                       >
+                        {/* User Identity Header */}
                         <div className="border-b border-ink-100 px-3 py-2.5 dark:border-slate-800">
                           <p className="text-xs font-bold text-ink-900 dark:text-white">Priya Nair</p>
                           <p className="text-[11px] text-ink-500 dark:text-slate-400 font-medium">Lead Procurement Officer</p>
                           <p className="text-[10px] text-ink-400 font-mono dark:text-slate-500">Urban Infrastructure Division</p>
                         </div>
 
+                        {/* Account & Preferences Items */}
                         <div className="py-1">
                           <button
                             onClick={() => {
@@ -379,6 +396,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
                           </button>
                         </div>
 
+                        {/* Sign Out */}
                         <div className="border-t border-ink-100 pt-1 dark:border-slate-800">
                           <button
                             onClick={() => {
@@ -399,6 +417,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
             </>
           )}
 
+          {/* Mobile Menu Toggle Button */}
           {!isAuth && (
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
@@ -411,6 +430,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
         </div>
       </div>
 
+      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && !isAuth && (
         <div className="border-t border-ink-200 bg-ivory-50 px-6 py-4 md:hidden animate-in dark:border-slate-800 dark:bg-[#090D16]">
           {!isPublic && (
@@ -483,10 +503,12 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
         </div>
       )}
 
+      {/* Command Palette Search Modal */}
       {searchOpen && (
         <SearchPalette onClose={() => setSearchOpen(false)} />
       )}
 
+      {/* Keyboard Shortcuts Modal */}
       {shortcutsModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShortcutsModalOpen(false)}>
           <div className="absolute inset-0 bg-ink-900/50 backdrop-blur-xs dark:bg-black/60" />
@@ -523,6 +545,7 @@ export function TopNav({ variant = 'public' }: TopNavProps) {
     </header>
   );
 }
+
 
 function SearchPalette({ onClose }: { onClose: () => void }) {
   const { navigate } = useRouter();
@@ -601,5 +624,6 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
         </div>
       </div>
     </div>
+
   );
 }

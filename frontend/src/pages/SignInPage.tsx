@@ -23,6 +23,7 @@ export function SignInPage() {
             <p className="mt-2 text-sm text-ink-500 dark:text-slate-400">Sign in to your StandIQ workspace</p>
           </div>
 
+
           <form
             onSubmit={(e) => {
               e.preventDefault();

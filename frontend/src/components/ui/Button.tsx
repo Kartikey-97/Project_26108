@@ -24,6 +24,7 @@ const variantMap: Record<Variant, string> = {
   outline: 'btn border border-ink-300 bg-transparent text-ink-700 hover:bg-ivory-50 focus:ring-ink-300 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/80',
 };
 
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { variant = 'primary', size = 'md', leftIcon, rightIcon, fullWidth, className = '', children, ...props },

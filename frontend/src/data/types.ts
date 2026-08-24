@@ -59,6 +59,7 @@ export interface Standard {
   humanDecision?: HumanDecision;
 }
 
+
 export interface MatchedRequirementItem {
   id: string;
   requirement: string;
@@ -140,6 +141,7 @@ export interface RegulatoryRequirement {
 
 export type EvidenceStatus = 'supported' | 'partial' | 'needs-review' | 'not-found';
 
+
 export interface EvidenceChainItem {
   id: string;
   analysisId?: string;
@@ -157,6 +159,8 @@ export interface EvidenceChainItem {
   isSaved?: boolean;
   isFlagged?: boolean;
 }
+
+
 
 export interface Document {
   id: string;
@@ -213,6 +217,7 @@ export interface StandardRelationship {
   evidenceSource?: string;
 }
 
+
 export interface Report {
   id: string;
   analysisId: string;
@@ -245,6 +250,7 @@ export interface Activity {
 
 export type ProfileFieldStatus = 'detected' | 'edited' | 'needs-review' | 'not-found';
 
+
 export interface ProfileParameter {
   id: string;
   label: string;
@@ -263,3 +269,4 @@ export interface ProcurementProfile {
   testingRequirements: ProfileParameter[];
   regulatoryMentions: ProfileParameter[];
 }
+
