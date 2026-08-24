@@ -9,8 +9,8 @@ import { ArrowRight, RotateCcw, ChevronDown } from 'lucide-react';
 export default function SpecInputForm({ onSubmitSpec }) {
   const [selectedCategory, setSelectedCategory] = useState(PRODUCT_CATEGORIES[0]);
   const [selectedDomain, setSelectedDomain] = useState(INDUSTRY_DOMAINS[0]);
-  const [department, setDepartment] = useState('Public Works Department (PWD)');
-  const [specText, setSpecText] = useState(PRESET_SPEC_SAMPLES[0].text);
+  const [department, setDepartment] = useState('');
+  const [specText, setSpecText] = useState('');
 
   const handleLoadSample = (sample) => {
     setSelectedCategory(sample.category);
