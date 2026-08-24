@@ -84,16 +84,29 @@ async def health() -> dict:
     """
     Health check — confirms the server is up and returns basic stack info.
     Frontend and DevOps can poll this to verify the backend is reachable.
+
+    Also reports live model/catalog values so the UI doesn't have to hardcode them.
     """
     from kartikey.orchestration.knowledge_registry import get_registry
+
+    registry = get_registry()
+
+    standards_count = None
+    try:
+        standards_count = registry.standards_store.count()
+    except Exception:  # pragma: no cover - count is best-effort telemetry
+        pass
 
     return {
         "status": "ok",
         "service": "sih26108-backend",
         "version": "0.1.0",
         "environment": settings.app_env,
-        "retrieval_mode": get_registry().retrieval_mode,
-        "retrieval_reason": get_registry().retrieval_reason,
+        "retrieval_mode": registry.retrieval_mode,
+        "retrieval_reason": registry.retrieval_reason,
+        "gemini_model": settings.gemini_model,
+        "standards_count": standards_count,
+        "aiml_service_configured": bool(settings.aiml_service_url),
     }
 
 

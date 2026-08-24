@@ -15,7 +15,8 @@ class BhashiniAdapter:
     """
     def __init__(self):
         self.client = None
-        self.model_name = "gemini-3.6-flash"
+        from shared.config import settings
+        self.model_name = settings.gemini_model
 
     def _get_client(self):
         if self.client is None:

@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import List, Dict, Any
-from src.reasoning.providers.gemini import get_gemini_client
+from src.llm_config import GEMINI_MODEL, get_gemini_client
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ Return EXACTLY a JSON object with this structure:
     try:
         client = get_gemini_client()
         response = client.models.generate_content(
-            model='gemini-3.6-flash',
+            model=GEMINI_MODEL,
             contents=prompt,
             config={
                 "response_mime_type": "application/json",

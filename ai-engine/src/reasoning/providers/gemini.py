@@ -12,7 +12,8 @@ Improvements:
 
 import json
 import logging
-import os
+
+from src.llm_config import GEMINI_MODEL, get_gemini_api_key, get_gemini_client
 
 from .base import ReasoningProvider
 
@@ -21,16 +22,15 @@ logger = logging.getLogger(__name__)
 
 class GeminiReasoner(ReasoningProvider):
     def __init__(self):
-        self.api_key = os.getenv("AI_ENGINE_GEMINI_KEY")
+        self.api_key = get_gemini_api_key()
         if not self.api_key:
-            logger.warning("AI_ENGINE_GEMINI_KEY is not set — Gemini reasoning unavailable.")
-        self.model = "gemini-3.6-flash"
+            logger.warning("No Gemini API key set (GOOGLE_API_KEY) — Gemini reasoning unavailable.")
+        self.model = GEMINI_MODEL
         self._client = None
 
     def _get_client(self):
         if self._client is None:
-            from google import genai
-            self._client = genai.Client(api_key=self.api_key)
+            self._client = get_gemini_client()
         return self._client
 
     def analyze(self, req_text, req_type, standards, is_reference=None, cited_year=None):
@@ -46,7 +46,7 @@ class GeminiReasoner(ReasoningProvider):
         cited_year    : int | None — year of the cited edition (e.g. 2018)
         """
         if not self.api_key:
-            return self._fallback("AI_ENGINE_GEMINI_KEY not configured.")
+            return self._fallback("Gemini API key (GOOGLE_API_KEY) not configured.")
 
         # Truncate very long requirement texts to stay within Gemini's context window.
         # Tender documents can be huge; individual requirements usually shouldn't exceed 500 chars.

@@ -10,35 +10,72 @@ import {
   Shield,
   Cpu,
 } from 'lucide-react';
+import { getBackendHealth } from '../services/api';
 
 const API_KEYS = [
   { label: 'Backend LLM Key', owner: 'Team Member A', env: 'GOOGLE_API_KEY' },
-  { label: 'AI Engine Key', owner: 'Team Member B', env: 'AI_ENGINE_GEMINI_KEY' },
+  { label: 'AI Engine Key', owner: 'Team Member B', env: 'GOOGLE_API_KEY' },
   { label: 'Redundancy Key', owner: 'Team Member C', env: 'GOOGLE_API_KEY_2' },
 ];
 
-const SYSTEM_INFO = [
-  { label: 'BIS Catalog Records', value: '1,015', icon: Database, color: 'var(--brand-primary)' },
-  { label: 'AI Model (Backend)', value: 'gemini-3.6-flash', icon: Cpu, color: 'var(--status-success-text)' },
-  { label: 'AI Model (Engine)', value: 'gemini-3.6-flash', icon: Cpu, color: 'var(--status-success-text)' },
-  { label: 'Backend Port', value: '8000', icon: Server, color: 'var(--text-secondary)' },
-  { label: 'AI Engine Port', value: '8001', icon: Server, color: 'var(--text-secondary)' },
-  { label: 'Vector Store', value: 'Qdrant (in-memory)', icon: Database, color: 'var(--text-secondary)' },
-];
+const UNKNOWN = 'Run health check';
 
 export default function Settings() {
   const [backendStatus, setBackendStatus] = useState(null);
+  const [health, setHealth] = useState(null);
   const [checking, setChecking] = useState(false);
+
+  // System info is reported by the backend /health endpoint rather than
+  // hardcoded here, so it can never drift from what is actually running.
+  const systemInfo = [
+    {
+      label: 'BIS Catalog Records',
+      value: health?.standards_count != null ? health.standards_count.toLocaleString() : UNKNOWN,
+      icon: Database,
+      color: 'var(--brand-primary)',
+    },
+    {
+      label: 'AI Model',
+      value: health?.gemini_model || UNKNOWN,
+      icon: Cpu,
+      color: 'var(--status-success-text)',
+    },
+    {
+      label: 'Environment',
+      value: health?.environment || UNKNOWN,
+      icon: Server,
+      color: 'var(--text-secondary)',
+    },
+    {
+      label: 'Retrieval Mode',
+      value: health?.retrieval_mode || UNKNOWN,
+      icon: Database,
+      color: 'var(--text-secondary)',
+    },
+    {
+      label: 'AI Engine',
+      value: health ? (health.aiml_service_configured ? 'Configured' : 'Not configured') : UNKNOWN,
+      icon: Server,
+      color: 'var(--text-secondary)',
+    },
+    {
+      label: 'Backend Service',
+      value: health?.service || UNKNOWN,
+      icon: Shield,
+      color: 'var(--text-secondary)',
+    },
+  ];
 
   const checkBackendHealth = async () => {
     setChecking(true);
     setBackendStatus(null);
     try {
-      const res = await fetch('http://localhost:8000/api/v1/health');
-      const data = await res.json();
+      const data = await getBackendHealth();
+      setHealth(data);
       setBackendStatus({ ok: true, message: `Online — status: ${data.status || 'ok'}` });
-    } catch {
-      setBackendStatus({ ok: false, message: 'Backend is offline or unreachable on port 8000.' });
+    } catch (err) {
+      setHealth(null);
+      setBackendStatus({ ok: false, message: `Backend is offline or unreachable. ${err.message}` });
     } finally {
       setChecking(false);
     }
@@ -93,7 +130,7 @@ export default function Settings() {
           <h2 className="text-sm font-bold" style={{ color: 'var(--text-main)' }}>System Configuration</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {SYSTEM_INFO.map((item, idx) => {
+          {systemInfo.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div key={idx} className="p-3.5 rounded-lg border space-y-1"

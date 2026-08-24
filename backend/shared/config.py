@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     openai_api_key: str = Field(default="")
     google_api_key: str = Field(default="")        # Gemini
+    # Default Gemini model. Override via GEMINI_MODEL if Google changes model
+    # availability — verify the new name against `client.models.list()` first.
+    gemini_model: str = Field(default="gemini-3.6-flash")
     aiml_service_url: str = Field(default="")      # if ML team runs as HTTP service
     aiml_timeout_seconds: float = Field(default=30.0)
     semantic_retrieval_enabled: bool = Field(default=False)

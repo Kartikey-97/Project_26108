@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { MOCK_MISSING_REQUIREMENTS } from '../../data/mockData';
 import { AlertCircle, CheckCircle2, Plus, Copy, Check } from 'lucide-react';
 
-export default function MissingRequirements({ missingList = MOCK_MISSING_REQUIREMENTS }) {
+export default function MissingRequirements({ missingList = [] }) {
   const [copiedId, setCopiedId] = useState(null);
   const [appliedIds, setAppliedIds] = useState([]);
 
@@ -160,6 +159,18 @@ export default function MissingRequirements({ missingList = MOCK_MISSING_REQUIRE
             </div>
           );
         })}
+        {missingList.length === 0 && (
+          <div
+            className="surface-card p-6 text-center text-xs"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            <CheckCircle2
+              className="w-5 h-5 mx-auto mb-2"
+              style={{ color: 'var(--status-success-text)' }}
+            />
+            No missing specification parameters were flagged for this analysis.
+          </div>
+        )}
       </div>
 
     </div>

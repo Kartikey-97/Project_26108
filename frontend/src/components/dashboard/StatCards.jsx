@@ -1,8 +1,7 @@
 import React from 'react';
-import { MOCK_STATS } from '../../data/mockData';
 import { FileText, BookOpen, CheckCircle2, AlertTriangle } from 'lucide-react';
 
-export default function StatCards({ stats = MOCK_STATS }) {
+export default function StatCards({ stats = [] }) {
   const getIcon = (idx) => {
     switch (idx) {
       case 0: return FileText;

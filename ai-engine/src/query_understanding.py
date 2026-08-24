@@ -11,8 +11,9 @@ Strategy:
 
 import json
 import logging
-import os
 import re
+
+from src.llm_config import GEMINI_MODEL, get_gemini_api_key, get_gemini_client
 
 logger = logging.getLogger(__name__)
 
@@ -87,18 +88,17 @@ def parse_query(query: str) -> dict:
 
     Tries Gemini first; falls back to regex if unavailable or on error.
     """
-    api_key = os.getenv("AI_ENGINE_GEMINI_KEY")
+    api_key = get_gemini_api_key()
     if not api_key:
-        logger.warning("AI_ENGINE_GEMINI_KEY not set — using regex fallback for query understanding.")
+        logger.warning("No Gemini API key set (GOOGLE_API_KEY) — using regex fallback for query understanding.")
         return _regex_fallback(query)
 
     try:
-        from google import genai
         from google.genai import types
 
-        client = genai.Client(api_key=api_key)
+        client = get_gemini_client()
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
+            model=GEMINI_MODEL,
             contents=f"{_SYSTEM_PROMPT}\n\nQuery:\n{query}",
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",

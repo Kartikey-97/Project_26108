@@ -1,0 +1,152 @@
+[
+  {
+    "query": "90W LED Street Lighting Luminaire IP66",
+    "expected_is_number": "IS 10322 : Part 5 : Sec 3",
+    "category": "Lighting"
+  },
+  {
+    "query": "PVC insulated unsheathed and sheathed cables up to 1100V",
+    "expected_is_number": "IS 694",
+    "category": "Electrical"
+  },
+  {
+    "query": "Three phase squirrel cage induction motors energy efficient IE2",
+    "expected_is_number": "IS 12615",
+    "category": "Electrical"
+  },
+  {
+    "query": "Crosslinked polyethylene insulated PVC sheathed cables XLPE for working voltages up to 3.3 kV",
+    "expected_is_number": "IS 7098 : Part 1",
+    "category": "Electrical"
+  },
+  {
+    "query": "Power transformers general requirements",
+    "expected_is_number": "IS 2026 : Part 1",
+    "category": "Electrical"
+  },
+  {
+    "query": "AC static watt-hour meters class 1 and 2",
+    "expected_is_number": "IS 13779",
+    "category": "Electrical"
+  },
+  {
+    "query": "Residual current operated circuit breakers without integral overcurrent protection RCCB",
+    "expected_is_number": "IS 12640 : Part 1",
+    "category": "Electrical"
+  },
+  {
+    "query": "Lead acid batteries for motor vehicles",
+    "expected_is_number": "IS 7372",
+    "category": "Automotive"
+  },
+  {
+    "query": "Self-ballasted LED lamps for general lighting services safety requirements",
+    "expected_is_number": "IS 16102 : Part 1",
+    "category": "Lighting"
+  },
+  {
+    "query": "Luminaires - General requirements and tests",
+    "expected_is_number": "IS 10322 : Part 1",
+    "category": "Lighting"
+  },
+  {
+    "query": "IS 10322 Part 5 Section 1",
+    "expected_is_number": "IS 10322 : Part 5 : Sec 1",
+    "category": "Exact Match"
+  },
+  {
+    "query": "Fixed general purpose luminaires for indoor use",
+    "expected_is_number": "IS 10322 : Part 5 : Sec 1",
+    "category": "Lighting"
+  },
+  {
+    "query": "Degrees of protection provided by enclosures IP code",
+    "expected_is_number": "IS/IEC 60529",
+    "category": "Testing"
+  },
+  {
+    "query": "Ceiling roses for voltage not exceeding 250V",
+    "expected_is_number": "IS 371",
+    "category": "Electrical Accessories"
+  },
+  {
+    "query": "Switches for domestic and similar purposes",
+    "expected_is_number": "IS 3854",
+    "category": "Electrical Accessories"
+  },
+  {
+    "query": "Plugs and socket outlets rated up to 250 volts",
+    "expected_is_number": "IS 1293",
+    "category": "Electrical Accessories"
+  },
+  {
+    "query": "Electric ceiling type fans and regulators",
+    "expected_is_number": "IS 374",
+    "category": "Appliances"
+  },
+  {
+    "query": "Room heaters for domestic use",
+    "expected_is_number": "IS 302 : Part 2 : Sec 30",
+    "category": "Appliances"
+  },
+  {
+    "query": "Safety of household and similar electrical appliances - general requirements",
+    "expected_is_number": "IS 302 : Part 1",
+    "category": "Appliances"
+  },
+  {
+    "query": "Electric iron",
+    "expected_is_number": "IS 302 : Part 2 : Sec 3",
+    "category": "Appliances"
+  },
+  {
+    "query": "Electric immersion water heaters",
+    "expected_is_number": "IS 368",
+    "category": "Appliances"
+  },
+  {
+    "query": "Uninterruptible power systems UPS",
+    "expected_is_number": "IS 16242 : Part 1",
+    "category": "Power Systems"
+  },
+  {
+    "query": "Solar photovoltaic water pumping systems",
+    "expected_is_number": "IS 14286",
+    "category": "Renewables"
+  },
+  {
+    "query": "Method of electrical and photometric measurements of solid state lighting products",
+    "expected_is_number": "IS 16106",
+    "category": "Testing"
+  },
+  {
+    "query": "Code of practice for electrical wiring installations",
+    "expected_is_number": "IS 732",
+    "category": "Code of Practice"
+  },
+  {
+    "query": "Guide for testing, calibration and maintenance of energy meters",
+    "expected_is_number": "IS 15707",
+    "category": "Testing"
+  },
+  {
+    "query": "Is 16102 Part 2 Performance Requirements",
+    "expected_is_number": "IS 16102 : Part 2",
+    "category": "Exact Match"
+  },
+  {
+    "query": "Automotive vehicles central locking systems",
+    "expected_is_number": "IS 16757",
+    "category": "Automotive"
+  },
+  {
+    "query": "Method for measurement of lumen maintenance of LED light sources",
+    "expected_is_number": "IS 16105",
+    "category": "Testing"
+  },
+  {
+    "query": "Tubular fluorescent lamps for general lighting service",
+    "expected_is_number": "IS 2418 : Part 1",
+    "category": "Lighting"
+  }
+]

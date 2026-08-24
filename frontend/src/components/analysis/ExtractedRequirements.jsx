@@ -4,7 +4,7 @@ import { CheckCircle2, AlertTriangle, ArrowRight, RotateCcw, Edit2, Check } from
 
 export default function ExtractedRequirements({
   summary,
-  requirements,
+  requirements = [],
   onReAnalyze,
   onViewRecommendations
 }) {
@@ -12,6 +12,11 @@ export default function ExtractedRequirements({
   const [reqList, setReqList] = useState(requirements);
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
+
+  // summary comes from the backend; fall back to neutral placeholders rather
+  // than crashing if a field wasn't returned.
+  const info = summary || {};
+  const NOT_STATED = 'Not stated';
 
   useEffect(() => {
     setReqList(requirements);
@@ -51,7 +56,7 @@ export default function ExtractedRequirements({
             Extracted Technical Parameters &amp; Verification
           </h2>
           <p className="text-xs mt-1 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-            Review and verify the 7 extracted parameters from your draft procurement specification. Edit values inline if adjustments are required before standard mapping.
+            Review and verify the {reqList.length} extracted parameter{reqList.length === 1 ? '' : 's'} from your draft procurement specification. Edit values inline if adjustments are required before standard mapping.
           </p>
         </div>
 
@@ -97,7 +102,7 @@ export default function ExtractedRequirements({
             }}
           >
             <span className="block text-[11px] mb-0.5" style={{ color: 'var(--text-secondary)' }}>Identified Product</span>
-            <span className="font-bold" style={{ color: 'var(--text-main)' }}>{summary.product}</span>
+            <span className="font-bold" style={{ color: 'var(--text-main)' }}>{info.product || NOT_STATED}</span>
           </div>
           <div
             className="p-3 rounded border"
@@ -107,7 +112,7 @@ export default function ExtractedRequirements({
             }}
           >
             <span className="block text-[11px] mb-0.5" style={{ color: 'var(--text-secondary)' }}>Product Category</span>
-            <span className="font-bold" style={{ color: 'var(--brand-primary)' }}>{summary.category}</span>
+            <span className="font-bold" style={{ color: 'var(--brand-primary)' }}>{info.category || NOT_STATED}</span>
           </div>
           <div
             className="p-3 rounded border"
@@ -117,7 +122,7 @@ export default function ExtractedRequirements({
             }}
           >
             <span className="block text-[11px] mb-0.5" style={{ color: 'var(--text-secondary)' }}>Housing Material Grade</span>
-            <span className="font-medium" style={{ color: 'var(--text-main)' }}>{summary.material}</span>
+            <span className="font-medium" style={{ color: 'var(--text-main)' }}>{info.material || NOT_STATED}</span>
           </div>
           <div
             className="p-3 rounded border"
@@ -127,7 +132,7 @@ export default function ExtractedRequirements({
             }}
           >
             <span className="block text-[11px] mb-0.5" style={{ color: 'var(--text-secondary)' }}>Target Application</span>
-            <span className="font-medium" style={{ color: 'var(--text-main)' }}>{summary.application}</span>
+            <span className="font-medium" style={{ color: 'var(--text-main)' }}>{info.application || NOT_STATED}</span>
           </div>
         </div>
       </div>
@@ -273,6 +278,18 @@ export default function ExtractedRequirements({
 
                 </tr>
               ))}
+              {reqList.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-6 text-center text-xs"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    No technical parameters were extracted from this specification.
+                    Try providing more detail in the spec text, or re-run the analysis.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

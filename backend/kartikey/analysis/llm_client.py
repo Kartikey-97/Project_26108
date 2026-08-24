@@ -11,8 +11,9 @@ Responsibilities:
   - Structured error reporting so callers don't need to handle SDK internals
 
 Model selection rationale:
-  - Primary:  gemini-2.5-flash  (stable, 1M context, best quality/speed ratio)
-  - Fallback: gemini-2.5-flash-lite (faster, cheaper, same context window)
+  - Primary:  settings.gemini_model (default gemini-3.6-flash) — configurable
+    via the GEMINI_MODEL env var, so a deprecation needs no code change.
+  - Fallback: gemini-3.6-flash-lite, then the *-latest aliases.
   - The model is resolved at runtime by probing the API — this makes the code
     robust to the availability changes that commonly affect Gemini API keys.
 
@@ -39,14 +40,22 @@ from shared.utils import AnalysisError, get_logger
 logger = get_logger(__name__)
 
 # Models tried in order — first one available wins.
+# The configured model (settings.gemini_model / GEMINI_MODEL env var) is always
+# probed first; the rest act as a fallback chain if Google deprecates it.
 # This list is ordered: stable → lite → preview.
-# Update when Google deprecates models, but always keep at least 2 entries.
-_MODEL_PRIORITY = [
+_MODEL_FALLBACKS = [
     "gemini-3.6-flash",
     "gemini-3.6-flash-lite",
     "gemini-flash-latest",
     "gemini-flash-lite-latest",
 ]
+
+# Configured model first, then the fallbacks (de-duplicated, order preserved).
+_MODEL_PRIORITY = list(
+    dict.fromkeys(
+        [m for m in [settings.gemini_model] if m] + _MODEL_FALLBACKS
+    )
+)
 
 # Retry settings for transient errors
 _MAX_RETRIES = 3

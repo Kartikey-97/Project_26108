@@ -1,9 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_RECENT_ANALYSES } from '../../data/mockData';
 import { ArrowUpRight, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
 
-export default function RecentAnalyses({ analyses = MOCK_RECENT_ANALYSES }) {
+export default function RecentAnalyses({ analyses = [] }) {
   const navigate = useNavigate();
 
   const getStatusBadge = (status) => {
@@ -105,7 +104,7 @@ export default function RecentAnalyses({ analyses = MOCK_RECENT_ANALYSES }) {
                     )}
                   </div>
                   <p className="text-[10px] font-mono truncate max-w-[160px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                    {item.standards.join(', ')}
+                    {(item.standards || []).join(', ')}
                   </p>
                 </td>
                 <td className="p-3">
@@ -145,6 +144,17 @@ export default function RecentAnalyses({ analyses = MOCK_RECENT_ANALYSES }) {
                 </td>
               </tr>
             ))}
+            {analyses.length === 0 && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="p-6 text-center text-xs"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  No analyses yet. Run a specification audit to see results here.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
