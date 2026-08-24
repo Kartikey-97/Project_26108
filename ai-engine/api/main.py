@@ -28,10 +28,49 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+import threading
+from contextlib import asynccontextmanager
+
+# ---------------------------------------------------------------------------
+# Global singletons
+# ---------------------------------------------------------------------------
+analyzer: Analyzer = None
+recommender: Recommender = None
+startup_status: str = "starting"
+
+def load_recommender():
+    """Background thread function to load Recommender without blocking the API."""
+    global recommender, startup_status
+    try:
+        logger.info("Background thread starting Recommender (generating embeddings if not cached)...")
+        recommender = Recommender()
+        startup_status = "ok" if recommender.retriever else "error"
+        logger.info("Background loading finished. Status: %s", startup_status)
+    except Exception as e:
+        logger.error("Error loading Recommender in background: %s", e)
+        startup_status = "error"
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global analyzer, recommender, startup_status
+    logger.info("Lifespan starting — Initialising Analyzer…")
+    analyzer = Analyzer()
+    
+    # Start recommender in a background thread so FastAPI can bind to the port
+    # and answer /health checks immediately.
+    startup_status = "starting"
+    thread = threading.Thread(target=load_recommender, daemon=True)
+    thread.start()
+    
+    yield
+    
+    logger.info("Lifespan shutting down.")
+
 app = FastAPI(
     title="StandIQ AI Engine",
     description="BIS standards recommendation and compliance analysis engine",
     version="2.0.0",
+    lifespan=lifespan,
 )
 
 # CORS — allow backend and frontend origins
@@ -42,15 +81,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ---------------------------------------------------------------------------
-# Startup — instantiate singletons once
-# ---------------------------------------------------------------------------
-logger.info("Initialising Analyzer…")
-analyzer = Analyzer()
-
-logger.info("Initialising Recommender (this will generate embeddings for 1015 standards)…")
-recommender = Recommender()
 
 # ---------------------------------------------------------------------------
 # Request / Response models for /analyze
@@ -128,22 +158,26 @@ class RecommendResponse(BaseModel):
 
 @app.get("/")
 def root():
+    cnt = len(recommender.standards) if recommender else 0
     return {
         "service": "StandIQ AI Engine",
         "version": "2.0.0",
         "endpoints": ["/health", "/analyze", "/recommend"],
-        "standards_indexed": len(recommender.standards),
+        "standards_indexed": cnt,
+        "startup_status": startup_status,
     }
 
 
 @app.get("/health")
 def health():
     """Liveness check — Render uses this to confirm the service is up."""
+    # We return HTTP 200 even if 'starting', so Render doesn't kill the container
+    # before embeddings are done generating.
     return {
-        "status": "ok",
-        "recommender_ready": recommender.retriever is not None,
-        "standards_count": len(recommender.standards),
-        "analyzer_mode": getattr(analyzer, "_mode", "unknown"),
+        "status": "ok" if startup_status == "ok" else startup_status,
+        "recommender_ready": recommender is not None and recommender.retriever is not None,
+        "standards_count": len(recommender.standards) if recommender else 0,
+        "analyzer_mode": getattr(analyzer, "_mode", "unknown") if analyzer else "unknown",
     }
 
 
@@ -169,6 +203,9 @@ def recommend(request: RecommendRequest):
     Uses hybrid BM25 + semantic retrieval, Gemini query understanding,
     deterministic currentness checking, and structured gap detection.
     """
+    if startup_status != "ok":
+        raise HTTPException(status_code=503, detail="Recommender is still starting up. Please try again in a moment.")
+
     try:
         result = recommender.recommend(request.query, top_k=request.top_k)
         if "error" in result:
