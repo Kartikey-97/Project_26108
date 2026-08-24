@@ -1,67 +1,140 @@
-import os
+"""
+ai-engine/src/reasoning/providers/gemini.py
+
+Gemini-powered reasoning provider.
+
+Improvements:
+  - analyze() now accepts is_reference and cited_year from the requirement record
+  - Prompt includes structured standard summaries (not just IS number + title)
+  - Prompt references cited IS number and year when available
+  - Falls back gracefully on any API error
+"""
+
 import json
+import logging
+import os
+
 from .base import ReasoningProvider
-from google import genai
-from google.genai import types
+
+logger = logging.getLogger(__name__)
+
 
 class GeminiReasoner(ReasoningProvider):
     def __init__(self):
-        api_key = os.getenv("AI_ENGINE_GEMINI_KEY")
-        if not api_key:
-            print("WARNING: AI_ENGINE_GEMINI_KEY is not set.")
-        self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-3.6-flash"
+        self.api_key = os.getenv("AI_ENGINE_GEMINI_KEY")
+        if not self.api_key:
+            logger.warning("AI_ENGINE_GEMINI_KEY is not set — Gemini reasoning unavailable.")
+        self.model = "gemini-2.0-flash"
+        self._client = None
 
-    def analyze(self, req_text, req_type, standards):
+    def _get_client(self):
+        if self._client is None:
+            from google import genai
+            self._client = genai.Client(api_key=self.api_key)
+        return self._client
+
+    def analyze(self, req_text, req_type, standards, is_reference=None, cited_year=None):
+        """
+        Analyze a procurement requirement against candidate BIS standards.
+
+        Parameters
+        ----------
+        req_text      : str  — raw requirement text from the tender
+        req_type      : str  — classified requirement category
+        standards     : list — retrieved standard objects (have .is_number, .title, .status)
+        is_reference  : str | None — explicit IS number cited in this requirement
+        cited_year    : int | None — year of the cited edition (e.g. 2018)
+        """
+        if not self.api_key:
+            return self._fallback("AI_ENGINE_GEMINI_KEY not configured.")
+
         if not standards:
             return {
                 "verdict": "requires_human_verification",
-                "reason": f"No retrieved standards could be confidently matched against the {req_type} requirement.",
-                "action": "Manually verify specification.",
-                "confidence": 0.4
+                "reason": (
+                    f"No retrieved standards could be confidently matched against "
+                    f"the {req_type} requirement."
+                ),
+                "action": "Manually verify specification against applicable BIS standards.",
+                "confidence": 0.4,
             }
-        
-        # Prepare standards text
-        stds_context = "\n".join([f"- {s.is_number}: {s.title}" for s in standards])
-        
-        prompt = f"""
-You are an expert Indian Standards (BIS) auditor.
-Analyze the following procurement requirement against the provided candidate standards.
 
-Requirement: "{req_text}"
-Requirement Type: {req_type}
+        # Build richer standards context — include status and scope where available
+        stds_lines = []
+        for s in standards[:5]:  # limit to top 5 for token budget
+            status = getattr(s, "status", "unknown")
+            title = getattr(s, "title", "")
+            is_num = getattr(s, "is_number", "")
+            stds_lines.append(f"- {is_num}: {title} [Status: {status}]")
+        stds_context = "\n".join(stds_lines)
 
-Candidate Standards:
+        # Build citation context
+        citation_note = ""
+        if is_reference:
+            year_str = f":{cited_year}" if cited_year else ""
+            citation_note = f"\nNote: The tender explicitly cites '{is_reference}{year_str}' in this requirement."
+
+        prompt = f"""You are an expert Indian Standards (BIS) compliance auditor reviewing a government procurement tender.
+
+REQUIREMENT TEXT:
+"{req_text}"
+
+REQUIREMENT TYPE: {req_type}{citation_note}
+
+CANDIDATE BIS STANDARDS (retrieved for this requirement):
 {stds_context}
 
-Determine the verdict (one of: justified, potentially_unnecessary, outdated_reference, incorrect_standard, wrong_scope, ambiguous, conflicting, potentially_over_restrictive, unsupported, requires_human_verification).
-Provide a concise reason (1-2 sentences).
-Provide a recommended action for the procurement officer.
-Provide a confidence score between 0.0 and 1.0.
+TASK:
+1. Determine whether this procurement requirement is justified, problematic, or unclear from a BIS compliance perspective.
+2. If the tender cites a specific IS number, check whether that standard is the correct and current one for this requirement.
+3. Provide a concise, evidence-grounded reason (2-3 sentences maximum).
+4. Recommend a concrete action for the procurement officer.
+5. Provide a confidence score (0.0 = very uncertain, 1.0 = very certain).
 
-Respond ONLY with a valid JSON object matching exactly this schema:
+VERDICT OPTIONS:
+- justified                  : requirement is correct and supported by the cited/matched standard
+- outdated_reference         : cited standard exists but is superseded or outdated
+- incorrect_standard         : wrong IS standard cited for this requirement
+- wrong_scope                : standard exists but doesn't cover this specific use case
+- potentially_over_restrictive : requirement is stricter than the standard mandates
+- ambiguous                  : requirement text is unclear or could be interpreted multiple ways
+- requires_human_verification: insufficient information to make a determination
+
+Respond ONLY with a valid JSON object:
 {{
-  "verdict": "justified",
-  "reason": "explanation here",
-  "action": "action here",
-  "confidence": 0.9
-}}
-"""
+  "verdict": "one of the options above",
+  "reason": "concise explanation referencing specific standard numbers",
+  "action": "concrete recommended action for the procurement officer",
+  "confidence": 0.85
+}}"""
+
         try:
-            response = self.client.models.generate_content(
+            from google.genai import types
+            client = self._get_client()
+            response = client.models.generate_content(
                 model=self.model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
-                    temperature=0.1
-                )
+                    temperature=0.1,
+                ),
             )
-            return json.loads(response.text)
-        except Exception as e:
-            print(f"Gemini analysis failed: {e}")
-            return {
-                "verdict": "requires_human_verification",
-                "reason": f"AI reasoning failed: {str(e)}",
-                "action": "Manually verify specification against standards.",
-                "confidence": 0.1
-            }
+            result = json.loads(response.text)
+            logger.info(
+                "Gemini verdict for req_type=%s: %s (confidence=%.2f)",
+                req_type, result.get("verdict"), result.get("confidence", 0)
+            )
+            return result
+
+        except Exception as exc:
+            logger.error("Gemini analysis failed: %s", exc)
+            return self._fallback(str(exc))
+
+    @staticmethod
+    def _fallback(reason: str) -> dict:
+        return {
+            "verdict": "requires_human_verification",
+            "reason": f"AI reasoning unavailable: {reason}",
+            "action": "Manually verify specification against applicable BIS standards.",
+            "confidence": 0.1,
+        }
