@@ -1,0 +1,17 @@
+{
+    "total_records": 1015,
+    "records_cleaned": 1015,
+    "records_with_scope": 1015,
+    "records_with_validity_date": 7,
+    "records_with_references": 0,
+    "records_with_related_standards": 0,
+    "records_with_test_methods": 0,
+    "records_needing_verification": 1015,
+    "major_cleaning_operations": [
+        "HTML decoding",
+        "Spacing normalization",
+        "Validity extraction",
+        "Category inference",
+        "Type inference"
+    ]
+}

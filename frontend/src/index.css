@@ -1,0 +1,323 @@
+/* ==========================================================================
+   ProcureIntel / StandIQ — Enterprise Design System (Light & Dark Theme)
+   ========================================================================== */
+
+:root {
+  /* Light Theme (Default: Soft Creamy-White & Restrained Teal) */
+  --bg-primary: #F7F6F1;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F2F1EC;
+  --bg-surface-secondary: #FAF9F5;
+  --header-bg: #FFFFFF;
+  --header-border: #E5E2D9;
+  
+  --border-subtle: #E5E2D9;
+  --border-strong: #D5D3C8;
+  
+  --text-main: #17202A;
+  --text-secondary: #667085;
+  --text-muted: #9BA3AF;
+  
+  --brand-primary: #087F73;
+  --brand-primary-hover: #066560;
+  --brand-tint: #EDF6F5;
+  --brand-tint-border: #C0E3DF;
+  
+  --input-bg: #FAF9F5;
+  --input-border: #E5E2D9;
+  --input-focus-border: #087F73;
+  
+  --btn-primary-bg: #11151C;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #242A32;
+  
+  --btn-secondary-bg: #FFFFFF;
+  --btn-secondary-text: #17202A;
+  --btn-secondary-border: #D5D3C8;
+  --btn-secondary-hover: #F0EFEA;
+  
+  --card-shadow: 0 2px 8px rgba(30, 40, 35, 0.04);
+  
+  /* Status Badges (Light) */
+  --status-success-bg: #EBF4F1;
+  --status-success-text: #2E6B5B;
+  --status-success-border: #C4E2DA;
+  
+  --status-warning-bg: #FDF7ED;
+  --status-warning-text: #A8752B;
+  --status-warning-border: #F6E2C3;
+  
+  --status-error-bg: #FBF1F0;
+  --status-error-text: #A84A42;
+  --status-error-border: #F3D2CF;
+  
+  --status-qco-bg: #EDF6F5;
+  --status-qco-text: #087F73;
+  --status-qco-border: #C0E3DF;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme (Neutral, Warm Charcoal, Mature Institutional) */
+  --bg-primary: #171A19;
+  --bg-surface: #202423;
+  --bg-surface-hover: #282E2B;
+  --bg-surface-secondary: #252A28;
+  --header-bg: #1C201F;
+  --header-border: #343A37;
+  
+  --border-subtle: #343A37;
+  --border-strong: #424946;
+  
+  --text-main: #F2F4F2;
+  --text-secondary: #AEB7B2;
+  --text-muted: #7E8883;
+  
+  --brand-primary: #2A9D8F;
+  --brand-primary-hover: #238479;
+  --brand-tint: rgba(42, 157, 143, 0.12);
+  --brand-tint-border: rgba(42, 157, 143, 0.25);
+  
+  --input-bg: #252A28;
+  --input-border: #3A403D;
+  --input-focus-border: #2A9D8F;
+  
+  --btn-primary-bg: #2A9D8F;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #238479;
+  
+  --btn-secondary-bg: #202423;
+  --btn-secondary-text: #F2F4F2;
+  --btn-secondary-border: #343A37;
+  --btn-secondary-hover: #282E2B;
+  
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  
+  /* Status Badges (Dark - Subtle & Understated) */
+  --status-success-bg: rgba(46, 107, 91, 0.16);
+  --status-success-text: #5EC2B6;
+  --status-success-border: rgba(46, 107, 91, 0.35);
+  
+  --status-warning-bg: rgba(168, 117, 43, 0.16);
+  --status-warning-text: #F0B86E;
+  --status-warning-border: rgba(168, 117, 43, 0.35);
+  
+  --status-error-bg: rgba(168, 74, 66, 0.16);
+  --status-error-text: #F18F87;
+  --status-error-border: rgba(168, 74, 66, 0.35);
+  
+  --status-qco-bg: rgba(42, 157, 143, 0.16);
+  --status-qco-text: #67C4B8;
+  --status-qco-border: rgba(42, 157, 143, 0.35);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* Accessibility Focus Outlines */
+*:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Clean Editorial Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Subtle Graph / Grid Paper Pattern for Landing Page */
+.bg-grid-subtle {
+  background-color: var(--bg-surface-secondary);
+  background-image: 
+    linear-gradient(to right, rgba(120, 130, 125, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120, 130, 125, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.font-serif-italic {
+  font-family: "Playfair Display", "Georgia", "Cambria", "Times New Roman", serif;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Surface / Card System
+   ========================================================================== */
+.glass-panel, .surface-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.glass-card, .surface-subcard {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.glass-card:hover, .surface-subcard:hover {
+  border-color: var(--brand-primary);
+  background-color: var(--bg-surface-hover);
+}
+
+/* ==========================================================================
+   Badges
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.badge-current {
+  background-color: var(--status-success-bg);
+  color: var(--status-success-text);
+  border: 1px solid var(--status-success-border);
+}
+
+.badge-amended {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  border: 1px solid var(--status-warning-border);
+}
+
+.badge-superseded {
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-border);
+}
+
+.badge-qco {
+  background-color: var(--status-qco-bg);
+  color: var(--status-qco-text);
+  border: 1px solid var(--status-qco-border);
+}
+
+.badge-restrictive {
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-border);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--btn-secondary-border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--btn-secondary-hover);
+}
+
+.btn-accent {
+  background-color: var(--brand-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 150ms ease;
+}
+
+.btn-accent:hover {
+  background-color: var(--brand-primary-hover);
+}
+
+/* ==========================================================================
+   Animation
+   ========================================================================== */
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Printable PDF Styling
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .glass-panel, .surface-card {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+}

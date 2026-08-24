@@ -1,0 +1,19 @@
+NOTICE INVITING TENDER - LED STREET LIGHTING
+
+Tender ID: 2026_PWD_123456_1
+
+TECHNICAL SPECIFICATIONS
+
+Luminaires shall conform to IS 10322 (Part 5/Sec 3):2012
+
+General requirements as per IS 10322 (Part 1)
+
+LED driver shall conform to IS 15885
+
+Product shall bear BIS ISI mark as per IS 10322
+
+IP65 protection as per IEC 60598-2-3
+
+Color rendering index CRI greater than 70 as per IS 2:1960
+
+Power factor shall be greater than 0.9

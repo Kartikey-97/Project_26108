@@ -1,0 +1,8 @@
+Supply and installation of 120W LED street lights for NH-44 highway expansion project.
+The luminaires must have a minimum IP66 rating for the optical compartment.
+Housing should be die-cast aluminum with proper thermal management.
+The correlated color temperature (CCT) must be strictly 5700K ± 50K.
+System luminous efficacy should be at least 130 lm/W.
+A 10 kV external Surge Protection Device (SPD) is required.
+Total Harmonic Distortion (THD) must not exceed 10%.
+The luminaires and drivers must carry the mandatory BIS ISI mark and CRS registration.

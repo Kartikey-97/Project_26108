@@ -1,0 +1,450 @@
+<USER_REQUEST>
+use this json in Standard.json and clean standard.json by following this prompt I have uploaded a JSON dataset containing BIS (Bureau of Indian Standards) standards.
+
+I have only ONE DAY left to complete my prototype for a government procurement AI project, so prioritize a working prototype over perfect data completeness.
+
+IMPORTANT:
+- Do NOT delete useful records.
+- Do NOT invent BIS standards, IS numbers, scopes, certification requirements, QCOs, dates, or relationships.
+- Use the existing data as the primary source.
+- If a field cannot be reliably derived from the existing data, keep it null/empty and mark it as "not_available" rather than hallucinating.
+- Preserve the original data in a field called "raw_record".
+- Create a cleaned/enriched version of every record.
+- The output must remain valid JSON.
+
+==================================================
+1. CLEAN THE EXISTING DATA
+==================================================
+
+For every record:
+
+A. Clean the title:
+- Decode HTML entities such as:
+  &mdash; → —
+  &amp; → &
+  &nbsp; → space
+- Remove accidental duplicated spaces.
+- Remove obvious extraction artifacts.
+- Fix obvious spelling errors ONLY when they are clearly data-extraction errors.
+- Do NOT change the official meaning of the title.
+
+Store:
+"raw_title": original title
+"clean_title": cleaned title
+
+B. Clean keywords:
+- Remove HTML entities and garbage tokens.
+- Remove duplicate keywords.
+- Normalize capitalization.
+- Remove meaningless words.
+- Keep technically meaningful keywords.
+- Add useful keywords ONLY when they can be safely derived from the title/scope.
+- Do not invent unrelated keywords.
+
+C. Normalize IS numbers:
+- Preserve the original IS number in:
+  "raw_is_number"
+- Create:
+  "normalized_is_number"
+- Normalize spacing and capitalization.
+- Do NOT change the actual number or part/section designation.
+
+Example:
+"IS/IEC 60034 : Part 2 : Sec 1"
+→
+"IS/IEC 60034: Part 2: Sec 1"
+
+==================================================
+2. STANDARD METADATA
+==================================================
+
+Create these fields:
+
+"is_number"
+"normalized_is_number"
+"edition_year"
+"title"
+"raw_title"
+"clean_title"
+"price"
+"keywords"
+"status"
+"valid_upto"
+"source"
+
+Keep the existing values whenever reliable.
+
+For "edition_year":
+- Use the existing year field.
+- Do not confuse edition year with latest version year.
+
+==================================================
+3. VERSION HANDLING
+==================================================
+
+This is VERY IMPORTANT.
+
+Do not assume that the current record is the latest version.
+
+Create:
+
+"version": {
+    "record_edition": "...",
+    "record_year": ...,
+    "latest_known_version": null,
+    "latest_known_year": null,
+    "supersedes": null,
+    "superseded_by": null,
+    "verification_status": "not_verified"
+}
+
+If the dataset itself contains multiple editions of the same standard family and the relationship is clearly identifiable, connect them.
+
+Example:
+
+IS 302:2008
+IS 302:2024
+
+should be recognized as different editions of the same standard family if the part/section matches.
+
+Do NOT claim that a version is latest unless the dataset provides enough evidence.
+
+==================================================
+4. VALIDITY DATE
+==================================================
+
+Some titles contain text such as:
+
+"(Vaild upto 24 January 2027)"
+"(Valid upto 27 August 2026)"
+
+Extract the date into:
+
+"valid_upto": "YYYY-MM-DD"
+
+Remove the validity phrase from clean_title.
+
+Correct obvious extraction typo:
+"Vaild" → "Valid"
+
+Do not invent validity dates.
+
+==================================================
+5. SCOPE
+==================================================
+
+Create:
+
+"scope": null
+
+If a reliable scope can be derived directly from the existing title/metadata, write a short factual scope.
+
+Example:
+
+Title:
+"Rotating Electrical Machines - Part 2 Determining Losses and Efficiency from Tests"
+
+Possible scope:
+"Methods for determining losses and efficiency of rotating electrical machines from tests."
+
+Do NOT create detailed technical requirements that are not present in the source data.
+
+If scope cannot safely be determined:
+"scope": null
+
+==================================================
+6. PRODUCT / PROCUREMENT CATEGORY
+==================================================
+
+Create:
+
+"product_categories": []
+
+Infer categories ONLY from the standard title/keywords.
+
+Examples:
+
+LED lighting standard:
+["lighting", "LED lighting"]
+
+Electrical cable:
+["electrical cable", "power cable"]
+
+Transformer:
+["transformer", "electrical equipment"]
+
+Do not invent categories unrelated to the standard.
+
+==================================================
+7. STANDARD TYPE
+==================================================
+
+Create:
+
+"standard_type": null
+
+Use only categories that can reasonably be inferred from the title:
+
+Possible values:
+
+- "Product Specification"
+- "Safety"
+- "Testing Method"
+- "Performance"
+- "Installation"
+- "Design"
+- "Energy Efficiency"
+- "Terminology"
+- "Application Guide"
+- "Maintenance"
+- "Material Specification"
+- "Other"
+
+If uncertain:
+null
+
+==================================================
+8. NORMATIVE REFERENCES
+==================================================
+
+Create:
+
+"normative_references": []
+
+Use the existing field if populated.
+
+DO NOT invent reference standards.
+
+If the source data does not contain references:
+[]
+
+Do not generate fake IS numbers.
+
+==================================================
+9. RELATED STANDARDS
+==================================================
+
+Create:
+
+"related_standards": []
+
+Use only relationships explicitly present in the dataset.
+
+If no reliable relationship exists:
+[]
+
+Do NOT use semantic guesses to create fake relationships.
+
+==================================================
+10. TEST METHODS
+==================================================
+
+Create:
+
+"test_methods": []
+
+If the existing dataset contains test methods, preserve them.
+
+If the title itself clearly indicates a testing standard, classify it appropriately.
+
+Do NOT invent test procedures, test limits, voltage values, temperatures, etc.
+
+==================================================
+11. CERTIFICATION
+==================================================
+
+Create:
+
+"certification": {
+    "mandatory": null,
+    "scheme": null,
+    "qco": null,
+    "verified": false,
+    "notes": null
+}
+
+IMPORTANT:
+Do not claim BIS certification is mandatory unless the source explicitly says so.
+
+If the current dataset says:
+
+"Not stated in source catalog; verify via BIS certification scheme lookup."
+
+preserve that uncertainty.
+
+==================================================
+12. SOURCE / VERIFICATION
+==================================================
+
+Create:
+
+"source_info": {
+    "organization": "BIS",
+    "source_type": "BIS catalogue",
+    "verified": false
+}
+
+Do not claim external verification unless it actually happened.
+
+==================================================
+13. SEARCH/AI TEXT
+==================================================
+
+Create a new field:
+
+"search_text"
+
+This field will later be used for embeddings/vector search.
+
+Construct it from reliable information only:
+
+IS Number
++
+Clean title
++
+Scope
++
+Keywords
++
+Product categories
++
+Standard type
+
+Example:
+
+"IS/IEC 60034: Part 2: Sec 1
+Rotating Electrical Machines
+Determining losses and efficiency
+rotating electrical machine
+motor
+generator
+efficiency
+performance testing
+Performance"
+
+Do NOT include:
+- price
+- unsupported certification claims
+- unsupported dates
+- unsupported technical specifications
+
+==================================================
+14. DATA QUALITY
+==================================================
+
+Create:
+
+"data_quality": {
+    "completeness_score": 0,
+    "issues": [],
+    "needs_verification": []
+}
+
+Calculate a simple completeness score based on the availability of:
+
+- IS number
+- title
+- year
+- scope
+- keywords
+- status
+- version information
+- references
+- related standards
+- test methods
+
+Do NOT treat empty normative references or certification as an error if the source does not provide them.
+
+==================================================
+15. RAW DATA PRESERVATION
+==================================================
+
+For every record add:
+
+"raw_record": { ...original record... }
+
+Do not modify raw_record.
+
+==================================================
+16. VERY IMPORTANT PROTOTYPE RULE
+==================================================
+
+I have only ONE DAY.
+
+Therefore:
+
+PRIORITY 1:
+Clean all records.
+
+PRIORITY 2:
+Make search_text high quality.
+
+PRIORITY 3:
+Create reliable metadata from existing information.
+
+PRIORITY 4:
+Do not spend excessive time trying to populate information that is absent from the source.
+
+The prototype must work even when some fields are null/empty.
+
+==================================================
+17. OUTPUT
+==================================================
+
+Create:
+
+cleaned_bis_standards.json
+
+The output should be valid JSON.
+
+Also create a short report:
+
+data_cleaning_report.json
+
+containing:
+
+{
+    "total_records": ...,
+    "records_cleaned": ...,
+    "records_with_scope": ...,
+    "records_with_validity_date": ...,
+    "records_with_references": ...,
+    "records_with_related_standards": ...,
+    "records_with_test_methods": ...,
+    "records_needing_verification": ...,
+    "major_cleaning_operations": [...]
+}
+
+==================================================
+18. FINAL VALIDATION
+==================================================
+
+Before saving:
+
+1. Validate JSON syntax.
+2. Ensure every record has an IS number or is explicitly marked invalid.
+3. Ensure no duplicate records were accidentally created.
+4. Ensure no HTML entities remain in clean_title or keywords.
+5. Ensure no "Vaild" remains.
+6. Ensure no obviously corrupted keywords remain.
+7. Ensure null is used instead of fabricated information.
+8. Ensure raw_record is unchanged.
+9. Ensure search_text exists for every valid standard.
+10. Print 10 sample cleaned records for manual inspection.
+
+Do NOT create fake BIS data just to fill fields.
+
+The goal is a clean, trustworthy prototype dataset that can be used for semantic search/RAG/vector embeddings.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-23T10:56:27+05:30.
+
+The user's current state is as follows:
+Active Document: d:\ai_engine_SIH\data\standards.json (LANGUAGE_JSON)
+Cursor is on line: 1
+Other open documents:
+- d:\ai_engine_SIH\data\standards.json (LANGUAGE_JSON)
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (Low). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>
