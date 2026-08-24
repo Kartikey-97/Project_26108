@@ -13,6 +13,7 @@ import logging
 import math
 import re
 from collections import defaultdict
+from typing import Dict, List, Optional, Tuple
 
 import faiss
 import numpy as np
@@ -37,19 +38,26 @@ class BM25Retriever:
     def __init__(self, k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
         self.b = b
-        self.corpus: list[list[str]] = []
-        self.doc_freqs: dict[str, int] = {}
-        self.idf: dict[str, float] = {}
-        self.doc_len: list[int] = []
+        self.corpus: List[List[str]] = []
+        self.doc_freqs: Dict[str, int] = {}
+        self.idf: Dict[str, float] = {}
+        self.doc_len: List[int] = []
         self.avgdl: float = 0.0
         self.n_docs: int = 0
 
     @staticmethod
-    def _tokenize(text: str) -> list[str]:
-        """Lowercase, split on non-alphanumeric, keep tokens ≥ 2 chars."""
+    def _tokenize(text: str) -> List[str]:
+        """
+        Lowercase and split on non-alphanumeric characters.
+        Keeps tokens >= 2 chars.
+        Examples:
+          "IS 10322:Part 5" → ["is", "10322", "part"]
+          "IP66"            → ["ip66"]
+          "5700K"           → ["5700k"]
+        """
         return [t for t in re.split(r"[^a-z0-9]+", text.lower()) if len(t) >= 2]
 
-    def fit(self, documents: list[str]) -> "BM25Retriever":
+    def fit(self, documents: List[str]) -> "BM25Retriever":
         """Fit the BM25 model on a list of document strings."""
         self.corpus = [self._tokenize(doc) for doc in documents]
         self.n_docs = len(self.corpus)
@@ -87,7 +95,7 @@ class BM25Retriever:
 
         return scores
 
-    def search(self, query: str, top_k: int = 20) -> tuple[np.ndarray, np.ndarray]:
+    def search(self, query: str, top_k: int = 20) -> Tuple[np.ndarray, np.ndarray]:
         """Return (scores, indices) of the top_k documents."""
         scores = self.get_scores(query)
         top_indices = np.argsort(scores)[::-1][:top_k]
@@ -111,14 +119,14 @@ class VectorStore:
         embeddings_np = np.array(embeddings, dtype="float32")
         self.index.add(embeddings_np)
 
-    def search(self, query_embedding: np.ndarray, top_k: int = 20) -> tuple[np.ndarray, np.ndarray]:
+    def search(self, query_embedding: np.ndarray, top_k: int = 20) -> Tuple[np.ndarray, np.ndarray]:
         """
         Search for the top_k nearest neighbours.
 
         Returns (similarities, indices) — similarities are cosine scores in [0, 1]
         for normalised embeddings.
         """
-        query_np = np.array([query_embedding], dtype="float32")
+        query_np = np.array(query_embedding, dtype="float32").reshape(1, -1)
         similarities, indices = self.index.search(query_np, top_k)
         return similarities[0], indices[0]
 
@@ -139,11 +147,11 @@ class HybridRetriever:
     RRF_K = 60  # standard RRF constant
 
     def __init__(self):
-        self.bm25: BM25Retriever | None = None
-        self.vector_store: VectorStore | None = None
-        self.standards: list[dict] = []
+        self.bm25: Optional[BM25Retriever] = None
+        self.vector_store: Optional[VectorStore] = None
+        self.standards: List[dict] = []
 
-    def fit(self, standards: list[dict], embeddings: np.ndarray) -> "HybridRetriever":
+    def fit(self, standards: List[dict], embeddings: np.ndarray) -> "HybridRetriever":
         """Build BM25 index and FAISS vector store from the standards corpus."""
         self.standards = standards
         search_texts = [std.get("search_text", "") for std in standards]
@@ -157,7 +165,7 @@ class HybridRetriever:
 
         return self
 
-    def search(self, query: str, query_embedding: np.ndarray, top_k: int = 20) -> list[dict]:
+    def search(self, query: str, query_embedding: np.ndarray, top_k: int = 20) -> List[dict]:
         """
         Retrieve top_k candidates using hybrid RRF search.
 
@@ -170,14 +178,18 @@ class HybridRetriever:
 
         # --- BM25 results ---
         bm25_scores, bm25_indices = self.bm25.search(query, top_k=top_k)
-        bm25_map: dict[int, float] = {int(idx): float(score) for idx, score in zip(bm25_indices, bm25_scores)}
+        bm25_map: Dict[int, float] = {
+            int(idx): float(score) for idx, score in zip(bm25_indices, bm25_scores)
+        }
 
         # --- Vector results ---
         sem_scores, sem_indices = self.vector_store.search(query_embedding, top_k=top_k)
-        sem_map: dict[int, float] = {int(idx): float(score) for idx, score in zip(sem_indices, sem_scores) if idx != -1}
+        sem_map: Dict[int, float] = {
+            int(idx): float(score) for idx, score in zip(sem_indices, sem_scores) if idx != -1
+        }
 
         # --- Reciprocal Rank Fusion ---
-        rrf: dict[int, float] = defaultdict(float)
+        rrf: Dict[int, float] = defaultdict(float)
         for rank, idx in enumerate(bm25_indices):
             rrf[int(idx)] += 1.0 / (self.RRF_K + rank + 1)
         for rank, idx in enumerate(sem_indices):
@@ -196,7 +208,9 @@ class HybridRetriever:
 
             in_bm25 = idx in bm25_map
             in_sem = idx in sem_map
-            std["retrieval_source"] = "both" if (in_bm25 and in_sem) else ("bm25" if in_bm25 else "semantic")
+            std["retrieval_source"] = (
+                "both" if (in_bm25 and in_sem) else ("bm25" if in_bm25 else "semantic")
+            )
 
             results.append(std)
 

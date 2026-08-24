@@ -32,11 +32,10 @@ class Recommender:
 
     def _load_and_index(self) -> None:
         if not os.path.exists(self.data_path):
-            # Graceful fallback to the 50-record knowledge base if full one not present
             fallback = "data/bis_50_knowledge_base.json"
             if os.path.exists(fallback):
                 logger.warning(
-                    "Full knowledge base not found at '%s', falling back to '%s'.",
+                    "Full KB not found at '%s', falling back to '%s'.",
                     self.data_path, fallback
                 )
                 self.data_path = fallback
@@ -55,14 +54,43 @@ class Recommender:
             logger.error("Knowledge base at '%s' is empty.", self.data_path)
             return
 
-        logger.info("Generating embeddings for %d standards…", len(self.standards))
-        try:
-            search_texts = [std.get("search_text", "") for std in self.standards]
-            embeddings = generate_embeddings(search_texts)
+        logger.info("Loaded %d standards from %s", len(self.standards), self.data_path)
 
-            logger.info("Building HybridRetriever (BM25 + FAISS cosine) over %d standards…", len(self.standards))
+        try:
+            # ------------------------------------------------------------------
+            # Embedding cache: re-use pre-computed embeddings if the KB file
+            # hasn't changed, saving ~30s on every cold start.
+            # ------------------------------------------------------------------
+            cache_path = self.data_path.replace(".json", "_embeddings.npy")
+            kb_mtime = os.path.getmtime(self.data_path)
+            import numpy as np
+
+            if os.path.exists(cache_path) and os.path.getmtime(cache_path) >= kb_mtime:
+                logger.info("Loading embeddings from cache: %s", cache_path)
+                embeddings = np.load(cache_path)
+                if embeddings.shape[0] != len(self.standards):
+                    logger.warning(
+                        "Cache has %d vectors but KB has %d records — regenerating.",
+                        embeddings.shape[0], len(self.standards)
+                    )
+                    raise ValueError("cache/kb size mismatch")
+            else:
+                logger.info(
+                    "Generating embeddings for %d standards (no valid cache)…",
+                    len(self.standards)
+                )
+                search_texts = [std.get("search_text", "") for std in self.standards]
+                embeddings = generate_embeddings(search_texts)
+                try:
+                    np.save(cache_path, embeddings)
+                    logger.info("Embedding cache saved to %s", cache_path)
+                except Exception as cache_exc:
+                    logger.warning("Could not save embedding cache: %s", cache_exc)
+
+            logger.info("Building HybridRetriever (BM25 + FAISS)…")
             self.retriever = HybridRetriever().fit(self.standards, embeddings)
             logger.info("Recommender ready — %d standards indexed.", len(self.standards))
+
         except Exception as exc:
             logger.error("Failed to build retrieval index: %s", exc)
             self.retriever = None

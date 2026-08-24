@@ -48,6 +48,16 @@ class GeminiReasoner(ReasoningProvider):
         if not self.api_key:
             return self._fallback("AI_ENGINE_GEMINI_KEY not configured.")
 
+        # Truncate very long requirement texts to stay within Gemini's context window.
+        # Tender documents can be huge; individual requirements usually shouldn't exceed 500 chars.
+        MAX_REQ_TEXT = 2000
+        if len(req_text) > MAX_REQ_TEXT:
+            logger.warning(
+                "req_text truncated from %d to %d chars for Gemini analysis.",
+                len(req_text), MAX_REQ_TEXT
+            )
+            req_text = req_text[:MAX_REQ_TEXT] + "… [truncated]"
+
         if not standards:
             return {
                 "verdict": "requires_human_verification",
