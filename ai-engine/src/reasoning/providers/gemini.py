@@ -24,7 +24,7 @@ class GeminiReasoner(ReasoningProvider):
         self.api_key = os.getenv("AI_ENGINE_GEMINI_KEY")
         if not self.api_key:
             logger.warning("AI_ENGINE_GEMINI_KEY is not set — Gemini reasoning unavailable.")
-        self.model = "gemini-2.0-flash"
+        self.model = "gemini-3.6-flash"
         self._client = None
 
     def _get_client(self):

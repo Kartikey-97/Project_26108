@@ -158,7 +158,7 @@ def parse_query(query: str) -> dict:
 
         client = genai.Client(api_key=api_key)
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.6-flash",
             contents=f"{_SYSTEM_PROMPT}\n\nQuery:\n{query}",
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
