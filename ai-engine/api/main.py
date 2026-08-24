@@ -152,6 +152,9 @@ class RecommendResponse(BaseModel):
     confidence: str = "low"
     error: Optional[str] = None
 
+class CompareRequest(BaseModel):
+    standard_ids: List[str] = Field(..., min_length=2, max_length=5, description="List of IS numbers to compare")
+
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
@@ -162,11 +165,32 @@ def root():
     return {
         "service": "StandIQ AI Engine",
         "version": "2.0.0",
-        "endpoints": ["/health", "/analyze", "/recommend"],
+        "endpoints": ["/health", "/analyze", "/recommend", "/compare"],
         "standards_indexed": cnt,
         "startup_status": startup_status,
     }
 
+from src.compare import compare_standards
+
+@app.post("/compare")
+def compare(request: CompareRequest):
+    """
+    Compares two or more standard IDs by querying the Gemini model with
+    the curated knowledge base data.
+    """
+    if startup_status != "ok":
+        raise HTTPException(status_code=503, detail="AI Engine is still loading knowledge base. Please try again in a moment.")
+
+    try:
+        result = compare_standards(request.standard_ids, recommender.standards)
+        if "error" in result:
+            raise HTTPException(status_code=400, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error(f"Compare endpoint failed: {exc}")
+        raise HTTPException(status_code=500, detail=str(exc))
 
 @app.get("/health")
 def health():
