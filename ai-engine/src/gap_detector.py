@@ -42,27 +42,31 @@ def detect_gaps(standard_record: dict, query_understanding: dict | None = None) 
     """
     gaps = []
 
-    scope_text = (standard_record.get("scope") or standard_record.get("scope_summary") or "").lower()
+    is_number = standard_record.get("is_number", "unknown")
+    scope_obj = standard_record.get("scope") or {}
+    scope_text = scope_obj.get("value", "").lower()
+    scope_source = scope_obj.get("source_type", "unverified")
+    is_verified = scope_obj.get("verified", False)
+
+    # 1. If scope is empty or synthetic, gap detection is unreliable
+    if not scope_text or not is_verified:
+        return [
+            {
+                "gap_type": "SCOPE_UNCLEAR",
+                "description": f"Official verified scope for {is_number} is not available.",
+                "severity": "medium",
+                "recommendation": (
+                    "Manually verify the standard's scope on bis.gov.in to confirm "
+                    "it covers all technical requirements."
+                )
+            }
+        ]
+
     search_text = standard_record.get("search_text", "").lower()
     combined_text = scope_text + " " + search_text
     test_methods = standard_record.get("test_methods") or []
     norm_refs = standard_record.get("normative_references") or []
     cert_data = standard_record.get("certification") or {}
-    is_number = standard_record.get("is_number", "unknown")
-
-    # -------------------------------------------------------------------
-    # 1. Scope is completely empty — cannot verify any coverage
-    # -------------------------------------------------------------------
-    if not scope_text.strip():
-        gaps.append({
-            "gap_type": "SCOPE_UNCLEAR",
-            "description": f"Official scope for {is_number} is not available in the knowledge base.",
-            "severity": "medium",
-            "recommendation": (
-                "Manually verify the standard's scope on bis.gov.in to confirm "
-                "it covers all specified requirements."
-            ),
-        })
 
     # -------------------------------------------------------------------
     # 2. No test methods — means compliance testing can't be specified

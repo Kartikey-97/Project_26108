@@ -137,11 +137,41 @@ class Recommender:
                 }
 
             # ----------------------------------------------------------------
-            # 4. Currentness check on top result
+            # 4. Currentness & Gaps for EACH recommendation
             # ----------------------------------------------------------------
-            primary_std = final_recommendations[0]
-            currentness_verdict = check_currentness(primary_std)
+            output_recs = []
+            related_stds = set()
+            test_methods = set()
+            safety_stds = set()
+            norm_refs = set()
 
+            for std in final_recommendations:
+                # 1. Currentness
+                std_currentness = check_currentness(std)
+                std["currentness"] = std_currentness
+                
+                # 2. Gaps
+                std_gaps = detect_gaps(std, query_understanding)
+                std["potential_gaps"] = std_gaps
+
+                # 3. Clean up before output
+                if "embedding" in std:
+                    del std["embedding"]
+                
+                # Collect aggregate info (from top 3)
+                if len(output_recs) < 3:
+                    for r in (std.get("related_standards") or []):
+                        related_stds.add(r)
+                    for t in (std.get("test_methods") or []):
+                        test_methods.add(t)
+                    for n in (std.get("normative_references") or []):
+                        norm_refs.add(n)
+                    if std.get("standard_type") == "Safety" or "safety" in (std.get("title") or "").lower():
+                        safety_stds.add(std.get("is_number"))
+
+                output_recs.append(std)
+
+            # Check explicit references if any were found in the text
             explicit_refs = query_understanding.get("explicit_standard_refs") or []
             additional_currentness = {}
             for ref in explicit_refs[:3]:
@@ -149,51 +179,8 @@ class Recommender:
                 if verdict:
                     additional_currentness[ref] = verdict
 
-            # ----------------------------------------------------------------
-            # 5. Gap detection against top standard
-            # ----------------------------------------------------------------
-            gaps = detect_gaps(primary_std, query_understanding)
-
-            # ----------------------------------------------------------------
-            # 6. Overall confidence from top result
-            # ----------------------------------------------------------------
-            top_confidence = primary_std.get("confidence", "low")
-
-            # ----------------------------------------------------------------
-            # 7. Aggregate related metadata across all top recommendations
-            # ----------------------------------------------------------------
-            related_stds = set()
-            test_methods = set()
-            norm_refs = set()
-            safety_stds = set()
-            output_recs = []
-
-            for rec in final_recommendations:
-                for r in (rec.get("related_standards") or []):
-                    related_stds.add(r)
-                for t in (rec.get("test_methods") or []):
-                    test_methods.add(t)
-                for n in (rec.get("normative_references") or []):
-                    norm_refs.add(n)
-                if "safety" in (rec.get("title") or "").lower():
-                    safety_stds.add(rec.get("is_number"))
-
-                output_recs.append({
-                    "rank":             rec.get("rank"),
-                    "is_number":        rec.get("is_number"),
-                    "title":            rec.get("title"),
-                    "semantic_score":   rec.get("semantic_score"),
-                    "bm25_score":       rec.get("bm25_score"),
-                    "relevance_score":  rec.get("relevance_score"),
-                    "final_score":      rec.get("final_score"),
-                    "confidence":       rec.get("confidence"),
-                    "confidence_reasons": rec.get("confidence_reasons", []),
-                    "reason":           rec.get("reason"),
-                    "evidence":         rec.get("evidence", []),
-                    "retrieval_source": rec.get("retrieval_source", "semantic"),
-                    "version":          rec.get("version") or {},
-                    "status":           rec.get("status") or {},
-                })
+            # Overall confidence from top result
+            top_confidence = output_recs[0].get("confidence", "low") if output_recs else "low"
 
             return {
                 "query":                 query,
@@ -203,8 +190,6 @@ class Recommender:
                 "test_methods":          sorted(test_methods),
                 "safety_standards":      sorted(s for s in safety_stds if s),
                 "normative_references":  sorted(norm_refs),
-                "potential_gaps":        gaps,
-                "currentness":           currentness_verdict,
                 "additional_currentness": additional_currentness,
                 "confidence":            top_confidence,
             }
