@@ -62,9 +62,11 @@ class Analyzer:
                 self._mode = "mock_fallback"
 
     def process(self, request) -> dict:
+        import concurrent.futures
+
         findings = []
 
-        for req in request.requirements:
+        def process_req(req):
             # 1. Classify requirement type
             req_type = _classify_requirement(req.text)
 
@@ -99,7 +101,7 @@ class Analyzer:
                 action = res.get("action", "Manually verify specification against standards.")
                 conf = float(res.get("confidence", 0.5))
 
-            finding = {
+            return {
                 "finding_id": str(uuid.uuid4()),
                 "requirement_id": req.id,
                 "verdict": verdict,
@@ -109,13 +111,16 @@ class Analyzer:
                 "evidence_ids": [],
                 "confidence": conf,
             }
-            findings.append(finding)
+
+        # Process all requirements concurrently (up to 5 at a time) to prevent massive latency
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            findings = list(executor.map(process_req, request.requirements))
 
         return {
             "analysis_id": request.analysis_id,
             "findings": findings,
             "extraction_metadata": {
-                "reasoning_mode": self._mode,   # was hardcoded to "mock" — now correct
+                "reasoning_mode": self._mode,
                 "requirements_analysed": len(findings),
             },
         }
