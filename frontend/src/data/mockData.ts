@@ -1772,18 +1772,20 @@ standards.push(...extraStandards);
 
 
 export const hindiMatchedRequirements: MatchedRequirementItem[] = [
-  { id: 'mr-h1', analysisId: 'an-hindi', standardId: 'std-1391', requirementId: 'spec-hindi-1', matchType: 'direct', confidenceScore: 98, mappingLogic: 'Matches requirement for Room ACs.' },
-  { id: 'mr-h2', analysisId: 'an-hindi', standardId: 'std-8148', requirementId: 'spec-hindi-2', matchType: 'derived', confidenceScore: 95, mappingLogic: 'Matches requirement for Packaged ACs.' },
-  { id: 'mr-h3', analysisId: 'an-hindi', standardId: 'std-732', requirementId: 'spec-hindi-1', matchType: 'related', confidenceScore: 88, mappingLogic: 'Electrical Safety Code.' },
-  { id: 'mr-h4', analysisId: 'an-hindi', standardId: 'std-msme', requirementId: 'spec-hindi-2', matchType: 'direct', confidenceScore: 99, mappingLogic: 'Matches MSME Exemption.' },
+  { id: 'mr-h1', requirement: '10% Performance Bank Guarantee', parameterValue: '10% of contract', standardCode: 'IS 1391', standardId: 'std-1391', clause: 'Section 4.1', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
+  { id: 'mr-h2', requirement: 'Turnover Requirement ₹1.21 Lakh', parameterValue: '1.21 Lakhs', standardCode: 'IS 8148', standardId: 'std-8148', clause: 'Section 3.2', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
+  { id: 'mr-h3', requirement: 'Electrical Safety AMC', parameterValue: 'Safe Wiring', standardCode: 'IS 732', standardId: 'std-732', clause: 'Section 5', status: 'needs-review', reviewConfidence: 'needs-review', decision: 'reviewed' },
+  { id: 'mr-h4', requirement: 'EMD Exemption', parameterValue: 'MSME', standardCode: 'GFR Rule 170', standardId: 'std-msme', clause: 'Rule 170 (i)', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
 ];
 
 export const tamilMatchedRequirements: MatchedRequirementItem[] = [
-  { id: 'mr-t1', analysisId: 'an-tamil', standardId: 'std-1391', requirementId: 'spec-tamil-1', matchType: 'direct', confidenceScore: 98, mappingLogic: 'Matches requirement for Room ACs.' },
-  { id: 'mr-t2', analysisId: 'an-tamil', standardId: 'std-8148', requirementId: 'spec-tamil-1', matchType: 'derived', confidenceScore: 95, mappingLogic: 'Matches requirement for Packaged ACs.' },
-  { id: 'mr-t3', analysisId: 'an-tamil', standardId: 'std-732', requirementId: 'spec-tamil-1', matchType: 'related', confidenceScore: 88, mappingLogic: 'Electrical Safety Code.' },
-  { id: 'mr-t4', analysisId: 'an-tamil', standardId: 'std-msme', requirementId: 'spec-tamil-1', matchType: 'direct', confidenceScore: 99, mappingLogic: 'Matches MSME Exemption.' },
+  { id: 'mr-t1', requirement: '10% செயல்திறன் வங்கி உத்தரவாதம்', parameterValue: '10% of contract', standardCode: 'IS 1391', standardId: 'std-1391', clause: 'Section 4.1', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
+  { id: 'mr-t2', requirement: 'Turnover Requirement ₹1.21 Lakh', parameterValue: '1.21 Lakhs', standardCode: 'IS 8148', standardId: 'std-8148', clause: 'Section 3.2', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
+  { id: 'mr-t3', requirement: 'Electrical Safety AMC', parameterValue: 'Safe Wiring', standardCode: 'IS 732', standardId: 'std-732', clause: 'Section 5', status: 'needs-review', reviewConfidence: 'needs-review', decision: 'reviewed' },
+  { id: 'mr-t4', requirement: 'EMD Exemption', parameterValue: 'MSME', standardCode: 'GFR Rule 170', standardId: 'std-msme', clause: 'Rule 170 (i)', status: 'covered', reviewConfidence: 'high-confidence', decision: 'accepted' },
 ];
+
+
 
 export const extraGaps: Gap[] = [
   {
