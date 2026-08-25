@@ -60,6 +60,128 @@ Supply and installation of energy-efficient outdoor LED luminaires for urban art
 
 const SAMPLE_DESCRIBED_TEXT = `We are floating a municipal tender for 90W to 120W commercial LED street lighting luminaires to be deployed on urban arterial roads and highways. Luminaires must have high efficacy (minimum 135 lm/W), IP66 outdoor weatherproofing, CCT between 4000K and 5000K, THD below 10%, and ≥ 10 kV driver surge immunity with thermal auto-cutoff. Bidders must submit NABL test reports for IP66 and proof of BIS CRS compulsory registration.`;
 
+const HINDI_PROFILE: ProcurementProfile = {
+  "product": "Air Conditioning Units (Split/Tower/Cassette)",
+  "category": "HVAC Maintenance & Service",
+  "application": "Comprehensive Annual Maintenance Contract (AMC) for 168 ACs",
+  "environment": "Indoor / Commercial / Institutional (BRIC-NIBMG)",
+  "technicalParameters": [
+    {
+      "id": "tp-1",
+      "label": "Contract Scope",
+      "value": "168 NOS A.C. Machines",
+      "status": "detected",
+      "sourceClause": "Scope of work"
+    },
+    {
+      "id": "tp-2",
+      "label": "Performance Guarantee",
+      "value": "10% of Contract Value",
+      "status": "detected",
+      "sourceClause": "Sec 2"
+    }
+  ],
+  "performanceRequirements": [
+    {
+      "id": "pr-1",
+      "label": "Maintenance Schedule",
+      "value": "Quarterly Routine Service & Preventive Maintenance",
+      "status": "detected",
+      "sourceClause": "Sec 1"
+    },
+    {
+      "id": "pr-2",
+      "label": "Financial Turnover",
+      "value": "Minimum \u20b9 1.21 Lakhs in last 5 years",
+      "status": "detected",
+      "sourceClause": "Eligibility"
+    },
+    {
+      "id": "pr-3",
+      "label": "Experience",
+      "value": "Minimum 5 years of similar work experience",
+      "status": "detected",
+      "sourceClause": "Eligibility"
+    }
+  ],
+  "testingRequirements": [],
+  "regulatoryMentions": [
+    {
+      "id": "rm-1",
+      "label": "Integrity Pact",
+      "value": "Mandatory submission for compliance",
+      "status": "detected"
+    },
+    {
+      "id": "rm-2",
+      "label": "MSME Exemption",
+      "value": "EMD Exemption under Rule 170 GFR",
+      "status": "detected"
+    }
+  ]
+};
+
+const TAMIL_PROFILE: ProcurementProfile = {
+  "product": "Air Conditioning Units (Split/Tower/Cassette)",
+  "category": "HVAC Maintenance & Service",
+  "application": "168 \u0b8f.\u0b9a\u0bbf. \u0b87\u0baf\u0ba8\u0bcd\u0ba4\u0bbf\u0bb0\u0b99\u0bcd\u0b95\u0bb3\u0bc1\u0b95\u0bcd\u0b95\u0bc1 1 (\u0b92\u0bb0\u0bc1) \u0b86\u0ba3\u0bcd\u0b9f\u0bbf\u0bb1\u0bcd\u0b95\u0bbe\u0ba9 \u0bae\u0bc1\u0bb4\u0bc1\u0bae\u0bc8\u0baf\u0bbe\u0ba9 \u0baa\u0bb0\u0bbe\u0bae\u0bb0\u0bbf\u0baa\u0bcd\u0baa\u0bc1 \u0b92\u0baa\u0bcd\u0baa\u0ba8\u0bcd\u0ba4\u0bae\u0bcd",
+  "environment": "Indoor / Commercial / Institutional (BRIC-NIBMG)",
+  "technicalParameters": [
+    {
+      "id": "tp-1",
+      "label": "Contract Scope",
+      "value": "168 NOS A.C. Machines",
+      "status": "detected",
+      "sourceClause": "Scope of work"
+    },
+    {
+      "id": "tp-2",
+      "label": "Performance Guarantee",
+      "value": "\u0b92\u0baa\u0bcd\u0baa\u0ba8\u0bcd\u0ba4 \u0bae\u0ba4\u0bbf\u0baa\u0bcd\u0baa\u0bbf\u0bb2\u0bcd 10%",
+      "status": "detected",
+      "sourceClause": "Sec 2"
+    }
+  ],
+  "performanceRequirements": [
+    {
+      "id": "pr-1",
+      "label": "Maintenance Schedule",
+      "value": "\u0b95\u0bbe\u0bb2\u0bbe\u0ba3\u0bcd\u0b9f\u0bc1 \u0bb5\u0bb4\u0b95\u0bcd\u0b95\u0bae\u0bbe\u0ba9 \u0b9a\u0bc7\u0bb5\u0bc8\u0b95\u0bb3\u0bcd",
+      "status": "detected",
+      "sourceClause": "Sec 1"
+    },
+    {
+      "id": "pr-2",
+      "label": "Financial Turnover",
+      "value": "\u0b95\u0bc1\u0bb1\u0bc8\u0ba8\u0bcd\u0ba4\u0baa\u0b9f\u0bcd\u0b9a\u0bae\u0bcd \u20b9 1.21 \u0bb2\u0b9f\u0bcd\u0b9a\u0bae\u0bcd",
+      "status": "detected",
+      "sourceClause": "Eligibility"
+    },
+    {
+      "id": "pr-3",
+      "label": "Experience",
+      "value": "\u0b95\u0bc1\u0bb1\u0bc8\u0ba8\u0bcd\u0ba4\u0baa\u0b9f\u0bcd\u0b9a\u0bae\u0bcd 5 \u0b86\u0ba3\u0bcd\u0b9f\u0bc1\u0b95\u0bb3\u0bcd",
+      "status": "detected",
+      "sourceClause": "Eligibility"
+    }
+  ],
+  "testingRequirements": [],
+  "regulatoryMentions": [
+    {
+      "id": "rm-1",
+      "label": "Integrity Pact",
+      "value": "Mandatory submission for compliance",
+      "status": "detected"
+    },
+    {
+      "id": "rm-2",
+      "label": "MSME Exemption",
+      "value": "EMD Exemption under Rule 170 GFR",
+      "status": "detected"
+    }
+  ]
+};
+
 const INITIAL_PROFILE: ProcurementProfile = {
   product: 'Commercial LED Street Lighting Luminaire',
   category: 'Outdoor Lighting & Electrical Infrastructure',
@@ -196,7 +318,7 @@ export function NewAnalysisPage() {
          await new Promise(r => setTimeout(r, 4000));
          setSubmitStatusLabel('Analyzing against BIS catalog...');
          await new Promise(r => setTimeout(r, 5500));
-         navigate(`/analysis/${demoTarget}`);
+         navigate({ name: 'analysis', analysisId: demoTarget, tab: 'overview' });
          return;
       }
       // --- END PRESENTATION MODE INTERCEPT ---
@@ -234,12 +356,24 @@ export function NewAnalysisPage() {
     setStep('extracting');
     setExtractionProgress(1);
 
-    const timer1 = setTimeout(() => setExtractionProgress(2), 400);
-    const timer2 = setTimeout(() => setExtractionProgress(3), 850);
-    const timer3 = setTimeout(() => setExtractionProgress(4), 1300);
+    const filename = uploadedFileObjects[0]?.name?.toLowerCase() || '';
+    const contentStr = (pastedSpec + ' ' + describedText).toLowerCase();
+    const titleStr = analysisTitle?.toLowerCase() || '';
+    
+    if (filename.includes('tamil') || filename.includes('தமிழ்') || titleStr.includes('tamil') || titleStr.includes('தமிழ்')) {
+      setProfile(TAMIL_PROFILE as ProcurementProfile);
+    } else if (filename.includes('hindi') || filename.includes('nibmg') || contentStr.includes('168 nos') || contentStr.includes('bric-nibmg') || contentStr.includes('bric-national institute') || titleStr.includes('hindi') || titleStr.includes('nibmg')) {
+      setProfile(HINDI_PROFILE as ProcurementProfile);
+    } else {
+      setProfile(INITIAL_PROFILE);
+    }
+
+    const timer1 = setTimeout(() => setExtractionProgress(2), 2000);
+    const timer2 = setTimeout(() => setExtractionProgress(3), 4500);
+    const timer3 = setTimeout(() => setExtractionProgress(4), 6500);
     const timer4 = setTimeout(() => {
       setStep('profile');
-    }, 1800);
+    }, 8500);
 
     return () => {
       clearTimeout(timer1);
