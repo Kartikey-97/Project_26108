@@ -158,7 +158,7 @@ async def email_pdf_report(analysis_id: str):
     
     try:
         files = {
-            "data": ("StandIQ-Report.pdf", io.BytesIO(pdf_bytes), "application/pdf")
+            "report_pdf": ("StandIQ-Report.pdf", io.BytesIO(pdf_bytes), "application/pdf")
         }
         data = {
             "tender_title": tender_title,
