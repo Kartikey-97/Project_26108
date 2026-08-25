@@ -1416,6 +1416,8 @@ export function getStandardById(id: string): Standard | undefined {
 }
 
 export function getAnalysisById(id: string): Analysis | undefined {
+  if (id === 'an-hindi') return hindiAnalysis;
+  if (id === 'an-tamil') return tamilAnalysis;
   return getRealAnalysis(id) || analyses.find((a) => a.id === id);
 }
 
@@ -1438,7 +1440,7 @@ export function getMemberById(id: string): WorkspaceMember | undefined {
 export function getMatchedRequirementsByAnalysisId(analysisId: string): MatchedRequirementItem[] {
   const real = getRealMatchedRequirements(analysisId);
   if (real) return real;
-  if (analysisId === 'an-001') {
+  if (analysisId === 'an-001' || analysisId === 'an-hindi' || analysisId === 'an-tamil') {
     return matchedRequirements;
   }
   return [];
@@ -1447,7 +1449,7 @@ export function getMatchedRequirementsByAnalysisId(analysisId: string): MatchedR
 export function getEvidenceChainsByAnalysisId(analysisId: string): EvidenceChainItem[] {
   const real = getRealEvidence(analysisId);
   if (real) return real;
-  if (analysisId === 'an-001') {
+  if (analysisId === 'an-001' || analysisId === 'an-hindi' || analysisId === 'an-tamil') {
     return evidenceChains;
   }
   return [];
@@ -1613,6 +1615,8 @@ export const regulatoryRequirements: RegulatoryRequirement[] = [
 export function getSpecificationRequirementsByAnalysisId(analysisId: string): SpecificationRequirement[] {
   const real = getRealSpecRequirements(analysisId);
   if (real) return real;
+  if (analysisId === 'an-hindi') return hindiSpecRequirements;
+  if (analysisId === 'an-tamil') return tamilSpecRequirements;
   if (analysisId === 'an-001') {
     return specificationRequirements;
   }
@@ -1622,6 +1626,7 @@ export function getSpecificationRequirementsByAnalysisId(analysisId: string): Sp
 export function getRegulatoryRequirementsByAnalysisId(analysisId: string): RegulatoryRequirement[] {
   const real = getRealRegulatory(analysisId);
   if (real) return real;
+  if (analysisId === 'an-hindi' || analysisId === 'an-tamil') return []; // Just empty for now to save space, or could mock
   if (analysisId === 'an-001') {
     return regulatoryRequirements;
   }
@@ -1630,3 +1635,182 @@ export function getRegulatoryRequirementsByAnalysisId(analysisId: string): Regul
 
 
 
+
+
+export const hindiAnalysis: Analysis = {
+  id: 'an-hindi',
+  title: 'Comprehensive AMC for 168 NOS A.C. Machine at BRIC-NIBMG',
+  category: 'HVAC Maintenance',
+  status: 'completed',
+  createdAt: new Date().toISOString(),
+  completedAt: new Date(Date.now() + 10000).toISOString(),
+  documentCount: 1,
+  standardsIdentified: 4,
+  gapsFound: 1,
+  certificationsRequired: 1,
+  confidence: 96,
+  summary: 'Analysis identified key requirements for the comprehensive AMC of 168 Air Conditioning units. The tender specifies a 10% Performance Bank Guarantee, MSME EMD exemptions per Rule 170 of GFR, and mandates a strict Integrity Pact. Minimum turnover requirement of ₹1.21 Lakhs and 5 years experience were also detected.',
+  matchedStandardIds: ['std-1391', 'std-8148', 'std-732', 'std-msme'],
+  gapIds: ['gap-hindi-1'],
+  documentIds: ['doc-hindi-1'],
+};
+
+export const tamilAnalysis: Analysis = {
+  id: 'an-tamil',
+  title: '168 ஏ.சி. இயந்திரங்களுக்கு 1 (ஒரு) ஆண்டிற்கான முழுமையான பராமரிப்பு ஒப்பந்தம்',
+  category: 'HVAC Maintenance',
+  status: 'completed',
+  createdAt: new Date().toISOString(),
+  completedAt: new Date(Date.now() + 10000).toISOString(),
+  documentCount: 1,
+  standardsIdentified: 4,
+  gapsFound: 1,
+  certificationsRequired: 1,
+  confidence: 96,
+  summary: 'Analysis identified key requirements for the comprehensive AMC of 168 Air Conditioning units (Tamil translated). The tender specifies a 10% Performance Bank Guarantee, MSME EMD exemptions, and mandates a strict Integrity Pact. Minimum turnover requirement of ₹1.21 Lakhs and 5 years experience were also detected.',
+  matchedStandardIds: ['std-1391', 'std-8148', 'std-732', 'std-msme'],
+  gapIds: ['gap-tamil-1'],
+  documentIds: ['doc-tamil-1'],
+};
+
+export const extraStandards: Standard[] = [
+  {
+    id: 'std-1391',
+    code: 'IS 1391 (Part 1)',
+    title: 'Room Air Conditioners - Specification (Part 1: Unitary Air Conditioners)',
+    status: 'active',
+    publicationYear: 2017,
+    category: 'HVAC',
+    isQcoMandatory: true,
+    lastUpdated: '2017-08-01',
+    description: 'Specifies the performance requirements and testing methods for unitary room air conditioners.',
+    domain: 'Mechanical Engineering',
+    icsCodes: ['23.120'],
+    matchedRequirements: [
+      { text: 'AC Unit Performance Testing', mappedClause: 'Section 4.1' }
+    ]
+  },
+  {
+    id: 'std-8148',
+    code: 'IS 8148',
+    title: 'Packaged Air Conditioners - Specification',
+    status: 'active',
+    publicationYear: 2018,
+    category: 'HVAC',
+    isQcoMandatory: true,
+    lastUpdated: '2018-05-12',
+    description: 'Covers requirements for packaged air conditioners including safety, testing, and performance.',
+    domain: 'Mechanical Engineering',
+    icsCodes: ['23.120'],
+    matchedRequirements: [
+      { text: 'Tower AC / Cassette Type Performance', mappedClause: 'Section 3.2' }
+    ]
+  },
+  {
+    id: 'std-732',
+    code: 'IS 732',
+    title: 'Code of Practice for Electrical Wiring Installations',
+    status: 'active',
+    publicationYear: 2019,
+    category: 'Electrical Safety',
+    isQcoMandatory: true,
+    lastUpdated: '2019-11-20',
+    description: 'Provides guidelines for safe electrical wiring for commercial and industrial premises.',
+    domain: 'Electrical Engineering',
+    icsCodes: ['29.020'],
+    matchedRequirements: [
+      { text: 'Electrical safety during installation & AMC', mappedClause: 'Section 5' }
+    ]
+  },
+  {
+    id: 'std-msme',
+    code: 'GFR Rule 170',
+    title: 'Micro and Small Enterprises (MSEs) Procurement Exemptions',
+    status: 'active',
+    publicationYear: 2024,
+    category: 'Procurement Policy',
+    isQcoMandatory: false,
+    lastUpdated: '2024-01-01',
+    description: 'Exempts registered MSEs from EMD (Bid Security) submission, requiring only a Bid Securing Declaration.',
+    domain: 'Finance & Procurement',
+    icsCodes: ['01.040'],
+    matchedRequirements: [
+      { text: 'EMD Exemption for MSE Bidders', mappedClause: 'Rule 170 (i)' }
+    ]
+  }
+];
+
+standards.push(...extraStandards);
+
+export const extraGaps: Gap[] = [
+  {
+    id: 'gap-hindi-1',
+    analysisId: 'an-hindi',
+    title: 'Missing specific AC maintenance test schedule',
+    severity: 'medium',
+    category: 'specification',
+    description: 'The tender mentions quarterly routine services and PM but does not explicitly reference IS 11338 testing protocols for AC performance during the AMC.',
+    suggestedFix: 'Incorporate reference to IS 11338 testing parameters for periodic maintenance validation.',
+    referenceClause: 'Section: Scope of work (b)',
+  },
+  {
+    id: 'gap-tamil-1',
+    analysisId: 'an-tamil',
+    title: 'பராமரிப்பு சோதனை அட்டவணை இல்லை',
+    severity: 'medium',
+    category: 'specification',
+    description: 'ஒப்பந்தம் காலாண்டு வழக்கமான சேவைகளைக் குறிப்பிடுகிறது, ஆனால் IS 11338 சோதனை நெறிமுறைகளை வெளிப்படையாகக் குறிப்பிடவில்லை.',
+    suggestedFix: 'IS 11338 சோதனை அளவுருக்களை சேர்க்கவும்.',
+    referenceClause: 'பிரிவு: Scope of work (b)',
+  }
+];
+
+gaps.push(...extraGaps);
+
+export const hindiSpecRequirements: SpecificationRequirement[] = [
+  {
+    id: 'spec-hindi-1',
+    analysisId: 'an-hindi',
+    title: '10% Performance Bank Guarantee',
+    parameter: 'Contract Security',
+    category: 'Commercial',
+    specifiedValue: '10% of contract value',
+    status: 'mapped',
+    mappedClause: 'Clause 2: Performance Bank Guarantee',
+    standardReference: 'General Procurement Guidelines',
+    aiConfidence: 98,
+    evidenceSnippet: '"Performance Bank Guarantee amounting to 10% (Ten percent) of the Contract value is to be submitted"',
+    evidenceLocation: 'Page 24, Section 2',
+  },
+  {
+    id: 'spec-hindi-2',
+    analysisId: 'an-hindi',
+    title: 'Turnover Requirement ₹1.21 Lakh',
+    parameter: 'Financial Viability',
+    category: 'Eligibility',
+    specifiedValue: '₹ 1.21 Lakhs minimum',
+    status: 'mapped',
+    mappedClause: 'Clause 3: Financial capability',
+    standardReference: 'General Procurement Guidelines',
+    aiConfidence: 95,
+    evidenceSnippet: '"Minimum turnover of ₹ 1.21 lakh is required in any one year during last 5 years."',
+    evidenceLocation: 'Page 5, Section 2(b)',
+  }
+];
+
+export const tamilSpecRequirements: SpecificationRequirement[] = [
+  {
+    id: 'spec-tamil-1',
+    analysisId: 'an-tamil',
+    title: '10% செயல்திறன் வங்கி உத்தரவாதம்',
+    parameter: 'Contract Security',
+    category: 'Commercial',
+    specifiedValue: 'ஒப்பந்த மதிப்பில் 10%',
+    status: 'mapped',
+    mappedClause: 'பிரிவு 2: Performance Bank Guarantee',
+    standardReference: 'General Procurement Guidelines',
+    aiConfidence: 98,
+    evidenceSnippet: '"Performance Bank Guarantee amounting to 10% (Ten percent) of the Contract value is to be submitted"',
+    evidenceLocation: 'பக்கம் 24',
+  }
+];

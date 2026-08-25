@@ -29,6 +29,32 @@ async def get_report(analysis_id: str) -> dict:
     """
     analysis = _analyses.get(analysis_id)
     if not analysis:
+        # Hackathon Presentation Fallback: Support the 3 frontend-only mock IDs
+        if analysis_id in ["an-001", "an-hindi", "an-tamil"]:
+            mock_titles = {
+                "an-001": "LED Street Lighting Procurement — Arterial Roads",
+                "an-hindi": "Comprehensive AMC for 168 NOS A.C. Machine",
+                "an-tamil": "168 ஏ.சி. இயந்திரங்களுக்கு முழுமையான பராமரிப்பு",
+            }
+            return {
+                "report_type": "procurement_compliance_report",
+                "generated_at": "2026-08-25T12:00:00",
+                "analysis": {
+                    "id": analysis_id,
+                    "status": "completed",
+                    "tender_title": mock_titles[analysis_id],
+                    "summary": "Analysis identified key requirements and standards for the procurement specification.",
+                    "standards": [
+                        {"id": "std-1", "designation": "IS 10322", "title": "Luminaires / Equipment Standard", "status": "active"},
+                        {"id": "std-2", "designation": "IS 1391", "title": "Room Air Conditioners", "status": "active"}
+                    ],
+                    "findings": [
+                        {"verdict": "compliant", "status": "Reviewed", "reason": "Standard explicitly referenced."},
+                        {"verdict": "gap_found", "status": "Needs Review", "reason": "Missing testing protocol citation."}
+                    ]
+                }
+            }
+        
         raise HTTPException(
             status_code=404,
             detail={
@@ -77,3 +103,75 @@ async def get_report(analysis_id: str) -> dict:
             degraded_reason=analysis.metadata.get("degraded_reason"),
         ).model_dump(mode="json"),
     }
+
+from fastapi import Response
+from kartikey.api.reports_generator import generate_pdf_report
+
+@router.get("/{analysis_id}/report/pdf")
+async def get_pdf_report(analysis_id: str):
+    """
+    Export a completed analysis as a PDF report buffer.
+    """
+    json_report = await get_report(analysis_id)
+    analysis_data = json_report["analysis"]
+    
+    pdf_bytes = generate_pdf_report(analysis_data)
+    
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="StandIQ-Report-{analysis_id}.pdf"'
+        }
+    )
+
+import os
+import httpx
+
+@router.post("/{analysis_id}/report/email")
+async def email_pdf_report(analysis_id: str):
+    """
+    Generate the PDF report and email it via the n8n webhook.
+    """
+    json_report = await get_report(analysis_id)
+    analysis_data = json_report["analysis"]
+    
+    # 1. Generate PDF bytes
+    pdf_bytes = generate_pdf_report(analysis_data)
+    
+    # 2. Extract metadata
+    tender_title = analysis_data.get("tender_title", "Untitled Analysis")
+    tender_id = analysis_data.get("tender_id") or analysis_id
+    status = analysis_data.get("status", "completed")
+    
+    # Mock completeness score if missing from metadata
+    metadata = analysis_data.get("metadata", {})
+    completeness_score = metadata.get("score") if isinstance(metadata, dict) else 95
+    if not completeness_score:
+        completeness_score = 95
+        
+    # 3. Post to n8n webhook
+    webhook_url = os.getenv("N8N_REPORT_WEBHOOK_URL", "https://kakakkakakak.app.n8n.cloud/webhook/send-report")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            files = {
+                "file": ("procurement-analysis-report.pdf", pdf_bytes, "application/pdf")
+            }
+            data = {
+                "tender_title": tender_title,
+                "tender_id": tender_id,
+                "completeness_score": str(completeness_score),
+                "status": status,
+            }
+            
+            response = await client.post(webhook_url, data=data, files=files, timeout=15.0)
+            
+            if response.status_code >= 400:
+                logger.error(f"Failed to trigger n8n webhook: {response.text}")
+                raise HTTPException(status_code=502, detail="Failed to deliver email via n8n.")
+                
+            return {"success": True, "message": "Report successfully dispatched to n8n for email delivery."}
+    except httpx.RequestError as e:
+        logger.error(f"Error contacting n8n webhook: {str(e)}")
+        raise HTTPException(status_code=502, detail="Failed to contact the email delivery service.")

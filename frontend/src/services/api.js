@@ -1,5 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-const API_ROOT = API_BASE + '/api/v1';
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+export const API_ROOT = API_BASE + '/api/v1';
 
 // The backend exposes /health at the root, outside the /api/v1 prefix.
 export async function getBackendHealth() {
@@ -182,7 +182,7 @@ export function toUiAnalysis(payload) {
     };
   }
 
-  const requirements = (payload.extracted_requirements || []).map((requirement) => ({
+  const requirements = (payload.extracted_requirements || payload.requirements || []).map((requirement) => ({
     ...requirement,
     type: requirement.type || requirement.category || 'General',
     specifiedValue: requirement.specifiedValue || requirement.specified_value || '',
@@ -191,10 +191,11 @@ export function toUiAnalysis(payload) {
     confidence: requirement.confidence ?? requirement.evidence_chain?.confidence ?? 0,
   }));
 
-  const standards = (payload.standards_intelligence || []).map((standard, index) => ({
+  const backendStandards = payload.standards_intelligence || payload.standards || [];
+  const standards = backendStandards.map((standard, index) => ({
     ...standard,
     rank: standard.rank ?? index + 1,
-    standardCode: standard.standardCode || standard.code || 'Unknown standard',
+    standardCode: standard.standardCode || standard.code || standard.designation || 'Unknown standard',
     standardTitle: standard.standardTitle || standard.title || '',
     statusBadge: standard.statusBadge || standard.status_badge || standard.status || 'UNKNOWN',
     isQcoMandatory: standard.isQcoMandatory ?? standard.is_qco_mandatory ?? false,

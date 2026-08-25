@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { API_ROOT } from '@/services/api';
 import {
   Award,
   Calendar,
   CheckCircle2,
   Clock,
   Download,
+  Send,
   Eye,
   FileCheck2,
   FileSearch,
@@ -44,6 +46,20 @@ export function ReportsPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<ReportType | 'all'>('all');
   const [previewReport, setPreviewReport] = useState<Report | null>(null);
+  const [isEmailing, setIsEmailing] = useState<string | null>(null);
+
+  const handleEmailReport = async (reportId: string, analysisId: string) => {
+    setIsEmailing(reportId);
+    try {
+      const res = await fetch(`${API_ROOT}/analyses/${analysisId}/report/email`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to send email via n8n');
+      alert('Report successfully dispatched for email delivery via n8n!');
+    } catch (err) {
+      alert('Failed to send email. Check backend logs.');
+    } finally {
+      setIsEmailing(null);
+    }
+  };
 
   const filtered = reports.filter((r) => {
     if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
@@ -158,22 +174,31 @@ export function ReportsPage() {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="mt-4 grid grid-cols-3 gap-2">
                     <Button
                       variant="secondary"
                       size="sm"
                       leftIcon={<Eye size={13} />}
                       onClick={() => setPreviewReport(report)}
                     >
-                      View Brief
+                      View
                     </Button>
                     <Button
                       variant="secondary"
                       size="sm"
-                      leftIcon={<Download size={13} />}
-                      onClick={() => alert(`Downloading ${report.title} (${report.format})...`)}
+                      leftIcon={<Download size={14} />}
+                      onClick={() => window.open(`${API_ROOT}/analyses/${report.analysisId}/report/pdf`, '_blank')}
                     >
-                      Download
+                      PDF
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      disabled={isEmailing === report.id}
+                      leftIcon={<Send size={13} />}
+                      onClick={() => handleEmailReport(report.id, report.analysisId)}
+                    >
+                      {isEmailing === report.id ? 'Sending...' : 'Email'}
                     </Button>
                   </div>
                 </Card>
@@ -239,12 +264,21 @@ function ReportPreviewModal({ report, onClose }: { report: Report; onClose: () =
               Print
             </Button>
             <Button
-              variant="primary"
+              variant="secondary"
               size="sm"
-              leftIcon={<Download size={13} />}
-              onClick={() => alert(`Exporting ${report.title}...`)}
+              leftIcon={<Download size={14} />}
+              onClick={() => window.open(`${API_ROOT}/analyses/${report.analysisId}/report/pdf`, '_blank')}
             >
               Export PDF
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              disabled={isEmailing === report.id}
+              leftIcon={<Send size={13} />}
+              onClick={() => handleEmailReport(report.id, report.analysisId)}
+            >
+              {isEmailing === report.id ? 'Sending...' : 'Email to Officer'}
             </Button>
             <button
               onClick={onClose}

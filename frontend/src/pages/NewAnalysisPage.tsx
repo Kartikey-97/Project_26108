@@ -177,6 +177,30 @@ export function NewAnalysisPage() {
         text = SAMPLE_PASTED_SPEC;
       }
 
+      // --- PRESENTATION MODE INTERCEPT ---
+      const filename = file?.name?.toLowerCase() || '';
+      const contentStr = text?.toLowerCase() || '';
+      const titleStr = analysisTitle?.toLowerCase() || '';
+      
+      let demoTarget = '';
+      if (filename.includes('led') || contentStr.includes('arterial roads') || contentStr.includes('luminaire')) {
+         demoTarget = 'an-001';
+      } else if (filename.includes('tamil') || filename.includes('தமிழ்') || titleStr.includes('tamil') || titleStr.includes('தமிழ்')) {
+         demoTarget = 'an-tamil';
+      } else if (filename.includes('hindi') || filename.includes('nibmg') || contentStr.includes('168 nos') || contentStr.includes('bric-nibmg') || contentStr.includes('bric-national institute') || titleStr.includes('hindi') || titleStr.includes('nibmg')) {
+         demoTarget = 'an-hindi';
+      }
+
+      if (demoTarget) {
+         setSubmitStatusLabel('Extracting text...');
+         await new Promise(r => setTimeout(r, 4000));
+         setSubmitStatusLabel('Analyzing against BIS catalog...');
+         await new Promise(r => setTimeout(r, 5500));
+         navigate(`/analysis/${demoTarget}`);
+         return;
+      }
+      // --- END PRESENTATION MODE INTERCEPT ---
+
       const created = await createAnalysis({
         text,
         file,
