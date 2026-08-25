@@ -19,7 +19,7 @@ import type {
 } from './types';
 import type { AdaptedAnalysis } from '@/services/adapter';
 
-export const SEEDED_ANALYSIS_IDS = new Set(['an-001', 'an-002', 'an-003']);
+export const SEEDED_ANALYSIS_IDS = new Set(['an-001', 'an-002', 'an-003', 'an-hindi', 'an-tamil']);
 
 export function isSeededAnalysisId(id: string): boolean {
   return SEEDED_ANALYSIS_IDS.has(id);
