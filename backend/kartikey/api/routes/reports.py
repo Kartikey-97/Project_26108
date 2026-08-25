@@ -156,7 +156,7 @@ async def email_pdf_report(analysis_id: str):
     try:
         async with httpx.AsyncClient() as client:
             files = {
-                "file": ("procurement-analysis-report.pdf", pdf_bytes, "application/pdf")
+                "data": ("procurement-analysis-report.pdf", pdf_bytes, "application/pdf")
             }
             data = {
                 "tender_title": tender_title,

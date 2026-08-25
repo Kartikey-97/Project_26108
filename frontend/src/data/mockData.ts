@@ -1440,16 +1440,16 @@ export function getMemberById(id: string): WorkspaceMember | undefined {
 export function getMatchedRequirementsByAnalysisId(analysisId: string): MatchedRequirementItem[] {
   const real = getRealMatchedRequirements(analysisId);
   if (real) return real;
-  if (analysisId === 'an-001' || analysisId === 'an-hindi' || analysisId === 'an-tamil') {
-    return matchedRequirements;
-  }
+  if (analysisId === 'an-hindi') return hindiMatchedRequirements;
+  if (analysisId === 'an-tamil') return tamilMatchedRequirements;
+  if (analysisId === 'an-001') return matchedRequirements;
   return [];
 }
 
 export function getEvidenceChainsByAnalysisId(analysisId: string): EvidenceChainItem[] {
   const real = getRealEvidence(analysisId);
   if (real) return real;
-  if (analysisId === 'an-001' || analysisId === 'an-hindi' || analysisId === 'an-tamil') {
+  if (analysisId === 'an-001') {
     return evidenceChains;
   }
   return [];
@@ -1741,6 +1741,21 @@ export const extraStandards: Standard[] = [
 ];
 
 standards.push(...extraStandards);
+
+
+export const hindiMatchedRequirements: MatchedRequirementItem[] = [
+  { id: 'mr-h1', analysisId: 'an-hindi', standardId: 'std-1391', requirementId: 'spec-hindi-1', matchType: 'direct', confidenceScore: 98, mappingLogic: 'Matches requirement for Room ACs.' },
+  { id: 'mr-h2', analysisId: 'an-hindi', standardId: 'std-8148', requirementId: 'spec-hindi-2', matchType: 'derived', confidenceScore: 95, mappingLogic: 'Matches requirement for Packaged ACs.' },
+  { id: 'mr-h3', analysisId: 'an-hindi', standardId: 'std-732', requirementId: 'spec-hindi-1', matchType: 'related', confidenceScore: 88, mappingLogic: 'Electrical Safety Code.' },
+  { id: 'mr-h4', analysisId: 'an-hindi', standardId: 'std-msme', requirementId: 'spec-hindi-2', matchType: 'direct', confidenceScore: 99, mappingLogic: 'Matches MSME Exemption.' },
+];
+
+export const tamilMatchedRequirements: MatchedRequirementItem[] = [
+  { id: 'mr-t1', analysisId: 'an-tamil', standardId: 'std-1391', requirementId: 'spec-tamil-1', matchType: 'direct', confidenceScore: 98, mappingLogic: 'Matches requirement for Room ACs.' },
+  { id: 'mr-t2', analysisId: 'an-tamil', standardId: 'std-8148', requirementId: 'spec-tamil-1', matchType: 'derived', confidenceScore: 95, mappingLogic: 'Matches requirement for Packaged ACs.' },
+  { id: 'mr-t3', analysisId: 'an-tamil', standardId: 'std-732', requirementId: 'spec-tamil-1', matchType: 'related', confidenceScore: 88, mappingLogic: 'Electrical Safety Code.' },
+  { id: 'mr-t4', analysisId: 'an-tamil', standardId: 'std-msme', requirementId: 'spec-tamil-1', matchType: 'direct', confidenceScore: 99, mappingLogic: 'Matches MSME Exemption.' },
+];
 
 export const extraGaps: Gap[] = [
   {

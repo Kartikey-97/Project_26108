@@ -223,7 +223,7 @@ export function NewAnalysisPage() {
   const [inputMode, setInputMode] = useState<InputMode>('upload');
 
   // Input fields
-  const [analysisTitle, setAnalysisTitle] = useState('LED Street Lighting — Urban Smart Highway NIT');
+  const [analysisTitle, setAnalysisTitle] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; pages: number }[]>([]);
   const [pastedSpec, setPastedSpec] = useState('');
   const [describedText, setDescribedText] = useState('');
