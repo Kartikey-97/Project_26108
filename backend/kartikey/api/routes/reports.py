@@ -153,27 +153,27 @@ async def email_pdf_report(analysis_id: str):
     # 3. Post to n8n webhook
     webhook_url = os.getenv("N8N_REPORT_WEBHOOK_URL", "https://kakakkakakak.app.n8n.cloud/webhook/send-report")
     
-    import io
-    import requests
+    import httpx
     
     try:
-        files = {
-            "report_pdf": ("StandIQ-Report.pdf", io.BytesIO(pdf_bytes), "application/pdf")
-        }
-        data = {
-            "tender_title": tender_title,
-            "tender_id": tender_id,
-            "completeness_score": str(completeness_score),
-            "status": status,
-        }
-        
-        response = requests.post(webhook_url, data=data, files=files, timeout=15.0)
-        
-        if response.status_code >= 400:
-            logger.error(f"Failed to trigger n8n webhook: {response.text}")
-            raise HTTPException(status_code=502, detail="Failed to deliver email via n8n.")
+        async with httpx.AsyncClient() as client:
+            files = {
+                "report_pdf": ("StandIQ-Report.pdf", pdf_bytes, "application/pdf")
+            }
+            data = {
+                "tender_title": tender_title,
+                "tender_id": tender_id,
+                "completeness_score": str(completeness_score),
+                "status": status,
+            }
             
-        return {"success": True, "message": "Report successfully dispatched to n8n for email delivery."}
-    except requests.RequestException as e:
+            response = await client.post(webhook_url, data=data, files=files, timeout=15.0)
+            
+            if response.status_code >= 400:
+                logger.error(f"Failed to trigger n8n webhook: {response.text}")
+                raise HTTPException(status_code=502, detail="Failed to deliver email via n8n.")
+                
+            return {"success": True, "message": "Report successfully dispatched to n8n for email delivery."}
+    except httpx.RequestError as e:
         logger.error(f"Error contacting n8n webhook: {str(e)}")
         raise HTTPException(status_code=502, detail="Failed to contact the email delivery service.")
