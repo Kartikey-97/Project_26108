@@ -194,7 +194,7 @@ export function AnalysisCertificationTab({ analysis }: Props) {
               variant="secondary"
               size="sm"
               leftIcon={<ScrollText size={13} />}
-              onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'evidence' })}
+              onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'evidence' })}
             >
               Evidence Workspace
             </Button>
@@ -264,11 +264,11 @@ export function AnalysisCertificationTab({ analysis }: Props) {
             Status:
           </span>
           {[
-            { id: 'all', label: 'All (6)' },
-            { id: 'applicable', label: 'Applicable (3)' },
-            { id: 'conditional', label: 'Conditional (1)' },
-            { id: 'recommended', label: 'Recommended (1)' },
-            { id: 'needs-review', label: 'Needs Review (1)' },
+            { id: 'all', label: `All (${rawRequirements.length})` },
+            { id: 'applicable', label: `Applicable (${summaryCounts.applicable})` },
+            { id: 'conditional', label: `Conditional (${summaryCounts.conditional})` },
+            { id: 'recommended', label: `Recommended (${summaryCounts.recommended})` },
+            { id: 'needs-review', label: `Needs Review (${summaryCounts.needsReview})` },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -450,7 +450,7 @@ export function AnalysisCertificationTab({ analysis }: Props) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'evidence' })}
+                      onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'evidence' })}
                       rightIcon={<ArrowRight size={12} />}
                       className="shrink-0 text-teal-800 hover:bg-teal-50"
                     >

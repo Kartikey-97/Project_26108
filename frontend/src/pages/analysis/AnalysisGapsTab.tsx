@@ -38,6 +38,7 @@ import {
   getSpecificationRequirementsByAnalysisId,
   getStandardById,
 } from '@/data/mockData';
+import { isSeededAnalysisId } from '@/data/runtimeStore';
 import type {
   HumanDecision,
   HumanReviewConfidence,
@@ -52,6 +53,17 @@ interface Props {
 export function AnalysisGapsTab({ analysisId }: Props) {
   const { navigate } = useRouter();
   const rawRequirements = getSpecificationRequirementsByAnalysisId(analysisId);
+
+  // Seeded demo ids keep their curated headline numbers; real analyses compute
+  // the coverage strip and filter counts from the actual requirement verdicts.
+  const isReal = !isSeededAnalysisId(analysisId);
+  const total = rawRequirements.length;
+  const coveredCount = rawRequirements.filter((r) => r.status === 'covered').length;
+  const reviewCount = rawRequirements.filter((r) => r.status === 'review').length;
+  const missingCount = rawRequirements.filter((r) => r.status === 'missing').length;
+  const conflictingCount = rawRequirements.filter((r) => r.status === 'conflicting').length;
+  const restrictiveCount = rawRequirements.filter((r) => r.status === 'restrictive').length;
+  const coveragePct = total ? Math.round((coveredCount / total) * 100) : 0;
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<SpecificationRequirementStatus | 'all'>('all');
@@ -164,7 +176,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               variant="secondary"
               size="sm"
               leftIcon={<ScrollText size={13} />}
-              onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'evidence' })}
+              onClick={() => navigate({ name: 'analysis', analysisId, tab: 'evidence' })}
             >
               Evidence Workspace
             </Button>
@@ -180,7 +192,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 Specification Coverage
               </span>
               <div className="flex items-baseline gap-1.5 mt-0.5">
-                <span className="text-2xl font-bold font-mono text-teal-950">82%</span>
+                <span className="text-2xl font-bold font-mono text-teal-950">{isReal ? `${coveragePct}%` : '82%'}</span>
                 <span className="text-[11px] text-teal-700">adequacy match</span>
               </div>
             </div>
@@ -195,7 +207,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Requirements Covered
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-success-700">6</span>
+              <span className="text-2xl font-bold font-mono text-success-700">{isReal ? coveredCount : 6}</span>
               <span className="text-[11px] text-ink-500">fully specified</span>
             </div>
           </div>
@@ -206,7 +218,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Review Recommended
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-warning-700">3</span>
+              <span className="text-2xl font-bold font-mono text-warning-700">{isReal ? reviewCount : 3}</span>
               <span className="text-[11px] text-ink-500">needs clarification</span>
             </div>
           </div>
@@ -217,8 +229,8 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Missing / Flagged
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-error-700">2 Missing</span>
-              <span className="text-[11px] text-amber-800 font-medium">· 1 Restrictive</span>
+              <span className="text-2xl font-bold font-mono text-error-700">{isReal ? `${missingCount} Missing` : '2 Missing'}</span>
+              <span className="text-[11px] text-amber-800 font-medium">{isReal ? `· ${restrictiveCount} Restrictive` : '· 1 Restrictive'}</span>
             </div>
           </div>
         </div>
@@ -254,7 +266,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
 
               <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-amber-200/60 pt-2 text-[11px] text-amber-900">
                 <span>
-                  <strong>Flagged Requirement:</strong> {restrictiveItems[0].requirement} (CCT 3950K–4050K)
+                  <strong>Flagged Requirement:</strong> {restrictiveItems[0].requirement}{!isReal && ' (CCT 3950K–4050K)'}
                 </span>
                 <button
                   onClick={() => {
@@ -285,12 +297,12 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 Filter:
               </span>
               {[
-                { id: 'all', label: 'All (11)' },
-                { id: 'covered', label: 'Covered (6)' },
-                { id: 'review', label: 'Review (2)' },
-                { id: 'missing', label: 'Missing (2)' },
-                { id: 'conflicting', label: 'Conflicting (1)' },
-                { id: 'restrictive', label: 'Restrictive (1)' },
+                { id: 'all', label: `All (${isReal ? total : 11})` },
+                { id: 'covered', label: `Covered (${isReal ? coveredCount : 6})` },
+                { id: 'review', label: `Review (${isReal ? reviewCount : 2})` },
+                { id: 'missing', label: `Missing (${isReal ? missingCount : 2})` },
+                { id: 'conflicting', label: `Conflicting (${isReal ? conflictingCount : 1})` },
+                { id: 'restrictive', label: `Restrictive (${isReal ? restrictiveCount : 1})` },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -520,7 +532,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'evidence' })}
+                  onClick={() => navigate({ name: 'analysis', analysisId, tab: 'evidence' })}
                   rightIcon={<ScrollText size={13} />}
                 >
                   View in Evidence Workspace

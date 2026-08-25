@@ -27,13 +27,34 @@ import {
   workspaceMembers,
 } from '@/data/mockData';
 import { formatDate, timeAgo } from '@/utils/format';
+import { useEffect, useState } from 'react';
+import { adaptAnalysisSummary } from '@/services/adapter';
+import { listAnalyses } from '@/services/api';
+import type { Analysis } from '@/data/types';
 
 export function WorkspacePage() {
   const { navigate } = useRouter();
 
-  const completedAnalyses = analyses.filter((a) => a.status === 'completed');
-  const processingAnalyses = analyses.filter((a) => a.status === 'processing');
-  const draftAnalyses = analyses.filter((a) => a.status === 'draft');
+  // Real analyses from the live backend, merged ahead of the seeded demo showcases.
+  const [realRows, setRealRows] = useState<Analysis[]>([]);
+  useEffect(() => {
+    let alive = true;
+    listAnalyses()
+      .then((res) => {
+        const list = Array.isArray(res) ? res : (res?.analyses || res?.items || res?.data || []);
+        if (alive) setRealRows(list.map(adaptAnalysisSummary));
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const analysesList = [...realRows, ...analyses.filter((m) => !realRows.some((r) => r.id === m.id))];
+
+  const completedAnalyses = analysesList.filter((a) => a.status === 'completed');
+  const processingAnalyses = analysesList.filter((a) => a.status === 'processing');
+  const draftAnalyses = analysesList.filter((a) => a.status === 'draft');
 
   const totalStandards = completedAnalyses.reduce((sum, a) => sum + a.standardsIdentified, 0);
   const totalGaps = completedAnalyses.reduce((sum, a) => sum + a.gapsFound, 0);
@@ -49,7 +70,7 @@ export function WorkspacePage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-ink-900 dark:text-white">Workspace</h1>
             <p className="mt-1 text-sm text-ink-500 dark:text-slate-400">
-              {analyses.length} analyses · {workspaceMembers.length} team members · Defensible Procurement Intelligence
+              {analysesList.length} analyses · {workspaceMembers.length} team members · Defensible Procurement Intelligence
             </p>
           </div>
           <Button onClick={() => navigate({ name: 'new-analysis' })} leftIcon={<Plus size={16} />}>
@@ -108,7 +129,7 @@ export function WorkspacePage() {
               </div>
 
               <div className="divide-y divide-ink-100">
-                {analyses.map((analysis) => {
+                {analysesList.map((analysis) => {
                   const status = analysisStatusConfig[analysis.status];
                   return (
                     <button

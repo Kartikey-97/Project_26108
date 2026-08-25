@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   ArrowDown,
@@ -35,6 +35,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from '@/router';
+import { adaptStandard } from '@/services/adapter';
+import { getStandard } from '@/services/api';
 import {
   standards,
   statusConfig,
@@ -56,7 +58,30 @@ interface Props {
 
 export function StandardDetailPage({ standardId }: Props) {
   const { navigate } = useRouter();
-  const standard = getStandardById(standardId);
+  const mockStandard = getStandardById(standardId);
+
+  // For catalog standards not in the seeded/registered set, fetch the real record from the backend.
+  const [fetchedStandard, setFetchedStandard] = useState<Standard | undefined>(undefined);
+  const [loadingStandard, setLoadingStandard] = useState(false);
+
+  useEffect(() => {
+    if (mockStandard) return;
+    let alive = true;
+    setLoadingStandard(true);
+    getStandard(standardId)
+      .then((raw) => {
+        if (alive && raw) setFetchedStandard(adaptStandard(raw));
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setLoadingStandard(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [standardId, mockStandard]);
+
+  const standard = mockStandard || fetchedStandard;
 
   // Comparison modal state
   const [isCompareOpen, setIsCompareOpen] = useState(false);
@@ -69,10 +94,14 @@ export function StandardDetailPage({ standardId }: Props) {
       <div className="min-h-screen bg-ivory-50">
         <TopNav variant="app" />
         <div className="container-app py-20 text-center">
-          <p className="text-sm text-ink-500">Standard not found in indexed catalog.</p>
-          <Button variant="secondary" onClick={() => navigate({ name: 'standards' })} className="mt-4">
-            Back to Standards Intelligence
-          </Button>
+          <p className="text-sm text-ink-500">
+            {loadingStandard ? 'Loading standard from BIS catalog…' : 'Standard not found in indexed catalog.'}
+          </p>
+          {!loadingStandard && (
+            <Button variant="secondary" onClick={() => navigate({ name: 'standards' })} className="mt-4">
+              Back to Standards Intelligence
+            </Button>
+          )}
         </div>
       </div>
     );

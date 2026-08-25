@@ -32,6 +32,7 @@ import { useRouter, type AnalysisTab } from '@/router';
 import {
   getStandardById,
   getGapsByAnalysisId,
+  getRelationshipsByAnalysisId,
   getMatchedRequirementsByAnalysisId,
   getEvidenceChainsByAnalysisId,
   statusConfig,
@@ -48,13 +49,17 @@ import { formatDate } from '@/utils/format';
 
 interface Props {
   analysis: Analysis;
+  isReal?: boolean;
 }
 
-export function AnalysisOverviewTab({ analysis }: Props) {
+export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
   const { navigate } = useRouter();
 
-  // Primary standard (IS 10322 or first matched standard)
-  const primaryStandard = getStandardById('std-10322') || getStandardById(analysis.matchedStandardIds[0]);
+  // Primary standard: for real analyses the top-ranked matched standard; for the
+  // seeded demo, the curated IS 10322 showcase (falls back to the first match).
+  const primaryStandard = isReal
+    ? getStandardById(analysis.matchedStandardIds[0])
+    : getStandardById('std-10322') || getStandardById(analysis.matchedStandardIds[0]);
 
   // All matched standards for metrics
   const matchedStandards = analysis.matchedStandardIds
@@ -62,8 +67,80 @@ export function AnalysisOverviewTab({ analysis }: Props) {
     .filter((s): s is Standard => s !== undefined);
 
   const gaps = getGapsByAnalysisId(analysis.id);
+  const relatedCount = getRelationshipsByAnalysisId(analysis.id).length;
   const initialRequirements = getMatchedRequirementsByAnalysisId(analysis.id);
   const evidenceChains = getEvidenceChainsByAnalysisId(analysis.id);
+
+  // Metric strip: computed from real analysis fields, or the curated demo values.
+  const metricItems = isReal
+    ? [
+        {
+          label: 'Applicable Standards',
+          value: analysis.standardsIdentified,
+          detail: 'Primary & normative codes',
+          tab: 'standards' as AnalysisTab,
+          accent: 'border-teal-500/30 bg-white',
+          badge: 'IS codes',
+        },
+        {
+          label: 'Related References',
+          value: relatedCount,
+          detail: 'Normative references cited',
+          tab: 'relationships' as AnalysisTab,
+          accent: 'border-ink-200 bg-white',
+          badge: 'Companions',
+        },
+        {
+          label: 'Specification Issues',
+          value: analysis.gapsFound,
+          detail: 'Gaps & restrictive clauses',
+          tab: 'gaps' as AnalysisTab,
+          accent: 'border-warning-200 bg-warning-50/20',
+          badge: 'Review',
+        },
+        {
+          label: 'Regulatory Checks',
+          value: analysis.certificationsRequired,
+          detail: 'Mandatory certifications',
+          tab: 'certification' as AnalysisTab,
+          accent: 'border-blue-200 bg-blue-50/20',
+          badge: 'Statutory',
+        },
+      ]
+    : [
+        {
+          label: 'Applicable Standards',
+          value: 7,
+          detail: 'Primary & normative codes',
+          tab: 'standards' as AnalysisTab,
+          accent: 'border-teal-500/30 bg-white',
+          badge: 'Primary IS codes',
+        },
+        {
+          label: 'Related References',
+          value: 4,
+          detail: 'Normative companions & test methods',
+          tab: 'relationships' as AnalysisTab,
+          accent: 'border-ink-200 bg-white',
+          badge: 'Companions',
+        },
+        {
+          label: 'Specification Issues',
+          value: gaps.length || 3,
+          detail: '1 obsolete code, 2 spec gaps',
+          tab: 'gaps' as AnalysisTab,
+          accent: 'border-warning-200 bg-warning-50/20',
+          badge: 'Action required',
+        },
+        {
+          label: 'Regulatory Checks',
+          value: 6,
+          detail: 'Technical Regulations & Orders',
+          tab: 'certification' as AnalysisTab,
+          accent: 'border-blue-200 bg-blue-50/20',
+          badge: 'Statutory',
+        },
+      ];
 
   // Interactive human decision states
   const [requirements, setRequirements] = useState<MatchedRequirementItem[]>(initialRequirements);
@@ -153,41 +230,7 @@ export function AnalysisOverviewTab({ analysis }: Props) {
       {/* 1. TOP INTELLIGENCE METRIC STRIP (Compact Summary)                  */}
       {/* ------------------------------------------------------------------ */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          {
-            label: 'Applicable Standards',
-            value: 7,
-            detail: 'Primary & normative codes',
-            tab: 'standards' as AnalysisTab,
-            accent: 'border-teal-500/30 bg-white',
-            badge: 'Primary IS codes',
-          },
-          {
-            label: 'Related References',
-            value: 4,
-            detail: 'Normative companions & test methods',
-            tab: 'relationships' as AnalysisTab,
-            accent: 'border-ink-200 bg-white',
-            badge: 'Companions',
-          },
-          {
-            label: 'Specification Issues',
-            value: gaps.length || 3,
-            detail: '1 obsolete code, 2 spec gaps',
-            tab: 'gaps' as AnalysisTab,
-            accent: 'border-warning-200 bg-warning-50/20',
-            badge: 'Action required',
-          },
-          {
-            label: 'Regulatory Checks',
-            value: 6,
-            detail: 'Technical Regulations & Orders',
-            tab: 'certification' as AnalysisTab,
-            accent: 'border-blue-200 bg-blue-50/20',
-            badge: 'Statutory',
-          },
-
-        ].map((item) => (
+        {metricItems.map((item) => (
           <button
             key={item.label}
             onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: item.tab })}
@@ -229,14 +272,22 @@ export function AnalysisOverviewTab({ analysis }: Props) {
                       Primary Applicable Standard
                     </span>
 
-                    <Badge variant="teal">CURRENT · Reaffirmed 2022</Badge>
+                    {isReal ? (
+                      <Badge variant={statusConfig[primaryStandard.status].variant}>
+                        {statusConfig[primaryStandard.status].label}
+                      </Badge>
+                    ) : (
+                      <Badge variant="teal">CURRENT · Reaffirmed 2022</Badge>
+                    )}
                     {renderConfidenceBadge(primaryStandard.reviewConfidence)}
                   </div>
                   <h2 className="mt-1 text-lg font-semibold tracking-tight text-ink-900 sm:text-xl">
                     {primaryStandard.number} — {primaryStandard.title}
                   </h2>
                   <p className="mt-0.5 text-xs text-ink-500 font-mono">
-                    Edition {primaryStandard.edition} · Bureau: {primaryStandard.bureau} ({primaryStandard.section}) · {primaryStandard.pages} pages · Incorporates Amendment 1 & 2
+                    Edition {primaryStandard.edition} · Bureau: {primaryStandard.bureau} ({primaryStandard.section})
+                    {primaryStandard.pages ? ` · ${primaryStandard.pages} pages` : ''}
+                    {!isReal && ' · Incorporates Amendment 1 & 2'}
                   </p>
                 </div>
               </div>
@@ -249,12 +300,18 @@ export function AnalysisOverviewTab({ analysis }: Props) {
                       Applicability Score
                     </span>
                     <span className="font-mono text-base font-bold text-ink-900 tabular-nums">
-                      {primaryStandard.applicabilityScore || 91}%
+                      {primaryStandard.applicabilityScore != null
+                        ? `${primaryStandard.applicabilityScore}%`
+                        : isReal ? '—' : '91%'}
                     </span>
                   </div>
                   <div className="h-7 w-px bg-ink-200 mx-1" />
                   <span className="text-[11px] text-teal-800 font-medium">
-                    Strong Direct Match
+                    {isReal
+                      ? (primaryStandard.applicabilityScore != null && primaryStandard.applicabilityScore >= 70
+                          ? 'Strong match'
+                          : 'Relevant match')
+                      : 'Strong Direct Match'}
                   </span>
                 </div>
 
@@ -314,7 +371,12 @@ export function AnalysisOverviewTab({ analysis }: Props) {
                 </span>
               </div>
 
-              <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {isReal ? (
+                <p className="text-xs leading-relaxed text-ink-700">
+                  {primaryStandard.whyApplies || primaryStandard.summary}
+                </p>
+              ) : (
+                <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   {
                     category: 'Scope match',
@@ -356,7 +418,8 @@ export function AnalysisOverviewTab({ analysis }: Props) {
                     </div>
                   </div>
                 ))}
-              </div>
+                </div>
+              )}
 
               <div className="mt-3 flex items-center justify-between border-t border-ink-200/60 pt-2 text-xs text-ink-500">
                 <span className="flex items-center gap-1.5 text-[11px]">
@@ -508,6 +571,7 @@ export function AnalysisOverviewTab({ analysis }: Props) {
         </div>
 
         {/* Evidence Chain Visual Ribbon: Requirement → Standard → Clause → Evidence → Conclusion */}
+        {!isReal && (
         <div className="mb-5 rounded-lg border border-teal-200/80 bg-teal-50/30 p-3 text-xs">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-teal-800 mb-2">
             Auditable Procurement Intelligence Chain
@@ -535,6 +599,7 @@ export function AnalysisOverviewTab({ analysis }: Props) {
             </div>
           </div>
         </div>
+        )}
 
         {/* Evidence Card Selector & Excerpt */}
         <div className="grid gap-4 sm:grid-cols-3">

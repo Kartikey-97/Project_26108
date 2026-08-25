@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
@@ -27,6 +27,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from '@/router';
+import { createAnalysis, waitForAnalysis, getSampleDocument } from '@/services/api';
+import { statusBadge } from '@/services/adapter';
 import type { ProcurementProfile, ProfileParameter, ProfileFieldStatus } from '@/data/types';
 
 // Realistic sample data for LED Street Lighting tender
@@ -115,18 +117,91 @@ export function NewAnalysisPage() {
   // Extraction animation step
   const [extractionProgress, setExtractionProgress] = useState(0);
 
-  // Load sample data helper
-  const handleLoadSample = () => {
+  // Real backend submission state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFileObjects, setUploadedFileObjects] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatusLabel, setSubmitStatusLabel] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const formatSize = (bytes: number) =>
+    bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+
+  const addFiles = (picked: File[]) => {
+    if (picked.length === 0) return;
+    setUploadedFileObjects((prev) => [...prev, ...picked]);
+    setUploadedFiles((prev) => [...prev, ...picked.map((f) => ({ name: f.name, size: formatSize(f.size), pages: 0 }))]);
+  };
+
+  const removeFileAt = (idx: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== idx));
+    setUploadedFileObjects((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Load sample data helper — fetches the real bundled tender PDF for upload mode
+  const handleLoadSample = async () => {
     setAnalysisTitle('Municipal LED Street Lighting — Arterial Roads NIT #MCD-2024-LT-09');
     if (inputMode === 'upload') {
-      setUploadedFiles([
-        { name: SAMPLE_TENDER_FILENAME, size: '2.8 MB', pages: 18 },
-        { name: 'Technical_Specification_Schedule_B.docx', size: '420 KB', pages: 4 },
-      ]);
+      try {
+        const file = await getSampleDocument();
+        setUploadedFileObjects([file]);
+        setUploadedFiles([{ name: file.name, size: formatSize(file.size), pages: 18 }]);
+      } catch {
+        // Sample endpoint unavailable (backend cold/offline) — keep metadata; submit falls back to sample text
+        setUploadedFileObjects([]);
+        setUploadedFiles([{ name: SAMPLE_TENDER_FILENAME, size: '2.8 MB', pages: 18 }]);
+      }
     } else if (inputMode === 'paste') {
       setPastedSpec(SAMPLE_PASTED_SPEC);
     } else {
       setDescribedText(SAMPLE_DESCRIBED_TEXT);
+    }
+  };
+
+  // Confirm & run the real analysis on the live backend, then open the real result
+  const handleConfirmAndAnalyze = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitStatusLabel('Waking the analysis service (first run can take ~50s)…');
+    try {
+      let text: string | undefined;
+      let file: File | undefined;
+      if (inputMode === 'upload' && uploadedFileObjects[0]) {
+        file = uploadedFileObjects[0];
+      } else if (inputMode === 'paste' && pastedSpec.trim()) {
+        text = pastedSpec.trim();
+      } else if (inputMode === 'describe' && describedText.trim()) {
+        text = describedText.trim();
+      } else {
+        // Upload mode without a captured File (sample fetch failed) — submit the sample spec text
+        text = SAMPLE_PASTED_SPEC;
+      }
+
+      const created = await createAnalysis({
+        text,
+        file,
+        category: profile.category,
+        department: 'Procurement',
+        tenderTitle: analysisTitle.trim() || 'Untitled procurement analysis',
+      });
+      const analysisId = created.analysis_id;
+      setSubmitStatusLabel('Queued…');
+
+      const final = await waitForAnalysis(
+        analysisId,
+        (a: any) => setSubmitStatusLabel(`${statusBadge(a?.status).label}…`),
+        120000
+      );
+
+      if (final.status === 'failed') {
+        setSubmitError('The analysis service could not process this input. Try clearer specification text or a different document.');
+        setIsSubmitting(false);
+        return;
+      }
+      navigate({ name: 'analysis', analysisId, tab: 'overview' });
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Could not reach the analysis service. Please try again.');
+      setIsSubmitting(false);
     }
   };
 
@@ -354,10 +429,7 @@ export function NewAnalysisPage() {
                     onDrop={(e) => {
                       e.preventDefault();
                       setIsDragOver(false);
-                      setUploadedFiles([
-                        ...uploadedFiles,
-                        { name: e.dataTransfer.files[0]?.name || SAMPLE_TENDER_FILENAME, size: '2.4 MB', pages: 16 },
-                      ]);
+                      addFiles(Array.from(e.dataTransfer.files || []));
                     }}
                     className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
                       isDragOver
@@ -375,14 +447,20 @@ export function NewAnalysisPage() {
                       Supports PDF, DOCX, and TXT files up to 50 MB
                     </p>
                     <div className="mt-4 flex gap-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,.docx,.txt"
+                        multiple
+                        className="hidden"
+                        onChange={(e) => {
+                          addFiles(Array.from(e.target.files || []));
+                          e.target.value = '';
+                        }}
+                      />
                       <button
                         type="button"
-                        onClick={() =>
-                          setUploadedFiles([
-                            ...uploadedFiles,
-                            { name: `Tender_NIT_${Date.now().toString().slice(-4)}.pdf`, size: '2.8 MB', pages: 18 },
-                          ])
-                        }
+                        onClick={() => fileInputRef.current?.click()}
                         className="btn-secondary text-xs py-1.5 px-3"
                       >
                         Browse Files
@@ -413,12 +491,12 @@ export function NewAnalysisPage() {
                             <div className="min-w-0">
                               <p className="font-mono text-xs font-semibold text-ink-900 truncate">{file.name}</p>
                               <p className="text-[11px] text-ink-400">
-                                {file.size} · {file.pages} pages extracted
+                                {file.size}{file.pages > 0 ? ` · ${file.pages} pages extracted` : ''}
                               </p>
                             </div>
                           </div>
                           <button
-                            onClick={() => setUploadedFiles(uploadedFiles.filter((_, i) => i !== idx))}
+                            onClick={() => removeFileAt(idx)}
                             className="text-ink-400 hover:text-error-600 p-1"
                             aria-label="Remove file"
                           >
@@ -1095,22 +1173,32 @@ export function NewAnalysisPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => setStep('input')}
-                  >
-                    Edit Source Input
-                  </Button>
-                  <Button
-                    size="md"
-                    onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'overview' })}
-                    rightIcon={<ArrowRight size={15} />}
-                    className="shadow-soft active:scale-[0.98] transition-transform"
-                  >
-                    Confirm & Find Applicable Standards
-                  </Button>
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      onClick={() => setStep('input')}
+                      disabled={isSubmitting}
+                    >
+                      Edit Source Input
+                    </Button>
+                    <Button
+                      size="md"
+                      onClick={handleConfirmAndAnalyze}
+                      disabled={isSubmitting}
+                      rightIcon={isSubmitting ? <RefreshCw size={15} className="animate-spin" /> : <ArrowRight size={15} />}
+                      className="shadow-soft active:scale-[0.98] transition-transform"
+                    >
+                      {isSubmitting ? 'Analyzing…' : 'Confirm & Find Applicable Standards'}
+                    </Button>
+                  </div>
+                  {isSubmitting && submitStatusLabel && (
+                    <p className="max-w-[280px] text-right text-[11px] text-ink-500">{submitStatusLabel}</p>
+                  )}
+                  {submitError && (
+                    <p className="max-w-[300px] text-right text-[11px] font-medium text-error-600">{submitError}</p>
+                  )}
                 </div>
               </div>
             </Card>

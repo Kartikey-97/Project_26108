@@ -46,7 +46,8 @@ function mapStandardStatus(status = ''): StandardStatus {
   const s = status.toLowerCase();
   if (s.includes('supersed')) return 'superseded';
   if (s.includes('withdraw')) return 'withdrawn';
-  if (s.includes('review')) return 'under-review';
+  // backend enum: active | under_revision | reaffirmed | superseded | withdrawn | unknown
+  if (s.includes('review') || s.includes('revis')) return 'under-review';
   if (s.includes('amend')) return 'amended';
   return 'current';
 }
@@ -147,6 +148,9 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const requirements: any[] = raw?.requirements || [];
 
   const standards = rawStandards.map(adaptStandard);
+  // The backend returns standards ranked by relevance; treat the top match as the
+  // primary code so the Standards-tab "Primary" filter and highlight styling work.
+  if (standards[0]) standards[0].relationshipRole = 'primary';
   const stdById = new Map(standards.map((s, i) => [String(rawStandards[i].id ?? s.id), s]));
   const findingFor = (reqId: string) => findings.find((f) => f.requirement_id === reqId);
 

@@ -15,6 +15,19 @@ import type {
   StandardStatus,
   WorkspaceMember,
 } from './types';
+// Cache-first accessors: any analysis submitted at runtime is registered in the
+// runtime store and read here before the seeded mock records, so every tab shows
+// real backend data automatically. The seeded demo ids (an-001/002/003) have no
+// store entry and continue to resolve to the rich mocks below.
+import {
+  getRealAnalysis,
+  getRealEvidence,
+  getRealMatchedRequirements,
+  getRealRegulatory,
+  getRealRelationships,
+  getRealSpecRequirements,
+  getRealStandardById,
+} from './runtimeStore';
 
 
 
@@ -1399,11 +1412,11 @@ export const gapSeverityConfig: Record<Gap['severity'], { label: string; variant
 };
 
 export function getStandardById(id: string): Standard | undefined {
-  return standards.find((s) => s.id === id);
+  return getRealStandardById(id) || standards.find((s) => s.id === id);
 }
 
 export function getAnalysisById(id: string): Analysis | undefined {
-  return analyses.find((a) => a.id === id);
+  return getRealAnalysis(id) || analyses.find((a) => a.id === id);
 }
 
 export function getGapsByAnalysisId(analysisId: string): Gap[] {
@@ -1411,7 +1424,7 @@ export function getGapsByAnalysisId(analysisId: string): Gap[] {
 }
 
 export function getRelationshipsByAnalysisId(analysisId: string): StandardRelationship[] {
-  return relationships.filter((r) => r.analysisId === analysisId);
+  return getRealRelationships(analysisId) || relationships.filter((r) => r.analysisId === analysisId);
 }
 
 export function getReportsByAnalysisId(analysisId: string): Report[] {
@@ -1423,6 +1436,8 @@ export function getMemberById(id: string): WorkspaceMember | undefined {
 }
 
 export function getMatchedRequirementsByAnalysisId(analysisId: string): MatchedRequirementItem[] {
+  const real = getRealMatchedRequirements(analysisId);
+  if (real) return real;
   if (analysisId === 'an-001') {
     return matchedRequirements;
   }
@@ -1430,6 +1445,8 @@ export function getMatchedRequirementsByAnalysisId(analysisId: string): MatchedR
 }
 
 export function getEvidenceChainsByAnalysisId(analysisId: string): EvidenceChainItem[] {
+  const real = getRealEvidence(analysisId);
+  if (real) return real;
   if (analysisId === 'an-001') {
     return evidenceChains;
   }
@@ -1594,6 +1611,8 @@ export const regulatoryRequirements: RegulatoryRequirement[] = [
 ];
 
 export function getSpecificationRequirementsByAnalysisId(analysisId: string): SpecificationRequirement[] {
+  const real = getRealSpecRequirements(analysisId);
+  if (real) return real;
   if (analysisId === 'an-001') {
     return specificationRequirements;
   }
@@ -1601,6 +1620,8 @@ export function getSpecificationRequirementsByAnalysisId(analysisId: string): Sp
 }
 
 export function getRegulatoryRequirementsByAnalysisId(analysisId: string): RegulatoryRequirement[] {
+  const real = getRealRegulatory(analysisId);
+  if (real) return real;
   if (analysisId === 'an-001') {
     return regulatoryRequirements;
   }

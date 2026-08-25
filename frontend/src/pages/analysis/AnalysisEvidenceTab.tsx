@@ -180,7 +180,7 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
               Evidence & Provenance Workspace
             </h2>
             <span className="rounded bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-800 border border-teal-200 font-mono">
-              6 Verified Clause Mappings
+              {rawEvidence.length} Verified Clause Mapping{rawEvidence.length === 1 ? '' : 's'}
             </span>
           </div>
           <p className="text-xs text-ink-500 mt-0.5">
@@ -193,10 +193,14 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-ink-200 shadow-soft text-xs font-mono">
           <FileText size={14} className="text-teal-700 shrink-0" />
           <span className="text-ink-900 font-semibold truncate max-w-[220px]">
-            {analysisDocs[0]?.name || 'NIT_MCD_2024_LED_Specs.pdf'}
+            {analysisDocs[0]?.name || (analysis.documentCount > 0 ? 'Uploaded document' : 'Text specification')}
           </span>
-          <span className="text-ink-400">·</span>
-          <span className="text-ink-500">{analysisDocs[0]?.pages || 24} pgs</span>
+          {analysisDocs[0]?.pages ? (
+            <>
+              <span className="text-ink-400">·</span>
+              <span className="text-ink-500">{analysisDocs[0].pages} pgs</span>
+            </>
+          ) : null}
           <span className="rounded bg-success-50 text-success-800 px-1.5 py-0.5 text-[10px] font-bold border border-success-200">
             PARSED
           </span>
@@ -333,6 +337,7 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
 
         {/* RIGHT COLUMN: EVIDENCE INSPECTOR & 5-STEP PROVENANCE CHAIN (6 cols) */}
         <div className="lg:col-span-6 space-y-3">
+          {selectedItem ? (
           <Card padding="md" className="bg-white border-ink-200 shadow-soft h-full flex flex-col justify-between">
             <div className="space-y-4">
               {/* Inspector Header */}
@@ -529,7 +534,7 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
                   variant="primary"
                   size="sm"
                   className="flex-1"
-                  onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'gaps' })}
+                  onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'gaps' })}
                   leftIcon={<ShieldAlert size={13} />}
                 >
                   Specification Quality Tab
@@ -547,6 +552,17 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
               </div>
             </div>
           </Card>
+          ) : (
+            <Card padding="lg" className="flex h-full items-center justify-center border-ink-200 bg-white text-center shadow-soft">
+              <div>
+                <FileText size={22} className="mx-auto mb-2 text-ink-300" />
+                <p className="text-sm font-medium text-ink-700">No evidence to inspect</p>
+                <p className="mx-auto mt-1 max-w-xs text-xs text-ink-400">
+                  This analysis produced no source-backed clause mappings, or none is selected.
+                </p>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
 

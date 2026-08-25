@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   AlertTriangle,
@@ -30,6 +30,11 @@ import { useRouter } from '@/router';
 import { standards, statusConfig, procurementCategories } from '@/data/mockData';
 import type { Standard, StandardRelationshipRole, StandardStatus } from '@/data/types';
 import { StandardComparisonModal } from '@/components/standards/StandardComparisonModal';
+import { adaptStandard } from '@/services/adapter';
+import { listStandards, searchStandards } from '@/services/api';
+
+const toStandardArray = (res: any): any[] =>
+  Array.isArray(res) ? res : (res?.items || res?.results || res?.standards || res?.data || []);
 
 export function StandardsPage() {
   const { navigate } = useRouter();
@@ -42,6 +47,45 @@ export function StandardsPage() {
   // Comparison selection
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  // Real BIS catalog from the live backend (falls back to the seeded demo set until loaded/if offline)
+  const [baseStandards, setBaseStandards] = useState<Standard[]>(standards);
+  const [searchResults, setSearchResults] = useState<Standard[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    listStandards(0, 48)
+      .then((res) => {
+        const rows = toStandardArray(res).map(adaptStandard);
+        if (alive && rows.length) setBaseStandards(rows);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const q = search.trim();
+    if (q.length < 2) {
+      setSearchResults(null);
+      return;
+    }
+    let alive = true;
+    const t = setTimeout(() => {
+      searchStandards(q)
+        .then((res) => {
+          if (alive) setSearchResults(toStandardArray(res).map(adaptStandard));
+        })
+        .catch(() => {
+          if (alive) setSearchResults(null);
+        });
+    }, 300);
+    return () => {
+      alive = false;
+      clearTimeout(t);
+    };
+  }, [search]);
 
   const toggleCompare = (id: string) => {
     setSelectedForCompare((prev) => {
@@ -57,10 +101,12 @@ export function StandardsPage() {
 
   // Filter and sort standards
   const filteredStandards = useMemo(() => {
-    return standards
+    const usingServerSearch = searchResults !== null;
+    const source = searchResults ?? baseStandards;
+    return source
       .filter((s) => {
-        // Search query
-        if (search) {
+        // Search query (client-side only when not already server-filtered)
+        if (search && !usingServerSearch) {
           const q = search.toLowerCase();
           const matchNumber = s.number.toLowerCase().includes(q);
           const matchTitle = s.title.toLowerCase().includes(q);
@@ -103,14 +149,14 @@ export function StandardsPage() {
         // Default: relevance / applicability score
         return (b.applicabilityScore || 0) - (a.applicabilityScore || 0);
       });
-  }, [search, statusFilter, categoryFilter, relationshipFilter, sortBy]);
+  }, [search, statusFilter, categoryFilter, relationshipFilter, sortBy, baseStandards, searchResults]);
 
   // Featured / Recently Relevant items for research intelligence strip
   const featuredStandards = useMemo(() => {
-    return standards
+    return baseStandards
       .filter((s) => s.applicabilityScore && s.applicabilityScore >= 80)
       .slice(0, 3);
-  }, []);
+  }, [baseStandards]);
 
   // Relationship badge helper
   const renderRoleBadge = (role?: StandardRelationshipRole) => {

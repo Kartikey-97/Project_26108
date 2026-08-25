@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   CheckCircle2,
   Clock,
@@ -7,6 +8,7 @@ import {
   GitBranch,
   Lightbulb,
   ListChecks,
+  Loader2,
   ScrollText,
   ShieldCheck,
   Sparkles,
@@ -19,12 +21,20 @@ import { useRouter, type AnalysisTab } from '@/router';
 import {
   getAnalysisById,
   analysisStatusConfig,
-  getGapsByAnalysisId,
   getRelationshipsByAnalysisId,
   getEvidenceChainsByAnalysisId,
   getRegulatoryRequirementsByAnalysisId,
   getStandardById,
 } from '@/data/mockData';
+import {
+  isSeededAnalysisId,
+  hasRealAnalysis,
+  registerRealAnalysis,
+} from '@/data/runtimeStore';
+import { adaptAnalysis, statusBadge } from '@/services/adapter';
+// api.js is plain JS bridged via allowJs — named exports resolve as implicit any.
+import { getAnalysis, waitForAnalysis } from '@/services/api';
+import type { Analysis } from '@/data/types';
 import { formatDate } from '@/utils/format';
 import { AnalysisOverviewTab } from './analysis/AnalysisOverviewTab';
 import { AnalysisStandardsTab } from './analysis/AnalysisStandardsTab';
@@ -49,8 +59,117 @@ const tabs: { id: AnalysisTab; label: string; icon: typeof Sparkles }[] = [
 
 export function AnalysisPage({ analysisId, tab }: Props) {
   const { navigate } = useRouter();
-  const analysis = getAnalysisById(analysisId);
   const [mobileTabOpen, setMobileTabOpen] = useState(false);
+
+  // Seeded demo records (an-001/002/003) render synchronously from the rich mocks
+  // as guaranteed-good SIH showcases. Any other id is a real backend analysis:
+  // fetch → poll to terminal → adapt → register in the runtime store (which the
+  // mockData getters read first), then render the same UI with real data.
+  const seeded = isSeededAnalysisId(analysisId);
+  const isReal = !seeded;
+
+  const [analysis, setAnalysis] = useState<Analysis | undefined>(() =>
+    seeded || hasRealAnalysis(analysisId) ? getAnalysisById(analysisId) : undefined,
+  );
+  const [loading, setLoading] = useState<boolean>(isReal && !hasRealAnalysis(analysisId));
+  const [progressLabel, setProgressLabel] = useState('Loading analysis…');
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    // Seeded or already-registered real analyses need no fetch.
+    if (seeded || hasRealAnalysis(analysisId)) {
+      setAnalysis(getAnalysisById(analysisId));
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    setProgressLabel('Loading analysis…');
+
+    (async () => {
+      try {
+        // waitForAnalysis returns immediately if the analysis is already terminal,
+        // otherwise polls (500 ms) up to the timeout. 120 s covers Render cold starts.
+        const raw = await waitForAnalysis(
+          analysisId,
+          (a: any) => {
+            if (!cancelled) setProgressLabel(statusBadge(a?.status).label + '…');
+          },
+          120000,
+        );
+        if (cancelled) return;
+        const bundle = adaptAnalysis(raw);
+        registerRealAnalysis(bundle);
+        setAnalysis(bundle.analysis);
+        setLoading(false);
+      } catch (e: any) {
+        if (cancelled) return;
+        // Fall back to a one-shot fetch so a genuinely-missing id shows "not found"
+        // rather than a timeout error.
+        try {
+          const raw = await getAnalysis(analysisId);
+          if (cancelled) return;
+          const bundle = adaptAnalysis(raw);
+          registerRealAnalysis(bundle);
+          setAnalysis(bundle.analysis);
+          setLoading(false);
+          return;
+        } catch {
+          if (cancelled) return;
+        }
+        setError(
+          e?.message?.includes('timeout')
+            ? 'The analysis service is taking longer than expected (it may be waking from sleep). Please retry.'
+            : 'Could not load this analysis. It may still be processing, or the service is unavailable.',
+        );
+        setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [analysisId, seeded, reloadKey]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ivory-50 dark:bg-[#090D16]">
+        <TopNav variant="app" />
+        <div className="container-app py-24 text-center">
+          <Loader2 size={30} className="mx-auto mb-4 animate-spin text-teal-600" />
+          <p className="text-sm font-medium text-ink-900 dark:text-white">{progressLabel}</p>
+          <p className="mx-auto mt-1 max-w-sm text-xs text-ink-400 dark:text-slate-400">
+            Waking the analysis service if needed (the first run can take ~50s), then
+            extracting requirements and matching BIS standards.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ivory-50 dark:bg-[#090D16]">
+        <TopNav variant="app" />
+        <div className="container-app py-20 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warning-100">
+            <AlertTriangle size={24} className="text-warning-600" />
+          </div>
+          <p className="text-sm font-medium text-ink-900 dark:text-white">Couldn't load analysis</p>
+          <p className="mx-auto mt-1 max-w-md text-sm text-ink-400 dark:text-slate-400">{error}</p>
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <Button onClick={() => setReloadKey((k) => k + 1)}>Retry</Button>
+            <Button variant="secondary" onClick={() => navigate({ name: 'workspace' })}>
+              Back to Workspace
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!analysis) {
     return (
@@ -67,7 +186,6 @@ export function AnalysisPage({ analysisId, tab }: Props) {
   }
 
   const status = analysisStatusConfig[analysis.status];
-  const gaps = getGapsByAnalysisId(analysis.id);
   const rels = getRelationshipsByAnalysisId(analysis.id);
   const evChains = getEvidenceChainsByAnalysisId(analysis.id);
   const regRequirements = getRegulatoryRequirementsByAnalysisId(analysis.id);
@@ -88,11 +206,11 @@ export function AnalysisPage({ analysisId, tab }: Props) {
   const renderTab = () => {
     switch (activeTab) {
       case 'overview':
-        return <AnalysisOverviewTab analysis={analysis} />;
+        return <AnalysisOverviewTab analysis={analysis} isReal={isReal} />;
       case 'standards':
         return <AnalysisStandardsTab analysis={analysis} />;
       case 'relationships':
-        return <AnalysisRelationshipsTab analysisId={analysis.id} />;
+        return <AnalysisRelationshipsTab analysisId={analysis.id} isReal={isReal} />;
       case 'gaps':
         return <AnalysisGapsTab analysisId={analysis.id} />;
       case 'certification':
@@ -238,6 +356,19 @@ export function AnalysisPage({ analysisId, tab }: Props) {
               </div>
               <p className="text-sm font-medium text-ink-900">Analysis in progress</p>
               <p className="mt-1 text-sm text-ink-400">Standards identification typically takes 3–5 minutes.</p>
+            </Card>
+          ) : analysis.status === 'failed' ? (
+            <Card padding="lg" className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-error-100">
+                <AlertTriangle size={24} className="text-error-600" />
+              </div>
+              <p className="text-sm font-medium text-ink-900">Analysis failed</p>
+              <p className="mt-1 text-sm text-ink-400">
+                {analysis.summary || 'The analysis could not be completed. Please try submitting again.'}
+              </p>
+              <Button onClick={() => navigate({ name: 'new-analysis' })} className="mt-4">
+                Start a new analysis
+              </Button>
             </Card>
           ) : (
             <Card padding="lg" className="text-center">

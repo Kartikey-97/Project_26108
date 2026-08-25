@@ -58,6 +58,7 @@ import { StandardComparisonModal } from '@/components/standards/StandardComparis
 
 interface Props {
   analysisId: string;
+  isReal?: boolean;
 }
 
 type FilterType =
@@ -79,7 +80,7 @@ interface GraphNode {
   role: StandardRelationshipRole | 'equivalent' | 'supersedes';
 }
 
-export function AnalysisRelationshipsTab({ analysisId }: Props) {
+export function AnalysisRelationshipsTab({ analysisId, isReal = false }: Props) {
   const { navigate } = useRouter();
   const rels = getRelationshipsByAnalysisId(analysisId);
 
@@ -320,6 +321,63 @@ export function AnalysisRelationshipsTab({ analysisId }: Props) {
         };
     }
   };
+
+  // Real analyses: the hardcoded LED force-graph (with non-null getStandardById
+  // assertions) can't render — show a clean references list from the adapter data.
+  if (isReal) {
+    return (
+      <div className="space-y-4">
+        <Card padding="lg" className="bg-white border-ink-200 shadow-soft">
+          <div className="flex items-center gap-2 border-b border-ink-100 pb-3 mb-4">
+            <GitBranch size={16} className="text-teal-700" />
+            <div>
+              <h3 className="text-sm font-semibold text-ink-900">Standard References &amp; Relationships</h3>
+              <p className="text-xs text-ink-500 mt-0.5">
+                Normative references cited by the matched standards for this procurement.
+              </p>
+            </div>
+          </div>
+          {rels.length === 0 ? (
+            <div className="py-10 text-center">
+              <Share2 size={22} className="mx-auto mb-2 text-ink-300" />
+              <p className="text-sm font-medium text-ink-700">No cross-standard references identified</p>
+              <p className="mx-auto mt-1 max-w-sm text-xs text-ink-400">
+                Relationships appear when a matched standard cites other Indian or international
+                standards as normative references.
+              </p>
+            </div>
+          ) : (
+            <ul className="space-y-2.5">
+              {rels.map((rel) => {
+                const from = getStandardById(rel.fromStandardId);
+                return (
+                  <li
+                    key={rel.id}
+                    className="rounded-lg border border-ink-100 bg-ivory-50/40 p-3 text-xs transition-colors hover:border-ink-200"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-mono font-semibold text-ink-900">{rel.label}</span>
+                      {from && (
+                        <button
+                          onClick={() => navigate({ name: 'standard', standardId: from.id })}
+                          className="inline-flex items-center gap-1 font-medium text-teal-700 hover:text-teal-900"
+                        >
+                          View {from.number} <ArrowRight size={12} />
+                        </button>
+                      )}
+                    </div>
+                    {rel.description && (
+                      <p className="mt-1 leading-relaxed text-ink-600">{rel.description}</p>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -856,7 +914,7 @@ export function AnalysisRelationshipsTab({ analysisId }: Props) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'standards' })}
+                  onClick={() => navigate({ name: 'analysis', analysisId, tab: 'standards' })}
                 >
                   Standards Tab
                 </Button>
