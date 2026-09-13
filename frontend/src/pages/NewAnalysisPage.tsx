@@ -312,11 +312,15 @@ export function NewAnalysisPage() {
     try {
       if (demoFixture === 'hindi' || demoFixture === 'tamil') {
         setSubmitStatusLabel('Queued...');
-        await new Promise(r => setTimeout(r, 1000));
-        setSubmitStatusLabel('Matching against BIS directory...');
-        await new Promise(r => setTimeout(r, 2000));
-        setSubmitStatusLabel('Running analysis pipeline...');
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 1500));
+        setSubmitStatusLabel('Extracting text and identifying IS references...');
+        await new Promise(r => setTimeout(r, 3000));
+        setSubmitStatusLabel('Retrieving BIS standards metadata...');
+        await new Promise(r => setTimeout(r, 4000));
+        setSubmitStatusLabel('Running cross-lingual NLP mapping...');
+        await new Promise(r => setTimeout(r, 4000));
+        setSubmitStatusLabel('Generating compliance report...');
+        await new Promise(r => setTimeout(r, 2500));
         navigate({ name: 'analysis', analysisId: demoFixture === 'hindi' ? 'an-hindi' : 'an-tamil', tab: 'overview' });
         return;
       }

@@ -365,7 +365,21 @@ export function AnalysisStandardsTab({ analysis }: Props) {
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span>Edition: {standard.edition} ({standard.revision})</span>
                     <span>·</span>
-                    <span>Bureau: {standard.bureau} ({standard.section})</span>
+                    <span>Bureau: {standard.bureau} — {standard.section}</span>
+                    {standard.icsCode && (
+                      <>
+                        <span>·</span>
+                        <span title="International Classification for Standards">ICS: {standard.icsCode}</span>
+                      </>
+                    )}
+                    {standard.supersededBy && (
+                      <>
+                        <span>·</span>
+                        <span className="text-warning-700 font-semibold cursor-pointer hover:underline" onClick={() => navigate({ name: 'standard', standardId: standard.supersededBy! })}>
+                           → Upgraded to {getStandardById(standard.supersededBy!)?.number || standard.supersededBy}
+                        </span>
+                      </>
+                    )}
                     <span>·</span>
                     <span>{standard.pages} pages</span>
                     {standard.amendments && standard.amendments.length > 0 && (

@@ -77,6 +77,7 @@ export function AnalysisPage({ analysisId, tab }: Props) {
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     // Seeded or already-registered real analyses need no fetch.
     if (seeded || hasRealAnalysis(analysisId)) {
       setAnalysis(getAnalysisById(analysisId));

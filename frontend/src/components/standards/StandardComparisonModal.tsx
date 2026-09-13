@@ -307,6 +307,13 @@ export function StandardComparisonModal({
                     </div>
 
                     <div className="divide-y divide-ink-100">
+                      {/* Column Headers for Data */ }
+                      <div className="grid grid-cols-12 gap-3 px-3 py-1.5 bg-ivory-50/80 border-b border-ink-100 text-[10px] font-semibold uppercase tracking-wider text-ink-500 font-mono">
+                        <div className="col-span-12 sm:col-span-3">Property</div>
+                        <div className="col-span-12 sm:col-span-4 text-teal-800 truncate">{stdA.number}</div>
+                        <div className="col-span-12 sm:col-span-5 text-blue-800 truncate">{stdB.number}</div>
+                      </div>
+                      
                       {rows.map((row, idx) => (
                         <div key={idx} className="grid grid-cols-12 gap-3 p-3 text-xs hover:bg-ivory-50/50 transition-colors">
                           <div className="col-span-12 sm:col-span-3">
@@ -319,17 +326,11 @@ export function StandardComparisonModal({
                             )}
                           </div>
 
-                          <div className="col-span-12 sm:col-span-4 rounded bg-teal-50/20 p-2 border border-teal-100/60 font-mono text-[11px] text-ink-800 leading-relaxed">
-                            <span className="text-[10px] text-teal-800 uppercase block font-sans font-semibold mb-0.5">
-                              {stdA.number}
-                            </span>
+                          <div className="col-span-12 sm:col-span-4 rounded bg-teal-50/10 p-2 border border-teal-100/40 font-mono text-[11px] text-ink-800 leading-relaxed">
                             {row.valA}
                           </div>
 
-                          <div className="col-span-12 sm:col-span-5 rounded bg-blue-50/20 p-2 border border-blue-100/60 font-mono text-[11px] text-ink-800 leading-relaxed">
-                            <span className="text-[10px] text-blue-800 uppercase block font-sans font-semibold mb-0.5">
-                              {stdB.number}
-                            </span>
+                          <div className="col-span-12 sm:col-span-5 rounded bg-blue-50/10 p-2 border border-blue-100/40 font-mono text-[11px] text-ink-800 leading-relaxed">
                             {row.valB}
                           </div>
                         </div>

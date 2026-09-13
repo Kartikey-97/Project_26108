@@ -146,7 +146,7 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
   const [requirements, setRequirements] = useState<MatchedRequirementItem[]>(initialRequirements);
   const [primaryDecision, setPrimaryDecision] = useState<HumanDecision>('accepted');
   const [selectedEvidenceId, setSelectedEvidenceId] = useState<string | null>(evidenceChains[0]?.id || null);
-  const [statusFilter, setStatusFilter] = useState<'all' | MatchedRequirementStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | MatchedRequirementStatus | 'accepted' | 'rejected'>('all');
 
   const handleDecision = (reqId: string, decision: HumanDecision) => {
     setRequirements((prev) =>
@@ -156,6 +156,12 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
 
   const filteredRequirements = requirements.filter((r) => {
     if (statusFilter === 'all') return true;
+    if (statusFilter === 'accepted') return r.decision === 'accepted';
+    if (statusFilter === 'rejected') return r.decision === 'rejected';
+    
+    // For standard system filters (covered, partial, needs-review), hide rejected items.
+    if (r.decision === 'rejected') return false;
+    
     return r.status === statusFilter;
   });
 
@@ -462,6 +468,8 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
               { id: 'covered', label: 'Covered' },
               { id: 'partial', label: 'Partial' },
               { id: 'needs-review', label: 'Needs review' },
+              { id: 'accepted', label: 'Accepted' },
+              { id: 'rejected', label: 'Rejected' },
             ].map((f) => (
               <button
                 key={f.id}
@@ -483,12 +491,12 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
           {filteredRequirements.map((req) => (
             <div
               key={req.id}
-              className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 rounded-lg border border-ink-100 bg-ivory-50/40 p-3 text-xs hover:border-ink-200 hover:bg-ivory-50 transition-colors"
+              className={`flex flex-col lg:flex-row lg:items-center justify-between gap-3 rounded-lg border p-3 text-xs transition-colors ${req.decision === 'rejected' ? 'border-error-200 bg-error-50/20 opacity-75' : 'border-ink-100 bg-ivory-50/40 hover:border-ink-200 hover:bg-ivory-50'}`}
             >
               {/* Left: Requirement & Parameter Value */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-ink-900 text-xs">{req.requirement}</span>
+                  <span className={`font-semibold text-xs ${req.decision === 'rejected' ? 'line-through text-ink-500' : 'text-ink-900'}`}>{req.requirement}</span>
                   {renderReqStatusBadge(req.status)}
                   {renderConfidenceBadge(req.reviewConfidence)}
                 </div>
