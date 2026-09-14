@@ -37,12 +37,12 @@ class VectorStore:
     Qdrant vector store abstraction for indexing and searching Standard and Evidence vectors.
     """
 
-    STANDARDS_COLLECTION = "standards_collection"
-    EVIDENCE_COLLECTION = "evidence_collection"
+    STANDARDS_COLLECTION = os.getenv("QDRANT_STANDARDS_COLLECTION", "bis_standards_v1")
+    EVIDENCE_COLLECTION = os.getenv("QDRANT_EVIDENCE_COLLECTION", "evidence_collection")
 
     def __init__(
         self,
-        dimension: int = 384,
+        dimension: int = 3072,
         client: Optional[Any] = None,
         location: Optional[str] = ":memory:",
         url: Optional[str] = None,

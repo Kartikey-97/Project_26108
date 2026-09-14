@@ -562,6 +562,8 @@ class Analysis(BaseModel):
     # Results
     requirements: list[Requirement] = []
     findings: list[Finding] = []
+    qco_findings: list[dict] | None = None
+    product_profile: dict | None = None
 
     # Summary (generated after analysis is complete)
     summary: str | None = None
@@ -595,6 +597,8 @@ class SimulationScenario(BaseModel):
     # Results
     status: str = "pending"           # pending | completed | failed
     affected_findings: list[Finding] = []
+    qco_findings: list[dict] | None = None
+    product_profile: dict | None = None
     impact_summary: str | None = None
     mandatory_violations: list[str] = []  # QCO/mandatory requirements that would be violated
     created_at: datetime = Field(default_factory=_utcnow)

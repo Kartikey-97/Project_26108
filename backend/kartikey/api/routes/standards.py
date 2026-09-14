@@ -78,3 +78,13 @@ async def get_standard(standard_id: str) -> Standard:
             },
         )
     return standard
+
+@router.get("/bis-sync-status")
+async def bis_sync_status() -> dict:
+    """
+    Returns current BIS live sync status.
+    Safe to call with zero syncs — returns nulls gracefully.
+    Never raises.
+    """
+    from shared.sync_state import get_sync_status
+    return get_sync_status()

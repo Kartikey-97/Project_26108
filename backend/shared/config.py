@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     # Application
     # ------------------------------------------------------------------
+    enable_bis_sync: bool = Field(default=True)
     app_env: str = Field(default="development")
     app_debug: bool = Field(default=True)
     app_port: int = Field(default=8000)

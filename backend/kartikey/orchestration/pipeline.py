@@ -462,79 +462,7 @@ async def _step_enrich(
 
     registry = get_registry()
 
-    # --- Live BIS Metadata Enrichment ---
-    try:
-        from kshiraj.bis_live_ingestion.adapters.bis_client import BISClient
-        from kshiraj.bis_live_ingestion.sync import BISSyncService
-        
-        bis_client = BISClient()
-        sync_service = BISSyncService(bis_client, registry.standards_store)
-        
-        # 1. Identify Explicitly Cited
-        cited = {req.is_reference for req in analysis.requirements if getattr(req, "is_reference", None)}
-        
-        # 2. Identify Applicable/Final (Defensive parsing of aiml_response)
-        aiml_applicable_ids = set()
-        if aiml_response and hasattr(aiml_response, "findings"):
-            findings_list = getattr(aiml_response, "findings", [])
-            for f in findings_list:
-                if getattr(f, "verdict", "") in ("justified", "applicable", "requires_human_verification"):
-                    std_ids = getattr(f, "applicable_standard_ids", [])
-                    if isinstance(std_ids, list):
-                        aiml_applicable_ids.update(std_ids)
-                        
-        sync_count = 0
-        for std in retrieved_standards:
-            if sync_count >= 3:
-                break
-                
-            needs_sync = False
-            if std.is_number in cited:
-                needs_sync = True
-            elif getattr(std, "id", None) in aiml_applicable_ids:
-                needs_sync = True
-            elif getattr(std, "status", None) == StandardStatus.UNKNOWN:
-                needs_sync = True
-                
-            if needs_sync:
-                # Build exact canonical designation
-                designation = std.is_number
-                if std.part and std.section:
-                    designation += f" ({std.part}/{std.section})"
-                elif std.part:
-                    designation += f" ({std.part})"
-                if std.year:
-                    designation += f":{std.year}"
-                
-                result = await asyncio.to_thread(
-                        sync_service.sync_designation,
-                        designation,
-                    )
-                
-                # Persist evidence
-                if result.evidence:
-                    for ev in result.evidence:
-                        registry.evidence_store.upsert(ev)
-                        
-                sync_count += 1
-                
-        # Refresh retrieved_standards from the store so they reflect the merged data
-        updated_stds = []
-        for std in retrieved_standards:
-            fresh = registry.standards_store.get_by_id(std.id)
-            if fresh:
-                fresh_copy = fresh.model_copy()
-                fresh_copy.relevance_score = std.relevance_score
-                fresh_copy.semantic_score = getattr(std, "semantic_score", None)
-                updated_stds.append(fresh_copy)
-            else:
-                updated_stds.append(std)
-        retrieved_standards = updated_stds
-        
-    except Exception as exc:
-        import logging
-        logging.getLogger(__name__).warning("Live BIS enrichment failed, continuing with offline catalog: %s", exc)
-    # ------------------------------------
+
 
     # Pass lookup dicts to the assembler so it can resolve any ID the AI/ML returns
     # to a real object. This enforces the anti-hallucination guardrail.
@@ -566,6 +494,34 @@ async def _step_enrich(
         len(retrieved_standards),
     )
 
+    # ── QCO Applicability Check ────────────────────────────────────────────────
+    try:
+        from kartikey.analysis.certification_engine import check_qco_applicability
+        _profile = {}
+        if hasattr(analysis, 'product_profile') and analysis.product_profile:
+            _profile = analysis.product_profile if isinstance(analysis.product_profile, dict) else {}
+        _is_nums = []
+        for std in (retrieved_standards or []):
+            if hasattr(std, 'designation') and std.designation:
+                _is_nums.append(std.designation)
+            elif hasattr(std, 'is_number') and std.is_number:
+                _is_nums.append(std.is_number)
+        _qco_results = check_qco_applicability(
+            product_profile=_profile,
+            matched_is_numbers=_is_nums,
+        )
+        analysis.qco_findings = _qco_results  # Store on analysis object
+        logger.info("QCO check: %d applicable orders found for analysis %s", len(_qco_results), analysis.id)
+    except Exception as exc:
+        logger.warning("QCO check failed silently: %s", exc)
+        # Never crash the pipeline
+    # ── End QCO Check ──────────────────────────────────────────────────────────
+
+    # ── Non-blocking BIS live sync (fire-and-forget) ───────────────────────────
+    asyncio.create_task(_trigger_bis_sync(analysis))
+    # ── End BIS sync trigger ───────────────────────────────────────────────────
+
+
 
 # ===========================================================================
 # Internal helpers
@@ -580,3 +536,64 @@ def _transition(analysis: Analysis, new_status: AnalysisStatus) -> None:
         "Analysis %s: %s → %s",
         analysis.id, old, new_status.value,
     )
+
+async def _trigger_bis_sync(analysis: Analysis) -> None:
+    """
+    Fire-and-forget BIS live metadata sync for matched standards.
+
+    RULES (all must be respected):
+    1. NEVER raises — any exception is logged and swallowed silently.
+    2. NEVER blocks the pipeline — called as asyncio.create_task().
+    3. Only syncs up to 3 standards (don't hammer BIS portal).
+    4. Respects ENABLE_BIS_SYNC env/config — disabled in tests.
+    5. Handles null BIS responses: if result.errors is non-empty, records
+       the errors so the UI can show "sync attempted — N errors" gracefully.
+    """
+    from shared.config import get_settings
+    cfg = get_settings()
+    if not getattr(cfg, 'enable_bis_sync', True):
+        return
+
+    try:
+        from kshiraj.bis_live_ingestion.adapters.bis_client import BISClient, BISClientConfig
+        from kshiraj.bis_live_ingestion.sync import BISSyncService
+        from kartikey.orchestration.knowledge_registry import KnowledgeRegistry
+        from shared.sync_state import record_sync_result
+        from datetime import datetime, timezone
+
+        registry = KnowledgeRegistry.get_instance()
+        store = registry.standards_store
+
+        # Collect IS designations for the first 3 matched standards
+        # Note: Analysis model uses snake_case 'matched_standard_ids'
+        is_numbers: list[str] = []
+        for std_id in (getattr(analysis, "matched_standard_ids", []) or [])[:3]:
+            std = store.get_by_id(std_id)
+            if std and getattr(std, 'designation', None):
+                is_numbers.append(std.designation)
+            elif std and getattr(std, 'is_number', None):
+                is_numbers.append(std.is_number)
+
+        if not is_numbers:
+            logger.debug("BIS sync: no designations to sync for analysis %s", analysis.id)
+            return
+
+        client_config = BISClientConfig(timeout_seconds=10.0, max_retries=1)
+        with BISClient(config=client_config) as client:
+            svc = BISSyncService(client=client, standards_store=store)
+            for is_number in is_numbers:
+                result = svc.sync_designation(is_number)
+                record_sync_result(
+                    is_number=is_number,
+                    synced_at=datetime.now(timezone.utc),
+                    changed=result.changed,
+                    errors=result.errors,  # May be empty (success) or non-empty (partial/fail)
+                )
+                if result.errors:
+                    logger.warning("BIS sync error for %s: %s", is_number, result.errors)
+                else:
+                    logger.info("BIS sync OK: %s changed=%s", is_number, result.changed)
+
+    except Exception as exc:
+        # Absolute last-resort catch — pipeline must never see this exception
+        logger.warning("BIS sync _trigger_bis_sync failed: %s", exc)

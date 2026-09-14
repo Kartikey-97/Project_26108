@@ -132,3 +132,9 @@ backend/test_webhook*.py
 backend/test_http_e2e.py
 backend/dump_demo_output.py
 backend/check_models.py
+
+# Additional rules
+.venv*
+*.npy
+backend/uploads/
+backend/:memory:*

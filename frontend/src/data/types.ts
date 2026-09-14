@@ -192,6 +192,7 @@ export interface Analysis {
   matchedStandardIds: string[];
   gapIds: string[];
   documentIds: string[];
+  qco_findings?: any[];
 }
 
 export interface Gap {

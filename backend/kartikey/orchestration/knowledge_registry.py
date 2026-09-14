@@ -257,13 +257,19 @@ def initialize_knowledge_registry() -> KnowledgeRegistry:
     retrieval_reason = "Semantic retrieval is not initialized."
     if settings.semantic_retrieval_enabled:
       try:
-        embedding_service = EmbeddingService(model_name="BAAI/bge-small-en-v1.5")
+        embedding_service = EmbeddingService(model_name="gemini-embedding-001")
         vector_store = VectorStore(dimension=embedding_service.dimension)
+        vector_store.create_collections_if_needed()
 
-        if standards_list:
-            logger.info("Indexing standards in VectorStore (this may take a few seconds)...")
-            vector_store.create_collections_if_needed()
-
+        existing_count = vector_store.count_standards()
+        if existing_count > 0:
+            logger.info(
+                "Qdrant collection '%s' already populated with %d standards. Skipping startup indexing.",
+                vector_store.standards_collection,
+                existing_count,
+            )
+        elif standards_list and not vector_store._url:
+            logger.info("Indexing standards in local VectorStore (this may take a few seconds)...")
             batch_size = 100
             for i in range(0, len(standards_list), batch_size):
                 batch = standards_list[i:i + batch_size]

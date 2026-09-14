@@ -226,6 +226,7 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
         total_requirements=analysis.total_requirements,
         standards=all_standards,
         findings=analysis.findings,
+        qco_findings=getattr(analysis, "qco_findings", None) or [],
         issues_found=analysis.issues_found,
         summary=analysis.summary,
         error_message=analysis.error_message,

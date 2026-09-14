@@ -21,7 +21,6 @@ pgvector>=0.3.0
 # Optional semantic retrieval runtime (the application degrades to lexical
 # retrieval when these or their model assets are unavailable)
 qdrant-client>=1.7.0
-sentence-transformers>=2.7.0
 
 # Document processing
 PyMuPDF>=1.24.0              # Fast PDF text extraction with excellent Unicode/Hindi support

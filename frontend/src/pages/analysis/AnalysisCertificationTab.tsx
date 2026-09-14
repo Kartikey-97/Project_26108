@@ -52,11 +52,40 @@ interface Props {
   analysis: Analysis;
 }
 
+function qcoFindingToRegulatoryRequirement(
+  qco: any,
+  analysisId: string
+): RegulatoryRequirement {
+  return {
+    id: `reg-qco-${qco.is_number.replace(/\W+/g, '-')}`,
+    analysisId,
+    type: 'mandatory-standard',
+    status: 'needs-review',
+    reviewConfidence: qco.confidence >= 0.95 ? 'high-confidence' : 'needs-review',
+    title: `Mandatory BIS Certification: ${qco.is_number}`,
+    issuingAuthority: qco.issuing_ministry || 'DPIIT',
+    description: qco.mandate_text || 'Compliance with QCO is mandatory.',
+    relatedStandardIds: [],
+    matchReason: qco.match_reasons.includes('product_keyword_match') 
+      ? `Matched based on product description (${(qco.products_covered || []).join(', ')})`
+      : 'Exact IS number match',
+    evidenceSnippet: qco.notification_title + (qco.gazette_so_number ? ` (${qco.gazette_so_number})` : ''),
+    evidenceSource: 'Quality Control Order Database',
+    actionRequired: 'Verify product coverage and ensure manufacturer holds valid BIS licence.',
+    dueDate: qco.effective_date,
+    link: qco.source_url
+  };
+}
+
 export function AnalysisCertificationTab({ analysis }: Props) {
   const { navigate } = useRouter();
   
   // Use mock data for demo, or generate from real standards if available
   let rawRequirements = getRegulatoryRequirementsByAnalysisId(analysis.id);
+  
+  if (analysis.qco_findings && analysis.qco_findings.length > 0) {
+    rawRequirements = analysis.qco_findings.map(q => qcoFindingToRegulatoryRequirement(q, analysis.id));
+  }
   
   if (analysis?.standards_intelligence?.length > 0 && rawRequirements.length === 0) {
      rawRequirements = analysis.standards_intelligence.slice(0, 2).map((std, i) => ({

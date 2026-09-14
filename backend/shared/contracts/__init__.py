@@ -85,6 +85,7 @@ class AnalysisResponse(BaseModel):
     standards: list[Standard] = []     # all unique standards referenced across findings
     findings: list[Finding] = []
     issues_found: int = 0
+    qco_findings: list[dict] | None = None
 
     # Populated after completion
     summary: str | None = None

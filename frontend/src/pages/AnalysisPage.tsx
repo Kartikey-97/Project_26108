@@ -209,7 +209,7 @@ export function AnalysisPage({ analysisId, tab }: Props) {
       case 'overview':
         return <AnalysisOverviewTab analysis={analysis} isReal={isReal} />;
       case 'standards':
-        return <AnalysisStandardsTab analysis={analysis} />;
+        return <AnalysisStandardsTab analysis={analysis} isReal={isReal} />;
       case 'relationships':
         return <AnalysisRelationshipsTab analysis={analysis} isReal={isReal} />;
       case 'gaps':

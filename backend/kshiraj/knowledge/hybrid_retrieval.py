@@ -187,8 +187,19 @@ class HybridRetrievalService:
         for hit in vector_hits:
             std_id = hit.get("id")
             score = hit.get("score", 0.0)
+            payload = hit.get("payload", {}) or {}
+            is_num = payload.get("is_number") or payload.get("normalized_is_number")
+
+            std_obj = None
             if std_id:
-                vector_scores_by_id[std_id] = float(score)
+                std_obj = self.standards_store.get_by_id(std_id)
+            if std_obj is None and is_num:
+                matches = self.standards_store.get_by_is_number(is_num)
+                if matches:
+                    std_obj = matches[0]
+
+            if std_obj:
+                vector_scores_by_id[std_obj.id] = float(score)
 
         # Collect union of candidate standard IDs
         all_candidate_ids = set(lex_candidates_by_id.keys()).union(set(vector_scores_by_id.keys()))
