@@ -59,7 +59,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
 
   // Detect the built-in LED street-lighting demo so we can show the AI improve panel.
   const _analysis = isReal ? getAnalysisById(analysisId) : null;
-  const isLedDemo = isReal && (_analysis?.title?.includes(LED_DEMO_TITLE_MARKER) ?? false);
+  const isLedDemo = analysisId === 'an-001' || (isReal && (_analysis?.title?.includes(LED_DEMO_TITLE_MARKER) ?? false));
 
   const [showImprove, setShowImprove] = useState(false);
   const [search, setSearch] = useState('');
@@ -236,7 +236,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 Specification Coverage
               </span>
               <div className="flex items-baseline gap-1.5 mt-0.5">
-                <span className="text-2xl font-bold font-mono text-teal-950">{isReal ? `${coveragePct}%` : '82%'}</span>
+                <span className="text-2xl font-bold font-mono text-teal-950">{coveragePct}%</span>
                 <span className="text-[11px] text-teal-700">adequacy match</span>
               </div>
             </div>
@@ -251,7 +251,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Requirements Covered
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-success-700">{isReal ? coveredCount : 6}</span>
+              <span className="text-2xl font-bold font-mono text-success-700">{coveredCount}</span>
               <span className="text-[11px] text-ink-500">fully specified</span>
             </div>
           </div>
@@ -262,7 +262,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Review Recommended
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-warning-700">{isReal ? reviewCount : 3}</span>
+              <span className="text-2xl font-bold font-mono text-warning-700">{reviewCount}</span>
               <span className="text-[11px] text-ink-500">needs clarification</span>
             </div>
           </div>
@@ -273,8 +273,8 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Missing / Flagged
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-error-700">{isReal ? `${missingCount} Missing` : '2 Missing'}</span>
-              <span className="text-[11px] text-amber-800 font-medium">{isReal ? `· ${restrictiveCount} Restrictive` : '· 1 Restrictive'}</span>
+              <span className="text-2xl font-bold font-mono text-error-700">{missingCount} Missing</span>
+              <span className="text-[11px] text-amber-800 font-medium">· {restrictiveCount} Restrictive</span>
             </div>
           </div>
         </div>
@@ -390,7 +390,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
 
               <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-amber-200/60 pt-2 text-[11px] text-amber-900">
                 <span>
-                  <strong>Flagged Requirement:</strong> {restrictiveItems[0].requirement}{!isReal && ' (CCT 3950K–4050K)'}
+                  <strong>Flagged Requirement:</strong> {restrictiveItems[0].requirement}{isLedDemo && ' (CCT 3950K–4050K)'}
                 </span>
                 <button
                   onClick={() => {
@@ -421,12 +421,12 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 Filter:
               </span>
               {[
-                { id: 'all', label: `All (${isReal ? total : 11})` },
-                { id: 'covered', label: `Covered (${isReal ? coveredCount : 6})` },
-                { id: 'review', label: `Review (${isReal ? reviewCount : 2})` },
-                { id: 'missing', label: `Missing (${isReal ? missingCount : 2})` },
-                { id: 'conflicting', label: `Conflicting (${isReal ? conflictingCount : 1})` },
-                { id: 'restrictive', label: `Restrictive (${isReal ? restrictiveCount : 1})` },
+                { id: 'all', label: `All (${total})` },
+                { id: 'covered', label: `Covered (${coveredCount})` },
+                { id: 'review', label: `Review (${reviewCount})` },
+                { id: 'missing', label: `Missing (${missingCount})` },
+                { id: 'conflicting', label: `Conflicting (${conflictingCount})` },
+                { id: 'restrictive', label: `Restrictive (${restrictiveCount})` },
               ].map((tab) => (
                 <button
                   key={tab.id}

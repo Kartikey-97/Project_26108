@@ -279,11 +279,15 @@ export async function uploadDocument(file) {
   return request('/documents/upload', { method: 'POST', body: form });
 }
 
-export async function createAnalysis({ text, file, category, department, tenderTitle }) {
+export async function createAnalysis({ text, file, document_id, category, department, tenderTitle }) {
   let body;
-  if (file) {
-    const document = await uploadDocument(file);
-    body = { input_type: 'document', document_id: document.document_id, tender_title: tenderTitle, metadata: { category, department } };
+  if (document_id || file) {
+    let finalDocId = document_id;
+    if (!finalDocId && file) {
+      const document = await uploadDocument(file);
+      finalDocId = document.document_id;
+    }
+    body = { input_type: 'document', document_id: finalDocId, tender_title: tenderTitle, metadata: { category, department } };
   } else {
     body = { input_type: 'text', text, tender_title: tenderTitle, metadata: { category, department } };
   }
@@ -323,9 +327,15 @@ export async function extractProfilePreview({ text, file, category }) {
     document_id = document.document_id;
   }
   
-  return request('/analyses/extract-profile', {
+  const profileData = await request('/analyses/extract-profile', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, document_id, category }),
+    body: JSON.stringify({
+      text: file ? undefined : text,
+      document_id,
+      category
+    })
   });
+  
+  return { ...profileData, document_id };
 }

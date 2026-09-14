@@ -241,6 +241,7 @@ export function NewAnalysisPage() {
   const [pastedSpec, setPastedSpec] = useState('');
   const [describedText, setDescribedText] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [documentId, setDocumentId] = useState<string | null>(null);
 
   // Profile data
   const [profile, setProfile] = useState<ProcurementProfile>(INITIAL_PROFILE);
@@ -328,7 +329,9 @@ export function NewAnalysisPage() {
       let text: string | undefined;
       let file: File | undefined;
       if (inputMode === 'upload' && uploadedFileObjects[0]) {
-        file = uploadedFileObjects[0];
+        if (!documentId) {
+          file = uploadedFileObjects[0];
+        }
       } else if (inputMode === 'paste' && pastedSpec.trim()) {
         text = pastedSpec.trim();
       } else if (inputMode === 'describe' && describedText.trim()) {
@@ -338,10 +341,10 @@ export function NewAnalysisPage() {
         text = SAMPLE_PASTED_SPEC;
       }
 
-
       const created = await createAnalysis({
         text,
         file,
+        document_id: documentId,
         category: profile.category,
         department: 'Procurement',
         tenderTitle: analysisTitle.trim() || 'Untitled procurement analysis',
@@ -423,6 +426,9 @@ export function NewAnalysisPage() {
 
       const res = await extractProfilePreview({ text, file, category: profile.category });
       setProfile(res);
+      if (res.document_id) {
+        setDocumentId(res.document_id);
+      }
       setExtractionProgress(4);
       setTimeout(() => setStep('profile'), 500);
     } catch (err) {
