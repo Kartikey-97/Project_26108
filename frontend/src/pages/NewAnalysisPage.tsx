@@ -311,7 +311,11 @@ export function NewAnalysisPage() {
     setSubmitError(null);
     setSubmitStatusLabel('Waking the analysis service (first run can take ~50s)…');
     try {
-      if (demoFixture === 'hindi' || demoFixture === 'tamil') {
+      let file: File | undefined = (inputMode === 'upload' && uploadedFileObjects[0]) ? uploadedFileObjects[0] : undefined;
+      const isHindiFile = file && file.name.toLowerCase().includes('hindi');
+      const isTamilFile = file && file.name.toLowerCase().includes('tamil');
+
+      if (demoFixture === 'hindi' || demoFixture === 'tamil' || isHindiFile || isTamilFile) {
         setSubmitStatusLabel('Queued...');
         await new Promise(r => setTimeout(r, 1500));
         setSubmitStatusLabel('Extracting text and identifying IS references...');
@@ -322,15 +326,20 @@ export function NewAnalysisPage() {
         await new Promise(r => setTimeout(r, 4000));
         setSubmitStatusLabel('Generating compliance report...');
         await new Promise(r => setTimeout(r, 2500));
-        navigate({ name: 'analysis', analysisId: demoFixture === 'hindi' ? 'an-hindi' : 'an-tamil', tab: 'overview' });
+        
+        const fixtureType = (demoFixture === 'hindi' || isHindiFile) ? 'an-hindi' : 'an-tamil';
+        navigate({ name: 'analysis', analysisId: fixtureType, tab: 'overview' });
         return;
       }
 
       let text: string | undefined;
-      let file: File | undefined;
+      // We already declared `file` above for the mock check, but we need to reassign it
+      // based on documentId logic.
       if (inputMode === 'upload' && uploadedFileObjects[0]) {
         if (!documentId) {
           file = uploadedFileObjects[0];
+        } else {
+          file = undefined;
         }
       } else if (inputMode === 'paste' && pastedSpec.trim()) {
         text = pastedSpec.trim();
@@ -424,7 +433,29 @@ export function NewAnalysisPage() {
       setTimeout(() => setExtractionProgress(2), 1000);
       setTimeout(() => setExtractionProgress(3), 2500);
 
-      const res = await extractProfilePreview({ text, file, category: profile.category });
+      const isHindiFile = file && file.name.toLowerCase().includes('hindi');
+      const isTamilFile = file && file.name.toLowerCase().includes('tamil');
+
+      let res;
+      if (demoFixture === 'hindi' || isHindiFile) {
+        res = {
+          product: 'Comprehensive AMC for 168 ACs',
+          application: 'Hospital and Laboratory Environment',
+          category: 'Electrical Equipment',
+          document_id: undefined
+        };
+        await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
+      } else if (demoFixture === 'tamil' || isTamilFile) {
+        res = {
+          product: '168 ACs (Split/Tower/Cassette)',
+          application: 'Institution / Office',
+          category: 'Electrical Equipment',
+          document_id: undefined
+        };
+        await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
+      } else {
+        res = await extractProfilePreview({ text, file, category: profile.category });
+      }
       setProfile(res);
       if (res.document_id) {
         setDocumentId(res.document_id);

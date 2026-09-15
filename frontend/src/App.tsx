@@ -37,7 +37,15 @@ function AppRouter() {
   }
 }
 
+import { useEffect } from 'react';
+import { getBackendHealth } from '@/services/api';
+
 function App() {
+  useEffect(() => {
+    // Silently ping the backend to wake up the Render free instance
+    getBackendHealth().catch(() => {});
+  }, []);
+
   return (
     <ThemeProvider>
       <RouterProvider>
