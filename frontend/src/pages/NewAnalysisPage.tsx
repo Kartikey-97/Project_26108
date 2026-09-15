@@ -433,11 +433,8 @@ export function NewAnalysisPage() {
       setTimeout(() => setExtractionProgress(2), 1000);
       setTimeout(() => setExtractionProgress(3), 2500);
 
-      const isHindiFile = file && file.name.toLowerCase().includes('hindi');
-      const isTamilFile = file && file.name.toLowerCase().includes('tamil');
-
       let res;
-      if (demoFixture === 'hindi' || isHindiFile) {
+      if (demoFixture === 'hindi') {
         res = {
           product: 'Comprehensive AMC for 168 ACs',
           application: 'Hospital and Laboratory Environment',
@@ -449,7 +446,7 @@ export function NewAnalysisPage() {
           regulatoryMentions: []
         };
         await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
-      } else if (demoFixture === 'tamil' || isTamilFile) {
+      } else if (demoFixture === 'tamil') {
         res = {
           product: '168 ACs (Split/Tower/Cassette)',
           application: 'Institution / Office',
