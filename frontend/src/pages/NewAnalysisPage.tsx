@@ -442,7 +442,11 @@ export function NewAnalysisPage() {
           product: 'Comprehensive AMC for 168 ACs',
           application: 'Hospital and Laboratory Environment',
           category: 'Electrical Equipment',
-          document_id: undefined
+          document_id: undefined,
+          technicalParameters: [],
+          performanceRequirements: [],
+          testingRequirements: [],
+          regulatoryMentions: []
         };
         await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
       } else if (demoFixture === 'tamil' || isTamilFile) {
@@ -450,7 +454,11 @@ export function NewAnalysisPage() {
           product: '168 ACs (Split/Tower/Cassette)',
           application: 'Institution / Office',
           category: 'Electrical Equipment',
-          document_id: undefined
+          document_id: undefined,
+          technicalParameters: [],
+          performanceRequirements: [],
+          testingRequirements: [],
+          regulatoryMentions: []
         };
         await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
       } else {
