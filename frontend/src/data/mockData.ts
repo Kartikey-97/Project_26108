@@ -1648,7 +1648,7 @@ export function getRegulatoryRequirementsByAnalysisId(analysisId: string): Regul
 
 export const hindiAnalysis: Analysis = {
   id: 'an-hindi',
-  title: 'व्यापक एएमसी / Comprehensive AMC for 168 ACs at BRIC-NIBMG',
+  title: 'Untitled procurement analysis',
   category: 'HVAC Maintenance',
   status: 'completed',
   createdAt: '2026-09-11T10:00:00Z',

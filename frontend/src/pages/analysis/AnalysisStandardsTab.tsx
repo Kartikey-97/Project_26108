@@ -61,8 +61,16 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
   } | null>(null);
 
   useEffect(() => {
-    if (!isReal) return;
     let cancelled = false;
+    
+    if (!isReal) {
+      // Simulate the sync check for seeded demos
+      setTimeout(() => {
+        if (!cancelled) setBisSync({ last_synced_at: null, total_synced: 0, error_count: 0 });
+      }, 1000);
+      return () => { cancelled = true; };
+    }
+
     fetch('/api/v1/standards/bis-sync-status')
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -189,32 +197,30 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Live BIS Sync Badge — only shown for real backend analyses */}
-      {isReal && (
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-emerald-900/40 text-emerald-600 border border-emerald-700">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live BIS Sync
+      {/* Live BIS Sync Badge */}
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-emerald-900/40 text-emerald-600 border border-emerald-700">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Live BIS Sync
+        </span>
+        {bisSync === null ? (
+          <span className="text-xs text-ink-600">Checking BIS portal...</span>
+        ) : bisSync.last_synced_at ? (
+          <span className="text-xs text-ink-500">
+            Last checked:{' '}
+            {new Date(bisSync.last_synced_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+            {bisSync.error_count > 0 && (
+              <span className="ml-2 text-amber-500">
+                ({bisSync.error_count} standard(s) could not be verified from BIS portal)
+              </span>
+            )}
           </span>
-          {bisSync === null ? (
-            <span className="text-xs text-ink-600">Checking BIS portal...</span>
-          ) : bisSync.last_synced_at ? (
-            <span className="text-xs text-ink-500">
-              Last checked:{' '}
-              {new Date(bisSync.last_synced_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-              {bisSync.error_count > 0 && (
-                <span className="ml-2 text-amber-500">
-                  ({bisSync.error_count} standard(s) could not be verified from BIS portal)
-                </span>
-              )}
-            </span>
-          ) : (
-            <span className="text-xs text-ink-400">
-              Analysis complete — BIS sync pending
-            </span>
-          )}
-        </div>
-      )}
+        ) : (
+          <span className="text-xs text-ink-400">
+            Analysis complete — BIS sync pending
+          </span>
+        )}
+      </div>
       {/* Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-ink-100 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
