@@ -440,10 +440,31 @@ export function NewAnalysisPage() {
           application: 'Hospital and Laboratory Environment',
           category: 'Electrical Equipment',
           document_id: undefined,
-          technicalParameters: [],
-          performanceRequirements: [],
-          testingRequirements: [],
-          regulatoryMentions: []
+          technicalParameters: [
+            'Equipment Scope: Split, Tower, Cassette ACs',
+            'Component Replacement: Compressor, Condenser Coil, Evaporator fan motor, PCB, Capacitors',
+            'Gas Charging & Refrigerant Leak Testing using R-32 or R-410A'
+          ],
+          performanceRequirements: [
+            'Maintenance Frequency: 4 scheduled preventive visits per year (2 wet, 2 dry season)',
+            'Correction of operational failures detected during regular inspection',
+            'Net Worth: Not eroded by more than 30% in last 3 years'
+          ],
+          testingRequirements: [
+            'Details of similar work and completion certificates during last 5 years'
+          ],
+          regulatoryMentions: [
+            'Minimum turnover of ₹ 1.21 lakh is required in any one year during last 5 years.',
+            'वित्तीय व्यिहायषता •वतयमान अनुपात का औसत गुणांक: 1 से अधधक',
+            'The average coefficient of debt ratio (Total Debt / Total Assets): Less than 50%',
+            'टिषओिर: ननववदा के ववज्ञावपत मूल्य के कम से कम 50% का न्यूनतम औसत वावर्यक टनयओवर',
+            'OEM Minimum average annual turnover of at least 400%',
+            'Banking reference (from a scheduled bank in India, not more than 3 months old)',
+            'Access to Funds to meet 3 months’ cash flow',
+            'EMD exemption declaration under GFR Rule 170',
+            'Contract termination protocol and Site safety',
+            'BIS CRS Registration for Air Conditioners'
+          ]
         };
         await new Promise(resolve => setTimeout(resolve, 800)); // fake delay
       } else if (demoFixture === 'tamil') {
