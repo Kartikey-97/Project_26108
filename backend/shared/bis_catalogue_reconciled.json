@@ -114,7 +114,15 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E)",
+      "note": "Adapters for household appliances are covered under CRS."
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active (Concurrent)",
@@ -165,7 +173,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 1"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -217,7 +232,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 2"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -269,7 +291,15 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E)",
+      "note": "Induction stoves are covered under CRS."
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -373,7 +403,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 5"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -425,7 +462,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 6"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -477,7 +521,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 17-36 (kitchen machines; scope-based, see report)"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -529,7 +580,15 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E)",
+      "note": "Rice cookers are covered under CRS."
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -633,7 +692,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "crs",
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2013-07-03",
+      "source": "MeitY/BIS CRS notified-product list, entry 7 (microwave ovens, IS 302-2-25:2014)"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -685,7 +751,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "crs",
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2013-07-03",
+      "source": "MeitY/BIS CRS notified-product list, entry 3 (electronic clocks with mains power, IS 302-2-26:2014)"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -789,7 +862,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 9"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -893,7 +973,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 11"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -945,7 +1032,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 12"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1257,7 +1351,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 14"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1309,7 +1410,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 15"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1413,7 +1521,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 16"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1465,7 +1580,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 37"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1517,7 +1639,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 38"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1569,7 +1698,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 39"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1621,7 +1757,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 41"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1673,7 +1816,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 42"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1725,7 +1875,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 43"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1881,7 +2038,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 45"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1933,7 +2097,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 46"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -1985,7 +2156,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 52"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2037,7 +2215,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 53"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2089,7 +2274,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 57"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2193,7 +2385,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 4"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2245,7 +2444,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 73"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2297,7 +2503,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 74"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2349,7 +2562,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 7"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2505,7 +2725,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 49 (and 10)"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -2557,7 +2784,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2026",
+      "qco_effective_date": "2026-10-01",
+      "source": "Gazette of India S.O. 1739(E), 6 Apr 2026, list item 13"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -3845,7 +4079,7 @@
   {
     "is_number": "IS 1448 : Part 148",
     "normalized_is_number": "IS 1448 : Part 148",
-    "title": "Methods of Test for Petroleum and Its Products [ P : 148 ] Petroleum Products — Aviation and Distillate Fuels — Determination of Electrical Conductivity ( First Revision )",
+    "title": "Methods of Test for Petroleum and Its Products [ P : 148 ] Petroleum Products \u2014 Aviation and Distillate Fuels \u2014 Determination of Electrical Conductivity ( First Revision )",
     "year": 2019,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -3897,7 +4131,7 @@
   {
     "is_number": "IS 1448 : Part 171",
     "normalized_is_number": "IS 1448 : Part 171",
-    "title": "Methods of Test for Petroleum and its Products [ P : 171 ] Carbonaceous Materials for the Production of Aluminum — Calcined Coke for Electrodes — Determination of the Electrical Resistivity of Granules",
+    "title": "Methods of Test for Petroleum and its Products [ P : 171 ] Carbonaceous Materials for the Production of Aluminum \u2014 Calcined Coke for Electrodes \u2014 Determination of the Electrical Resistivity of Granules",
     "year": 2019,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -9440,7 +9674,7 @@
   {
     "is_number": "IS 4484",
     "normalized_is_number": "IS 4484",
-    "title": "Shipbuilding — Electrically Welded Stud Link Anchor Chains and Connecting Shackles and Swivels",
+    "title": "Shipbuilding \u2014 Electrically Welded Stud Link Anchor Chains and Connecting Shackles and Swivels",
     "year": 2013,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15139,7 +15373,7 @@
   {
     "is_number": "IS 8504 : Part 1",
     "normalized_is_number": "IS 8504 : Part 1",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 1 Ageing Procedures And Evaluation Of Test Results",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 1 Ageing Procedures And Evaluation Of Test Results",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15295,7 +15529,7 @@
   {
     "is_number": "IS 8504 : Part 4",
     "normalized_is_number": "IS 8504 : Part 4",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 4 Instructions for Calculating Thermal Endurance Characteristics",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 4 Instructions for Calculating Thermal Endurance Characteristics",
     "year": 2013,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15347,7 +15581,7 @@
   {
     "is_number": "IS 8504 : PART 5 : SEC 1",
     "normalized_is_number": "IS 8504 : PART 5 : SEC 1",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 5 Ageing Ovens Section 1 Single- chamber Ovens",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 5 Ageing Ovens Section 1 Single- chamber Ovens",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15399,7 +15633,7 @@
   {
     "is_number": "IS 8504 : PART 5 : SEC 2",
     "normalized_is_number": "IS 8504 : PART 5 : SEC 2",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 5 Ageing Ovens Section 2 Precision Ovens For Use Up To 300Â°c",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 5 Ageing Ovens Section 2 Precision Ovens For Use Up To 300\u00c2\u00b0c",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15451,7 +15685,7 @@
   {
     "is_number": "IS 8504 : PART 5 : SEC 3",
     "normalized_is_number": "IS 8504 : PART 5 : SEC 3",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 5 Ageing Ovens Section 3 Multi-chamber Ovens",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 5 Ageing Ovens Section 3 Multi-chamber Ovens",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15503,7 +15737,7 @@
   {
     "is_number": "IS 8504 : PART 6",
     "normalized_is_number": "IS 8504 : PART 6",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 6 Determination Of Relative Thermal Endurance Index (rte) Of An Insulating Material",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 6 Determination Of Relative Thermal Endurance Index (rte) Of An Insulating Material",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15555,7 +15789,7 @@
   {
     "is_number": "IS 8504 : PART 7",
     "normalized_is_number": "IS 8504 : PART 7",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 7 Determination Of Thermal Endurance Indices (ti And Rte) Of An Insulating Material Using The Fixed Time Frame Method",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 7 Determination Of Thermal Endurance Indices (ti And Rte) Of An Insulating Material Using The Fixed Time Frame Method",
     "year": 2012,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15607,7 +15841,7 @@
   {
     "is_number": "IS 8504 : Part 8",
     "normalized_is_number": "IS 8504 : Part 8",
-    "title": "Electrical Insulating Materials — Thermal Endurance Properties Part 8 Instructions for Calculating Thermal Endurance Characteristics Using Simplified Procedures",
+    "title": "Electrical Insulating Materials \u2014 Thermal Endurance Properties Part 8 Instructions for Calculating Thermal Endurance Characteristics Using Simplified Procedures",
     "year": 2019,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -15659,7 +15893,7 @@
   {
     "is_number": "IS 8516",
     "normalized_is_number": "IS 8516",
-    "title": "Electrical Insulating Materials — Determination Of Electrolytic Corrosion Caused By Insulating Materials — Test Methods",
+    "title": "Electrical Insulating Materials \u2014 Determination Of Electrolytic Corrosion Caused By Insulating Materials \u2014 Test Methods",
     "year": 2011,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -19182,7 +19416,7 @@
   {
     "is_number": "IS 9176",
     "normalized_is_number": "IS 9176",
-    "title": "Electrical and Electronic Measurement Equipment — Expression of Performance ( Second Revision )",
+    "title": "Electrical and Electronic Measurement Equipment \u2014 Expression of Performance ( Second Revision )",
     "year": 2018,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -20221,21 +20455,14 @@
     "year": 1981,
     "document_type": "other",
     "standard_type_label": "Installation",
-    "scope": "Rigid plain conduits of insulating material (PVC conduit) for use in electrical installations. Specifies dimensional, mechanical, thermal, and electrical requirements.",
-    "scope_summary": "Rigid insulating (PVC) conduit for protection of electrical cables in fixed installations.",
+    "scope": "Rigid plain conduits of steel for use in electrical installations. Specifies dimensional, mechanical, thermal, and electrical requirements.",
+    "scope_summary": "Rigid steel conduit for protection of electrical cables in fixed installations.",
     "normative_references": [],
     "related_standards": [
       "IS 9537 : Part 1",
       "IS 9537 : Part 3"
     ],
-    "certification": {
-      "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "BIS"
-    },
+    "certification": null,
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -21060,7 +21287,7 @@
   {
     "is_number": "IS 9947",
     "normalized_is_number": "IS 9947",
-    "title": "Electrical Insulating Materials Used Under Severe Ambient Conditions — Test Methods For Evaluating Resistance To Tracking And Erosion",
+    "title": "Electrical Insulating Materials Used Under Severe Ambient Conditions \u2014 Test Methods For Evaluating Resistance To Tracking And Erosion",
     "year": 2011,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -25724,7 +25951,7 @@
   {
     "is_number": "IS/ISO 11862",
     "normalized_is_number": "IS/ISO 11862",
-    "title": "Earth-Moving Machinery — Auxiliary Starting Aid Electrical Connector",
+    "title": "Earth-Moving Machinery \u2014 Auxiliary Starting Aid Electrical Connector",
     "year": 1993,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -26803,7 +27030,7 @@
   {
     "is_number": "IS 12444",
     "normalized_is_number": "IS 12444",
-    "title": "Copper Wire Rods for Electrical Applications â€”€” Specification ( First Revision )",
+    "title": "Copper Wire Rods for Electrical Applications \u00e2\u20ac\u201d\u20ac\u201d Specification ( First Revision )",
     "year": 2020,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -26827,7 +27054,7 @@
       "Rods",
       "Electrical",
       "Applications",
-      "â€”€”"
+      "\u00e2\u20ac\u201d\u20ac\u201d"
     ],
     "product_categories": [
       "Safety Equipment"
@@ -30393,7 +30620,7 @@
   {
     "is_number": "IS 13450 : Part 2 : Sec 47",
     "normalized_is_number": "IS 13450 : Part 2 : Sec 47",
-    "title": "Medical Electrical Equipment Part 1 General Requirements for the Basic Safety and Essential Performance Section 2 Collateral standard: Electromagnetic disturbances — Requirements and tests ( First Revision )",
+    "title": "Medical Electrical Equipment Part 1 General Requirements for the Basic Safety and Essential Performance Section 2 Collateral standard: Electromagnetic disturbances \u2014 Requirements and tests ( First Revision )",
     "year": 2018,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -30705,7 +30932,7 @@
   {
     "is_number": "IS 13450 : Part 2 : Sec 70",
     "normalized_is_number": "IS 13450 : Part 2 : Sec 70",
-    "title": "Medical electrical equipment Part 2 ï¿½ Particular requirements for basic safety and essential performance Section 70 : Sleep apnoea breathing therapy equipment",
+    "title": "Medical electrical equipment Part 2 \u00ef\u00bf\u00bd Particular requirements for basic safety and essential performance Section 70 : Sleep apnoea breathing therapy equipment",
     "year": 2022,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -33508,7 +33735,7 @@
   {
     "is_number": "IS 13773",
     "normalized_is_number": "IS 13773",
-    "title": "Live Working — Electrical Insulating Sleeves ( First Revision )",
+    "title": "Live Working \u2014 Electrical Insulating Sleeves ( First Revision )",
     "year": 2018,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -33559,7 +33786,7 @@
   {
     "is_number": "IS 13778 : Part 5",
     "normalized_is_number": "IS 13778 : Part 5",
-    "title": "Winding Wires — Test Methods Part 5 Electrical Properties (Including Amendment No. 1)",
+    "title": "Winding Wires \u2014 Test Methods Part 5 Electrical Properties (Including Amendment No. 1)",
     "year": 2012,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -38068,7 +38295,7 @@
   {
     "is_number": "IS 16498 : Part 3 : Sec 2",
     "normalized_is_number": "IS 16498 : Part 3 : Sec 2",
-    "title": "Specification for Pressboard and Presspaper for Electrical Purposes Part 3 Specifications for Individual Materials — Sheet 2 : Requirements for Presspaper, Types P.2.1, P.4.1, P.4.2, P.4.3 and P.6.1",
+    "title": "Specification for Pressboard and Presspaper for Electrical Purposes Part 3 Specifications for Individual Materials \u2014 Sheet 2 : Requirements for Presspaper, Types P.2.1, P.4.1, P.4.2, P.4.3 and P.6.1",
     "year": 2019,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -38224,7 +38451,7 @@
   {
     "is_number": "IS 16504 : Part 1",
     "normalized_is_number": "IS 16504 : Part 1",
-    "title": "Safety of Machinery — Electrical Equipment of Machines Part 1 General Requirements ( First Revision )",
+    "title": "Safety of Machinery \u2014 Electrical Equipment of Machines Part 1 General Requirements ( First Revision )",
     "year": 2019,
     "document_type": "other",
     "standard_type_label": "Safety",
@@ -38333,9 +38560,19 @@
     "standard_type_label": "Safety",
     "scope": null,
     "scope_summary": null,
-    "normative_references": [],
+    "normative_references": [
+      "IS 16107",
+      "IS 1554"
+    ],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "scheme_label": "ISI Mark",
+      "qco": "Machinery Safety (Quality Control) Order",
+      "qco_effective_date": "2024-01-01",
+      "source": "Gazette of India"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -38379,7 +38616,7 @@
   {
     "is_number": "IS 16504 : Part 31",
     "normalized_is_number": "IS 16504 : Part 31",
-    "title": "Safety of Machinery — Electrical Equipment of Machines Part 31 Particular Safety and EMC Requirements for Sewing Machines, Units and Systems",
+    "title": "Safety of Machinery \u2014 Electrical Equipment of Machines Part 31 Particular Safety and EMC Requirements for Sewing Machines, Units and Systems",
     "year": 2019,
     "document_type": "other",
     "standard_type_label": "Safety",
@@ -38431,7 +38668,7 @@
   {
     "is_number": "IS 16504 : Part 33",
     "normalized_is_number": "IS 16504 : Part 33",
-    "title": "Safety of Machinery — Electrical Equipment of Machines Part 33 Requirements for Semiconductor Fabrication Equipment",
+    "title": "Safety of Machinery \u2014 Electrical Equipment of Machines Part 33 Requirements for Semiconductor Fabrication Equipment",
     "year": 2019,
     "document_type": "other",
     "standard_type_label": "Safety",
@@ -38483,7 +38720,7 @@
   {
     "is_number": "IS 16504 : Part 34",
     "normalized_is_number": "IS 16504 : Part 34",
-    "title": "Safety of Machinery — Electrical Equipment of Machines Part 34 Requirements for Machine Tools",
+    "title": "Safety of Machinery \u2014 Electrical Equipment of Machines Part 34 Requirements for Machine Tools",
     "year": 2019,
     "document_type": "other",
     "standard_type_label": "Safety",
@@ -38691,7 +38928,7 @@
   {
     "is_number": "IS 16622",
     "normalized_is_number": "IS 16622",
-    "title": "Live Working — Insulating Hollow Tubes for Electrical Purposes",
+    "title": "Live Working \u2014 Insulating Hollow Tubes for Electrical Purposes",
     "year": 2019,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -38897,7 +39134,7 @@
   {
     "is_number": "IS 16827",
     "normalized_is_number": "IS 16827",
-    "title": "Electrically Propelled Road Vehicles — Dimensions and Designation of Secondary Lithium-Ion Cells",
+    "title": "Electrically Propelled Road Vehicles \u2014 Dimensions and Designation of Secondary Lithium-Ion Cells",
     "year": 2018,
     "document_type": "other",
     "standard_type_label": "Symbols & Markings",
@@ -38950,7 +39187,7 @@
   {
     "is_number": "IS 16996",
     "normalized_is_number": "IS 16996",
-    "title": "Low-Voltage Electrical Installations — Energy Efficiency",
+    "title": "Low-Voltage Electrical Installations \u2014 Energy Efficiency",
     "year": 2018,
     "document_type": "other",
     "standard_type_label": "Installation",
@@ -39001,7 +39238,7 @@
   {
     "is_number": "IS 16997",
     "normalized_is_number": "IS 16997",
-    "title": "Requirements for Low-Voltage Special Electrical Installations or Locations — Solar Photovoltaic ( PV ) Power Supply Systems",
+    "title": "Requirements for Low-Voltage Special Electrical Installations or Locations \u2014 Solar Photovoltaic ( PV ) Power Supply Systems",
     "year": 2018,
     "document_type": "other",
     "standard_type_label": "Installation",
@@ -39676,7 +39913,7 @@
   {
     "is_number": "IS 17122",
     "normalized_is_number": "IS 17122",
-    "title": "Electrical Accessories — Circuit-Breakers and Similar Equipment for Household Use — Auxiliary Contact Units",
+    "title": "Electrical Accessories \u2014 Circuit-Breakers and Similar Equipment for Household Use \u2014 Auxiliary Contact Units",
     "year": 2019,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -39728,7 +39965,7 @@
   {
     "is_number": "IS 17123 : Part 1",
     "normalized_is_number": "IS 17123 : Part 1",
-    "title": "Adjustable Speed Electrical Power Drive Systems - Part 1 General Requirements — Rating specifications for Low Voltage Adjustable Speed d.c. Power Drive Systems",
+    "title": "Adjustable Speed Electrical Power Drive Systems - Part 1 General Requirements \u2014 Rating specifications for Low Voltage Adjustable Speed d.c. Power Drive Systems",
     "year": 2025,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -40613,7 +40850,7 @@
   {
     "is_number": "IS 17123 : Part 7 : Sec 201",
     "normalized_is_number": "IS 17123 : Part 7 : Sec 201",
-    "title": "Adjustable Speed Electrical Power Drive Systems - Part 7 Generic Interface and Use of Profiles for Power Drive Systems - Section 201 Profile Type 1 — Specification",
+    "title": "Adjustable Speed Electrical Power Drive Systems - Part 7 Generic Interface and Use of Profiles for Power Drive Systems - Section 201 Profile Type 1 \u2014 Specification",
     "year": 2025,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -41392,7 +41629,7 @@
   {
     "is_number": "IS 17784 : Part 1",
     "normalized_is_number": "IS 17784 : Part 1",
-    "title": "Electrical Equipment for Measurement, Control and Laboratory Use ï¿½ EMC Requirements Part 1 General Requirements (IEC 61326-1: 2020, MOD)",
+    "title": "Electrical Equipment for Measurement, Control and Laboratory Use \u00ef\u00bf\u00bd EMC Requirements Part 1 General Requirements (IEC 61326-1: 2020, MOD)",
     "year": 2023,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -41913,7 +42150,7 @@
   {
     "is_number": "IS 18323",
     "normalized_is_number": "IS 18323",
-    "title": "Thyristor Valves for Thyristor Controlled Series Capacitors (TCSC) — Electrical Testing",
+    "title": "Thyristor Valves for Thyristor Controlled Series Capacitors (TCSC) \u2014 Electrical Testing",
     "year": 2023,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -45707,7 +45944,7 @@
   {
     "is_number": "IS/IEC 60512 : Part 2 : Sec 1",
     "normalized_is_number": "IS/IEC 60512 : Part 2 : Sec 1",
-    "title": "Connectors for Electronic Equipment - Part 2 Tests and Measurements - Section 1 Electrical Continuity and Contact Resistance Tests – Test 2a: Contact Resistance Millivolt Level Method",
+    "title": "Connectors for Electronic Equipment - Part 2 Tests and Measurements - Section 1 Electrical Continuity and Contact Resistance Tests \u2013 Test 2a: Contact Resistance Millivolt Level Method",
     "year": 2002,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -46172,8 +46409,8 @@
     }
   },
   {
-    "is_number": "IS/IEC 60669 : Part 2 : Sec 2",
-    "normalized_is_number": "IS/IEC 60669 : Part 2 : Sec 2",
+    "is_number": "IS/IEC 60669 : Part 2 : Sec 1",
+    "normalized_is_number": "IS/IEC 60669 : Part 2 : Sec 1",
     "title": "Switches for Household and Similar Fixed Electrical Installations Part 2 Particular Requirements Section 1 Electronic Switches",
     "year": 2006,
     "document_type": "other",
@@ -46182,7 +46419,14 @@
     "scope_summary": null,
     "normative_references": [],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "crs",
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2013-07-03",
+      "source": "MeitY/BIS CRS notified-product list"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -47267,7 +47511,7 @@
   {
     "is_number": "IS/IEC 61196 : Part 1 : Sec 106",
     "normalized_is_number": "IS/IEC 61196 : Part 1 : Sec 106",
-    "title": "Coaxial communication cables Part 1-106 Electrical Test Methods â€”€” Test for Withstand Voltage of Cable Sheath",
+    "title": "Coaxial communication cables Part 1-106 Electrical Test Methods \u00e2\u20ac\u201d\u20ac\u201d Test for Withstand Voltage of Cable Sheath",
     "year": 2008,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -47319,7 +47563,7 @@
   {
     "is_number": "IS/IEC 61196 : Part 1 : Sec 113",
     "normalized_is_number": "IS/IEC 61196 : Part 1 : Sec 113",
-    "title": "Coaxial communication cables Part 1-113 Electrical Test Methods â€”€” Test for Attenuation Constant",
+    "title": "Coaxial communication cables Part 1-113 Electrical Test Methods \u00e2\u20ac\u201d\u20ac\u201d Test for Attenuation Constant",
     "year": 2018,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -47579,7 +47823,7 @@
   {
     "is_number": "IS/IEC 61196 : Part 1 : Sec 112",
     "normalized_is_number": "IS/IEC 61196 : Part 1 : Sec 112",
-    "title": "Coaxial Communication Cables, Part 1-112 Electrical Test methods — Test for return loss (Uniformity of impedance)",
+    "title": "Coaxial Communication Cables, Part 1-112 Electrical Test methods \u2014 Test for return loss (Uniformity of impedance)",
     "year": 2006,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -47683,7 +47927,7 @@
   {
     "is_number": "IS/IEC 61196 : PART 1 : SEC 122",
     "normalized_is_number": "IS/IEC 61196 : PART 1 : SEC 122",
-    "title": "Coaxial communication cables Part 1-122 Electrical test methods—Test for cross-talk between coaxial cables",
+    "title": "Coaxial communication cables Part 1-122 Electrical test methods\u2014Test for cross-talk between coaxial cables",
     "year": 2006,
     "document_type": "method_of_test",
     "standard_type_label": "Testing",
@@ -49502,7 +49746,7 @@
   {
     "is_number": "IS/IEC 61557 : Part 2",
     "normalized_is_number": "IS/IEC 61557 : Part 2",
-    "title": "Electrical Safety in Low Voltage Distribution Systems Up to 1 000 V a.c. and 1 500 V d.c. — Equipment for Testing, Measuring or Monitoring of Protective Measures",
+    "title": "Electrical Safety in Low Voltage Distribution Systems Up to 1 000 V a.c. and 1 500 V d.c. \u2014 Equipment for Testing, Measuring or Monitoring of Protective Measures",
     "year": 2019,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -49658,7 +49902,7 @@
   {
     "is_number": "IS/IEC 61557 : Part 5",
     "normalized_is_number": "IS/IEC 61557 : Part 5",
-    "title": "Electrical Safety in Low Voltage Distribution Systems up to 1000 V ac and 1500 V dc — Equipment for Testing, Measuring or Monitoring of Protective Measures Part 5 Resistance to Earth",
+    "title": "Electrical Safety in Low Voltage Distribution Systems up to 1000 V ac and 1500 V dc \u2014 Equipment for Testing, Measuring or Monitoring of Protective Measures Part 5 Resistance to Earth",
     "year": 2007,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -50027,10 +50271,19 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": null,
-    "scope_summary": null,
-    "normative_references": [],
+    "scope_summary": "Specifies requirements for equipment for testing the safety of electrical equipment for machinery in low voltage distribution systems.",
+    "normative_references": [
+      "IS/IEC 61557 : Part 1",
+      "IS/IEC 61557 : Part 2",
+      "IS/IEC 61557 : Part 4",
+      "IS 10322"
+    ],
     "related_standards": [],
-    "certification": null,
+    "certification": {
+      "mandatory": false,
+      "scheme": "isi_mark",
+      "qco": null
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -50542,7 +50795,7 @@
   {
     "is_number": "IS/IEC/TR 61852",
     "normalized_is_number": "IS/IEC/TR 61852",
-    "title": "Medical Electrical Equipment — Digital Imaging and Communications in Medicine ( DICOM ) — Radiotherapy Objects",
+    "title": "Medical Electrical Equipment \u2014 Digital Imaging and Communications in Medicine ( DICOM ) \u2014 Radiotherapy Objects",
     "year": 1998,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -51010,7 +51263,7 @@
   {
     "is_number": "IS/IEC 62353",
     "normalized_is_number": "IS/IEC 62353",
-    "title": "Medical Electrical Equipment — Recurrent Test and Test after Repair of Medical Electrical Equipment ( First Revision )",
+    "title": "Medical Electrical Equipment \u2014 Recurrent Test and Test after Repair of Medical Electrical Equipment ( First Revision )",
     "year": 2014,
     "document_type": "product_specification",
     "standard_type_label": "Specification",
@@ -52217,14 +52470,7 @@
     "related_standards": [
       "IS 10322 : Part 5 : Sec 3"
     ],
-    "certification": {
-      "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "bis.gov.in"
-    },
+    "certification": null,
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -52273,8 +52519,10 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Specifies particular safety, performance, and construction requirements for LED luminaires used in road and street lighting.",
-    "scope_summary": null,
+    "scope_summary": "Particular requirements for luminaires for road and street lighting, including LED-based luminaires, for use with mains supply up to 1000 V.",
     "normative_references": [
+      "IS 15885 : Part 2 : Sec 1",
+      "IS 16104",
       "IS 10322 : Part 1"
     ],
     "related_standards": [
@@ -52283,10 +52531,10 @@
     "certification": {
       "mandatory": true,
       "scheme": "crs",
-      "scheme_label": "CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "bis.gov.in"
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2018-05-23",
+      "source": "MeitY/BIS CRS notified-product list, entry 33"
     },
     "currentness": {
       "status": "active",
@@ -52347,10 +52595,10 @@
     "certification": {
       "mandatory": true,
       "scheme": "crs",
-      "scheme_label": "CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "bis.gov.in"
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2016-03-01",
+      "source": "MeitY/BIS CRS notified-product list, entry 28"
     },
     "currentness": {
       "status": "active",
@@ -52406,10 +52654,10 @@
     "certification": {
       "mandatory": true,
       "scheme": "crs",
-      "scheme_label": "CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "bis.gov.in"
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2018-05-23",
+      "source": "MeitY/BIS CRS notified-product list, entry 32"
     },
     "currentness": {
       "status": "active",
@@ -52465,10 +52713,10 @@
     "certification": {
       "mandatory": true,
       "scheme": "crs",
-      "scheme_label": "CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "bis.gov.in"
+      "scheme_label": "BIS CRS",
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2018-05-23",
+      "source": "MeitY/BIS CRS notified-product list, entry 34"
     },
     "currentness": {
       "status": "active",
@@ -52821,8 +53069,13 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "This standard covers PVC insulated cables with copper or aluminium conductors, rated up to 1100 V for fixed wiring in buildings, industrial plants, and similar applications.",
-    "scope_summary": "PVC insulated cables for fixed wiring up to 1100V — copper or aluminium conductors.",
-    "normative_references": [],
+    "scope_summary": "Covers requirements and tests for PVC insulated cables with copper or aluminium conductors for working voltages up to and including 1100 V.",
+    "normative_references": [
+      "IS 8130",
+      "IS 5831",
+      "IS 10810",
+      "IS 3975"
+    ],
     "related_standards": [
       "IS 1554",
       "IS 7098",
@@ -52830,11 +53083,8 @@
     ],
     "certification": {
       "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "BIS"
+      "scheme": "isi_mark",
+      "qco": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Order, 2003"
     },
     "currentness": {
       "status": "active",
@@ -52890,10 +53140,12 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Heavy duty PVC insulated electric cables with copper or aluminium conductors for working voltages up to 1100 V. Includes armoured and unarmoured types for industrial installations, mines, and distribution systems.",
-    "scope_summary": "Heavy duty PVC insulated cables up to 1100V — for distribution systems, industrial and mining applications, armoured and unarmoured.",
+    "scope_summary": "Covers the requirements and test methods for PVC insulated heavy-duty electric cables for working voltages up to and including 1100 V.",
     "normative_references": [
-      "IS 694",
-      "IS 8130"
+      "IS 8130",
+      "IS 5831",
+      "IS 3975",
+      "IS 10810"
     ],
     "related_standards": [
       "IS 694",
@@ -52902,11 +53154,8 @@
     ],
     "certification": {
       "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "BIS"
+      "scheme": "isi_mark",
+      "qco": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Order, 2003"
     },
     "currentness": {
       "status": "active",
@@ -52963,17 +53212,23 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "XLPE insulated, thermoplastic sheathed cables for working voltages from 3.3 kV to 11 kV (medium voltage). For power distribution and transmission underground.",
-    "scope_summary": "XLPE insulated medium voltage underground cables, 3.3kV to 11kV — for power distribution and transmission.",
+    "scope_summary": "Specifies requirements for cross-linked polyethylene (XLPE) insulated and PVC sheathed cables for electricity supply and control purposes.",
     "normative_references": [
       "IS 8130",
-      "IS 5831"
+      "IS 5831",
+      "IS 3975",
+      "IS 10810"
     ],
     "related_standards": [
       "IS 7098 : Part 2",
       "IS 694",
       "IS 1554"
     ],
-    "certification": null,
+    "certification": {
+      "mandatory": true,
+      "scheme": "isi_mark",
+      "qco": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Order, 2003"
+    },
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -53027,7 +53282,7 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "XLPE insulated cables for high voltage (HV) applications 33 kV to 66 kV. Used for underground transmission of electrical energy.",
-    "scope_summary": "XLPE insulated high voltage cables, 33kV to 66kV — for underground power transmission.",
+    "scope_summary": "XLPE insulated high voltage cables, 33kV to 66kV \u2014 for underground power transmission.",
     "normative_references": [
       "IS 7098 : Part 1",
       "IS 8130"
@@ -53101,14 +53356,7 @@
       "IS 15999 : Part 1",
       "IS/IEC 60034 : Part 30 : Sec 3"
     ],
-    "certification": {
-      "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": "QCO 2018",
-      "qco_effective_date": "2018-10-01",
-      "source": "BIS"
-    },
+    "certification": null,
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -53164,7 +53412,7 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "General requirements for power transformers. Covers ratings, markings, tests, and limits for losses. Applicable to distribution and transmission transformers.",
-    "scope_summary": "General requirements for power transformers — ratings, losses, tests, markings for distribution and transmission.",
+    "scope_summary": "General requirements for power transformers \u2014 ratings, losses, tests, markings for distribution and transmission.",
     "normative_references": [],
     "related_standards": [
       "IS 2026 : Part 2",
@@ -53226,7 +53474,7 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Requirements for dry-type (air-cooled) power transformers. Covers ratings, losses, temperature rise classes, insulation levels, and test requirements for industrial and commercial installations.",
-    "scope_summary": "General requirements for dry-type air-cooled power transformers — for industrial and commercial installations.",
+    "scope_summary": "General requirements for dry-type air-cooled power transformers \u2014 for industrial and commercial installations.",
     "normative_references": [
       "IS 2026 : Part 1"
     ],
@@ -53287,10 +53535,13 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Performance requirements for LED road and street luminaires. Covers photometric requirements: luminous flux, luminous efficacy (lm/W), colour rendering index (CRI), correlated colour temperature (CCT), colour consistency, lumen maintenance (L70/L80), power factor, THD, and minimum IP66 for outdoor LED street lighting.",
-    "scope_summary": "LED road and street luminaire performance — luminous efficacy, CCT, CRI, L70 lumen maintenance, IP66, power factor for outdoor lighting.",
+    "scope_summary": "Specifies performance requirements for complete LED luminaires used for road and street lighting applications, including luminous efficacy, color quality, IP rating, and IK rating.",
     "normative_references": [
       "IS 10322",
-      "IS 1944"
+      "IS 1944",
+      "IS 16101",
+      "IS 16102",
+      "IS 15885"
     ],
     "related_standards": [
       "IS 10322 : Part 1",
@@ -53298,14 +53549,7 @@
       "IS 1944 : Part 1 and 2",
       "IS 16101"
     ],
-    "certification": {
-      "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": "QCO 2020",
-      "qco_effective_date": "2020-01-01",
-      "source": "BIS"
-    },
+    "certification": null,
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -53365,19 +53609,12 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Requirements for static (solid state, electronic) AC watt-hour meters for active energy with accuracy classes 1 and 2. Applicable to single-phase and three-phase meters used in electricity distribution and metering.",
-    "scope_summary": "Static AC electricity meters for active energy measurement — Classes 1 and 2 accuracy.",
+    "scope_summary": "Static AC electricity meters for active energy measurement \u2014 Classes 1 and 2 accuracy.",
     "normative_references": [],
     "related_standards": [
       "IS 14697"
     ],
-    "certification": {
-      "mandatory": true,
-      "scheme": "crs",
-      "scheme_label": "BIS CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "BIS"
-    },
+    "certification": null,
     "currentness": {
       "status": "active",
       "status_label": "Active",
@@ -53431,7 +53668,7 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Requirements for assemblies of low-voltage switchgear and controlgear (LV switchboards, MCCBs, distribution boards, motor control centres). Covers design verification and testing for LV panels up to 1000V AC or 1500V DC.",
-    "scope_summary": "Low voltage switchgear and controlgear assemblies — LV switchboards, distribution boards, MCCs up to 1000V AC.",
+    "scope_summary": "Low voltage switchgear and controlgear assemblies \u2014 LV switchboards, distribution boards, MCCs up to 1000V AC.",
     "normative_references": [],
     "related_standards": [
       "IS 8623 : Part 2",
@@ -53494,7 +53731,7 @@
     "document_type": "code_of_practice",
     "standard_type_label": "Code of Practice",
     "scope": "Code of practice for earthing (grounding) of electrical installations. Covers earth electrodes, earth continuity conductors, protective bonding, and testing. Applicable to all LV and MV electrical installations.",
-    "scope_summary": "Code of practice for earthing of electrical installations — earth electrodes, bonding, testing, LV/MV systems.",
+    "scope_summary": "Code of practice for earthing of electrical installations \u2014 earth electrodes, bonding, testing, LV/MV systems.",
     "normative_references": [],
     "related_standards": [
       "SP 30",
@@ -53546,12 +53783,12 @@
   {
     "is_number": "IS 15885 : Part 2 : Sec 13",
     "normalized_is_number": "IS 15885 : Part 2 : Sec 13",
-    "title": "Self Ballasted LED Lamps for General Lighting Services - Safety Requirements",
+    "title": "Safety of Lamp Controlgear Part 2 Particular Requirements Section 13 d.c. or a.c. Supplied Electronic Controlgear for LED Modules",
     "year": 2012,
     "document_type": "other",
     "standard_type_label": "Safety",
-    "scope": "Safety requirements for self-ballasted LED lamps (LED bulbs) for general lighting services. Covers lamp construction, insulation, thermal requirements, photobiological safety, and test methods at supply voltages above 50V.",
-    "scope_summary": "Safety requirements for self-ballasted LED lamps — LED bulbs for general lighting, thermal and electrical safety.",
+    "scope": "Specifies safety requirements for electronic controlgear for LED modules.",
+    "scope_summary": "Safety requirements for electronic controlgear for LED modules.",
     "normative_references": [
       "IS 10322",
       "IS 16101"
@@ -53564,9 +53801,9 @@
       "mandatory": true,
       "scheme": "crs",
       "scheme_label": "BIS CRS",
-      "qco": null,
-      "qco_effective_date": null,
-      "source": "BIS"
+      "qco": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order, 2021",
+      "qco_effective_date": "2015-12-01",
+      "source": "MeitY/BIS CRS notified-product list, entry 25 (electronic controlgear for LED modules)"
     },
     "currentness": {
       "status": "active",
@@ -53578,12 +53815,11 @@
       "concurrent_running": null
     },
     "keywords": [
-      "LED lamp",
-      "self ballasted",
-      "LED bulb",
-      "safety",
-      "general lighting",
-      "BIS mandatory"
+      "Lamp",
+      "Controlgear",
+      "LED",
+      "Modules",
+      "Safety"
     ],
     "product_categories": [
       "Lighting & LED"

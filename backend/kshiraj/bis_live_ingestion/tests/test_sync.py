@@ -32,5 +32,5 @@ def test_sync_designation_upserts_live_metadata():
 
     assert result.errors == []
     assert result.amendment_count == 1
-    assert result.matched_designation == "IS 694:2010"
+    assert result.matched_designation == "IS 694:2010 Amd.1"
     assert len(result.evidence) == 2

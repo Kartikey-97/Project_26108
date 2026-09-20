@@ -557,43 +557,99 @@ async def _trigger_bis_sync(analysis: Analysis) -> None:
     try:
         from kshiraj.bis_live_ingestion.adapters.bis_client import BISClient, BISClientConfig
         from kshiraj.bis_live_ingestion.sync import BISSyncService
-        from kartikey.orchestration.knowledge_registry import KnowledgeRegistry
+        from kartikey.orchestration.knowledge_registry import get_registry
         from shared.sync_state import record_sync_result
         from datetime import datetime, timezone
 
-        registry = KnowledgeRegistry.get_instance()
+        registry = get_registry()
         store = registry.standards_store
 
-        # Collect IS designations for the first 3 matched standards
-        # Note: Analysis model uses snake_case 'matched_standard_ids'
+        # Use std.is_number (bare base, e.g. "IS 16107") NOT std.designation
+        # ("IS 16107:2023 Amd.1") — the normalizer strips years but not Amd.N suffixes,
+        # causing exact-match failures in sync.py.
         is_numbers: list[str] = []
-        for std_id in (getattr(analysis, "matched_standard_ids", []) or [])[:3]:
-            std = store.get_by_id(std_id)
-            if std and getattr(std, 'designation', None):
-                is_numbers.append(std.designation)
-            elif std and getattr(std, 'is_number', None):
-                is_numbers.append(std.is_number)
+        seen: set[str] = set()
+        for finding in (analysis.findings or []):
+            for std in (finding.applicable_standards or []):
+                base = getattr(std, 'base_designation', None) or getattr(std, 'is_number', None)
+                if base and base not in seen:
+                    seen.add(base)
+                    is_numbers.append(base)
+                if len(is_numbers) >= 5:
+                    break
+            if len(is_numbers) >= 5:
+                break
 
         if not is_numbers:
             logger.debug("BIS sync: no designations to sync for analysis %s", analysis.id)
             return
 
-        client_config = BISClientConfig(timeout_seconds=10.0, max_retries=1)
-        with BISClient(config=client_config) as client:
-            svc = BISSyncService(client=client, standards_store=store)
-            for is_number in is_numbers:
-                result = svc.sync_designation(is_number)
-                record_sync_result(
-                    is_number=is_number,
-                    synced_at=datetime.now(timezone.utc),
-                    changed=result.changed,
-                    errors=result.errors,  # May be empty (success) or non-empty (partial/fail)
-                )
-                if result.errors:
-                    logger.warning("BIS sync error for %s: %s", is_number, result.errors)
-                else:
-                    logger.info("BIS sync OK: %s changed=%s", is_number, result.changed)
+        def _do_sync() -> None:
+            """Run blocking HTTP calls off the event loop thread."""
+            client_config = BISClientConfig(timeout_seconds=12.0, max_retries=1)
+            with BISClient(config=client_config) as client:
+                svc = BISSyncService(client=client, standards_store=store)
+                for is_number in is_numbers:
+                    result = svc.sync_designation(is_number)
+                    record_sync_result(
+                        is_number=is_number,
+                        synced_at=datetime.now(timezone.utc),
+                        changed=result.changed,
+                        errors=result.errors,
+                        analysis_id=analysis.id,
+                    )
+                    if result.errors:
+                        logger.warning("BIS sync error for %s: %s", is_number, result.errors)
+                    else:
+                        logger.info("BIS sync OK: %s changed=%s", is_number, result.changed)
+
+        # Run blocking sync calls in a thread pool so the event loop stays responsive
+        await asyncio.to_thread(_do_sync)
 
     except Exception as exc:
         # Absolute last-resort catch — pipeline must never see this exception
         logger.warning("BIS sync _trigger_bis_sync failed: %s", exc)
+
+async def rescore_and_merge(analysis_id: str, new_standard: 'Standard') -> None:
+    """
+    Called after BIS Sync discovers a superseding standard.
+    Evaluates the new standard against the analysis requirements and injects it
+    into the existing findings if it is highly applicable.
+    """
+    from shared.config import settings
+    from kshiraj.aiml_client.client import AimlClient
+    from shared.contracts import AimlRequest
+    from kartikey.api.main import repository
+    from kartikey.document_processing.storage import get_extracted_text
+    from shared.models import Standard, InputType, Verdict
+
+    try:
+        analysis = await repository.get(analysis_id)
+        if not analysis:
+            return
+
+        modified = False
+        new_is_norm = new_standard.designation.replace(" ", "").lower() if hasattr(new_standard, "designation") else new_standard.is_number.replace(" ", "").lower()
+        
+        for finding in analysis.findings:
+            if not hasattr(finding, 'applicable_standards'):
+                continue
+                
+            for old_std in finding.applicable_standards:
+                if old_std.superseded_by:
+                    old_sup_norm = old_std.superseded_by.replace(" ", "").lower()
+                    if old_sup_norm == new_is_norm or old_sup_norm == new_standard.is_number.replace(" ", "").lower():
+                        if not any(ns.id == new_standard.id for ns in finding.applicable_standards):
+                            new_standard.relevance_score = getattr(old_std, 'relevance_score', 0.99)
+                            finding.applicable_standards.append(new_standard)
+                            modified = True
+                        break # Move to next finding
+
+        if modified:
+            await repository.save(analysis)
+            logger.info("rescore_and_merge: Successfully injected %s into findings for analysis %s", new_standard.is_number, analysis_id)
+        else:
+            logger.info("rescore_and_merge: %s did not supersede any existing standards in findings", new_standard.is_number)
+
+    except Exception as e:
+        logger.error("rescore_and_merge failed for analysis %s: %s", analysis_id, e)

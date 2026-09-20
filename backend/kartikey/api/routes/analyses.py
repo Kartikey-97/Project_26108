@@ -205,14 +205,48 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
     # with no standard attached and the Standards tab rendered empty on precisely
     # the documents worth reviewing. The finding still carries the verdict; this
     # only makes sure the standard it is about is in the payload.
+    from kartikey.orchestration.knowledge_registry import get_registry
+    store = get_registry().standards_store
+
     seen_standard_ids: set[str] = set()
     all_standards = []
+    
+    from kshiraj.bis_live_ingestion.normalizer import normalize_designation
+    
     for group in ("applicable_standards", "cited_standards"):
         for finding in analysis.findings:
-            for standard in getattr(finding, group, None) or []:
+            stds = getattr(finding, group, None) or []
+            
+            # Use a while loop or iterate carefully to allow appending
+            new_stds_to_append = []
+            
+            for i, standard in enumerate(stds):
+                # Always return the freshest state from in-memory store in case it was synced
+                fresh_std = store.get_by_id(standard.id)
+                if fresh_std:
+                    # Preserve transient ML scores attached to the document finding
+                    fresh_std.relevance_score = getattr(standard, 'relevance_score', None)
+                    fresh_std.semantic_score = getattr(standard, 'semantic_score', None)
+                    fresh_std.text_excerpt = getattr(standard, 'text_excerpt', None)
+                    
+                    stds[i] = fresh_std
+                    standard = fresh_std
                 if standard.id not in seen_standard_ids:
                     all_standards.append(standard)
                     seen_standard_ids.add(standard.id)
+                    
+                # Look for superseding standard in the store
+                if standard.superseded_by:
+                    norm_target = normalize_designation(standard.superseded_by)
+                    superseding = next((s for s in store.list_all() if (s.is_number and s.is_number.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower()) or (hasattr(s, 'designation') and s.designation.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower())), None)
+                    if superseding and superseding.id not in seen_standard_ids:
+                        all_standards.append(superseding)
+                        seen_standard_ids.add(superseding.id)
+                        # We also attach it to the finding so adapter.ts sees it in findings
+                        new_stds_to_append.append(superseding)
+            
+            if new_stds_to_append:
+                stds.extend(new_stds_to_append)
 
     return AnalysisResponse(
         id=analysis.id,
@@ -220,6 +254,7 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
         input_type=analysis.input_type,
         tender_id=analysis.tender_id,
         tender_title=analysis.tender_title,
+        document_id=analysis.document_id,
         created_at=analysis.created_at.isoformat(),
         updated_at=analysis.updated_at.isoformat(),
         requirements=analysis.requirements,
@@ -265,3 +300,78 @@ async def list_analyses() -> list[dict]:
         }
         for a in sorted(analyses, key=lambda x: x.created_at, reverse=True)
     ]
+
+@router.post("/{analysis_id}/sync-bis")
+async def trigger_manual_bis_sync(analysis_id: str) -> dict:
+    """Manually trigger BIS sync for an analysis."""
+    import asyncio
+    from kartikey.orchestration.knowledge_registry import get_registry
+    from kshiraj.bis_live_ingestion.adapters.bis_client import BISClient, BISClientConfig
+    from kshiraj.bis_live_ingestion.sync import BISSyncService
+    from shared.sync_state import record_sync_result
+    from datetime import datetime, timezone
+
+    try:
+        analysis_obj = await repository.get(analysis_id)
+        if not analysis_obj:
+            return {"status": "error", "message": "Analysis not found"}
+
+        # Collect unique base IS numbers from findings (no year, no Amd suffix)
+        # Using std.is_number (e.g. "IS 16107") not std.designation ("IS 16107:2023 Amd.1")
+        # so that normalize_designation() produces a clean "IS 16107" that matches BIS portal results.
+        is_numbers: list[str] = []
+        seen: set[str] = set()
+        for finding in (analysis_obj.findings or []):
+            for std in (finding.applicable_standards or []):
+                base = getattr(std, 'base_designation', None) or getattr(std, 'is_number', None)
+                if base and base not in seen:
+                    seen.add(base)
+                    is_numbers.append(base)
+                if len(is_numbers) >= 5:
+                    break
+            if len(is_numbers) >= 5:
+                break
+
+        if not is_numbers:
+            return {"status": "skipped", "message": "No standards to sync for this analysis"}
+
+        store = get_registry().standards_store
+
+        def do_sync() -> list:
+            """Blocking BIS HTTP calls — run off event loop via asyncio.to_thread."""
+            new_superseded = []
+            config = BISClientConfig(timeout_seconds=15.0, max_retries=1)
+            with BISClient(config=config) as client:
+                svc = BISSyncService(client=client, standards_store=store)
+                for is_num in is_numbers:
+                    res = svc.sync_designation(is_num)
+                    if res.supersedes:
+                        new_superseded.append(res.supersedes)
+                    record_sync_result(
+                        is_number=is_num,
+                        synced_at=datetime.now(timezone.utc),
+                        changed=res.changed,
+                        errors=res.errors,
+                        analysis_id=analysis_id,
+                    )
+            return new_superseded
+
+        # Bug fix: must await asyncio.to_thread so the coroutine is actually scheduled
+        new_superseded_ids = await asyncio.to_thread(do_sync)
+        
+        if new_superseded_ids:
+            from kartikey.orchestration.pipeline import rescore_and_merge
+            from kshiraj.bis_live_ingestion.normalizer import normalize_designation
+            
+            for sup_is in new_superseded_ids:
+                # Find it in the store EXACTLY matching the returned supersedes string (ignoring whitespace/case)
+                new_std = next((s for s in store.list_all() if (s.is_number and s.is_number.replace(' ', '').lower() == sup_is.replace(' ', '').lower()) or (hasattr(s, 'designation') and s.designation.replace(' ', '').lower() == sup_is.replace(' ', '').lower())), None)
+                if new_std:
+                    asyncio.create_task(rescore_and_merge(analysis_id, new_std))
+
+        return {"status": "sync_complete", "standards_synced": is_numbers}
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning("Manual BIS sync failed: %s", e)
+        return {"status": "error", "message": str(e)}

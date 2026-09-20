@@ -48,7 +48,7 @@ function getRealReports(): Report[] {
   return listRealAnalyses().map((a) => ({
     id: `real-${a.id}`,
     analysisId: a.id,
-    title: a.tenderTitle || a.id,
+    title: a.title || a.id,
     type: 'compliance' as ReportType,
     generatedAt: a.createdAt || new Date().toISOString(),
     format: 'PDF' as const,
@@ -241,14 +241,14 @@ export function ReportsPage() {
       {/* Document-Style Report Preview Modal */}
       <AnimatePresence>
         {previewReport && (
-          <ReportPreviewModal report={previewReport} onClose={() => setPreviewReport(null)} />
+          <ReportPreviewModal report={previewReport} onClose={() => setPreviewReport(null)} isEmailing={isEmailing} handleEmailReport={handleEmailReport} />
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function ReportPreviewModal({ report, onClose }: { report: Report; onClose: () => void }) {
+function ReportPreviewModal({ report, onClose, isEmailing, handleEmailReport }: { report: Report; onClose: () => void; isEmailing: string | null; handleEmailReport: (rId: string, aId: string) => void }) {
   const analysis = getAnalysisById(report.analysisId);
 
   return (

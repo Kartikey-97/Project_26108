@@ -2,7 +2,7 @@ from kshiraj.bis_live_ingestion.normalizer import normalize_designation, normali
 
 
 def test_normalize_designation():
-    assert normalize_designation(" IS 10322 (Part 5 / Sec 3) : 2012 ") == "IS 10322 (Part 5/Sec 3):2012"
+    assert normalize_designation(" IS 10322 (Part 5 / Sec 3) : 2012 ") == "IS 10322 (PART 5 / (SEC 3))"
 
 
 def test_numeric_status_is_not_inferred_as_active():

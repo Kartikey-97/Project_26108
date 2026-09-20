@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { API_ROOT, API_KEY } from '@/services/api';
 import {
   AlertCircle,
+  RefreshCw,
   AlertTriangle,
   ArrowRight,
   BookMarked,
@@ -43,16 +45,17 @@ import { StandardComparisonModal } from '@/components/standards/StandardComparis
 interface Props {
   analysis: Analysis;
   isReal?: boolean;
+  onSyncComplete?: () => Promise<void>;
 }
 
-export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
+export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete }: Props) {
   const { navigate } = useRouter();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'primary' | 'normative' | 'testing' | 'issues'>('all');
   const [compareModalOpen, setCompareModalOpen] = useState(false);
   const [compareA, setCompareA] = useState('std-10322');
   const [compareB, setCompareB] = useState('std-1944');
-
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const [bisSync, setBisSync] = useState<{
     last_synced_at: string | null;
@@ -62,7 +65,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    
+
     if (!isReal) {
       // Simulate the sync check for seeded demos
       setTimeout(() => {
@@ -71,21 +74,58 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
       return () => { cancelled = true; };
     }
 
-    fetch('/api/v1/standards/bis-sync-status')
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data) => {
-        if (!cancelled) setBisSync(data);
-      })
-      .catch(() => {
-        if (!cancelled) setBisSync({ last_synced_at: null, total_synced: 0, error_count: 0 });
-      });
-    return () => { cancelled = true; };
-  }, [isReal]);
+    const fetchStatus = () => {
+      // Scope to this analysis so other tabs don't bleed through
+      fetch(`${API_ROOT}/standards/bis-sync-status?analysis_id=${analysis.id}`, { headers: { 'X-API-Key': API_KEY } })
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((data) => {
+          if (!cancelled) setBisSync(data);
+        })
+        .catch(() => {
+          if (!cancelled) setBisSync({ last_synced_at: null, total_synced: 0, error_count: 0 });
+        });
+    };
+
+    fetchStatus();
+    // Poll every 30s so the timestamp updates automatically after a background sync completes
+    const interval = setInterval(fetchStatus, 30_000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, [isReal, analysis.id]);
 
   const allMatchedRequirements = getMatchedRequirementsByAnalysisId(analysis.id);
+
+  const handleManualSync = async () => {
+    if (!analysis?.id || isSyncing) return;
+    setIsSyncing(true);
+    setBisSync((prev) => prev ? { ...prev, last_synced_at: null } : null);
+    try {
+      const resp = await fetch(`${API_ROOT}/analyses/${analysis.id}/sync-bis`, {
+        method: 'POST',
+        headers: { 'X-API-Key': API_KEY },
+      });
+      const body = await resp.json().catch(() => ({}));
+      if (body?.status === 'error' || body?.status === 'skipped') {
+        console.warn('BIS sync:', body?.message);
+        setIsSyncing(false);
+        return;
+      }
+      // Wait for backend to finish writing results, then refresh both status and analysis
+      setTimeout(async () => {
+        try {
+          const r = await fetch(`${API_ROOT}/standards/bis-sync-status?analysis_id=${analysis.id}`, { headers: { 'X-API-Key': API_KEY } });
+          if (r.ok) setBisSync(await r.json());
+        } catch {}
+        // Re-fetch the full analysis so standards cards reflect any status/amendment changes
+        try { await onSyncComplete?.(); } catch {}
+        setIsSyncing(false);
+      }, 5000);
+    } catch {
+      setIsSyncing(false);
+    }
+  };
 
   const matchedStandards = analysis.matchedStandardIds
     .map((id) => getStandardById(id))
@@ -197,30 +237,56 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Live BIS Sync Badge */}
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-emerald-900/40 text-emerald-600 border border-emerald-700">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Live BIS Sync
-        </span>
-        {bisSync === null ? (
-          <span className="text-xs text-ink-600">Checking BIS portal...</span>
-        ) : bisSync.last_synced_at ? (
-          <span className="text-xs text-ink-500">
-            Last checked:{' '}
-            {new Date(bisSync.last_synced_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-            {bisSync.error_count > 0 && (
-              <span className="ml-2 text-amber-500">
-                ({bisSync.error_count} standard(s) could not be verified from BIS portal)
-              </span>
+      {/* BIS Sync Status Bar */}
+      {isReal && (
+        <div className="flex items-center justify-between rounded-lg border border-ink-100 bg-white px-3 py-2 mb-3 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            {/* Status dot */}
+            <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${
+              isSyncing ? 'bg-amber-400 animate-pulse' :
+              bisSync?.last_synced_at ? 'bg-emerald-500' :
+              'bg-ink-300'
+            }`} />
+            <span className="text-xs font-semibold text-ink-700">BIS Portal Sync</span>
+            {bisSync === null && !isSyncing && (
+              <span className="text-xs text-ink-400">Checking…</span>
             )}
-          </span>
-        ) : (
-          <span className="text-xs text-ink-400">
-            Analysis complete — BIS sync pending
-          </span>
-        )}
-      </div>
+            {isSyncing && (
+              <span className="text-xs text-amber-600 font-medium">Syncing with BIS portal…</span>
+            )}
+            {!isSyncing && bisSync !== null && (
+              <>
+                {bisSync.last_synced_at ? (
+                  <span className="text-xs text-ink-400">
+                    Updated {new Date(bisSync.last_synced_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' })}
+                  </span>
+                ) : (
+                  <span className="text-xs text-ink-400 italic">Not yet synced</span>
+                )}
+                {bisSync.total_synced > 0 && (
+                  <span className="rounded-full bg-ink-100 px-2 py-0.5 text-[10px] font-medium text-ink-500">
+                    {bisSync.total_synced} standard{bisSync.total_synced !== 1 ? 's' : ''} checked
+                  </span>
+                )}
+                {bisSync.error_count > 0 && (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                    {bisSync.error_count} could not verify
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+          <button
+            onClick={handleManualSync}
+            disabled={isSyncing}
+            className="inline-flex items-center gap-1.5 rounded-md border border-ink-200 bg-ivory-50 px-2.5 py-1 text-xs font-medium text-ink-600 hover:bg-ivory-100 hover:text-ink-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <RefreshCw size={11} className={isSyncing ? 'animate-spin' : ''} />
+            {isSyncing ? 'Syncing…' : 'Sync Now'}
+          </button>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-ink-100 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
@@ -423,10 +489,22 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
                     <span>Edition: {standard.edition} ({standard.revision})</span>
                     <span>·</span>
                     <span>Bureau: {standard.bureau} — {standard.section}</span>
-                    {standard.icsCode && (
+                    {standard.committee && (
                       <>
                         <span>·</span>
-                        <span title="International Classification for Standards">ICS: {standard.icsCode}</span>
+                        <span>{standard.committee}</span>
+                      </>
+                    )}
+                    {standard.ministry && (
+                      <>
+                        <span>·</span>
+                        <span title={standard.ministry}>Gov</span>
+                      </>
+                    )}
+                    {false && (
+                      <>
+                        <span>·</span>
+                        <span title="International Classification for Standards">ICS: {standard.section}</span>
                       </>
                     )}
                     {standard.supersededBy && (
@@ -438,11 +516,13 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
                       </>
                     )}
                     <span>·</span>
-                    <span>{standard.pages} pages</span>
+                    {standard.pages > 0 && <span>{standard.pages} pages</span>}
                     {standard.amendments && standard.amendments.length > 0 && (
                       <>
                         <span>·</span>
-                        <span className="text-ink-700">{standard.amendments.join(', ')}</span>
+                        <span className="text-ink-700">
+                          {standard.amendments.map((a: any) => typeof a === 'string' ? a : `Amd ${(a.amendment_number || a.number)}` + (a.year ? ` (${a.year})` : '')).join(', ')}
+                        </span>
                       </>
                     )}
                     {standard.retrievedAt && (
@@ -454,7 +534,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false }: Props) {
                     {standard.bisSourceUrl && (
                       <>
                         <span>·</span>
-                        <a href={standard.bisSourceUrl} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline">BIS source ↗</a>
+                        <a href={standard.bisSourceUrl === "https://standards.bis.gov.in" ? "https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails" : standard.bisSourceUrl} title="Copy the IS number and paste it in the BIS search portal" target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline">BIS Search Portal ↗</a>
                       </>
                     )}
                   </div>

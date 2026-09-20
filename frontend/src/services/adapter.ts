@@ -169,7 +169,7 @@ export function adaptStandard(raw: any): Standard {
     title,
     category: raw.division_council || raw.category || 'BIS Catalog',
     edition: String(raw.latest_version || raw.edition || year || ''),
-    revision: raw.status ? String(raw.status).replace(/_/g, ' ') : 'Current',
+    revision: raw.status ? (String(raw.status) === 'unknown' ? 'Active' : String(raw.status).replace(/_/g, ' ')) : 'Current',
     status: mapStandardStatus(raw.status),
     bureau: 'BIS',
     section: raw.ics_code || raw.section || '',
@@ -186,10 +186,12 @@ export function adaptStandard(raw: any): Standard {
     regulatoryNote: qco ? 'Notified under a Quality Control Order — BIS certification mandatory.' : null,
     supersededBy: raw.superseded_by || undefined,
     amendments: raw.amendments || [],
-    internationalEquivalents: raw.ics_code ? [raw.ics_code] : [],
+    committee: raw.technical_committee || raw.committee || undefined,
+    ministry: raw.ministry || undefined,
+    internationalEquivalents: raw.equivalents || raw.internationalEquivalents || (raw.ics_code ? [raw.ics_code] : []),
     technicalCoverage: raw.text_excerpt || undefined,
     whyApplies: cleanReasoning(raw.why_recommended || raw.text_excerpt || scope),
-    applicabilityScore: raw.applicability_score ? Math.round(norm(raw.applicability_score) * 100) : undefined,
+    applicabilityScore: (raw.relevance_score || raw.semantic_score || raw.applicability_score) ? Math.round(norm(raw.relevance_score || raw.semantic_score || raw.applicability_score) * 100) : undefined,
     evidenceAvailable: Array.isArray(raw.evidence) ? raw.evidence.length > 0 : undefined,
     bisSourceUrl: raw.source_url || (raw.provenance?.url) || undefined,
     retrievedAt: raw.retrieved_at || undefined,
@@ -218,10 +220,13 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const requirements: any[] = raw?.requirements || [];
 
   const standards = rawStandards.map(adaptStandard);
-  // The backend returns standards ranked by relevance; treat the top match as the
-  // primary code so the Standards-tab "Primary" filter and highlight styling work.
-  if (standards[0]) standards[0].relationshipRole = 'primary';
   const stdById = new Map(standards.map((s, i) => [String(rawStandards[i].id ?? s.id), s]));
+  
+  // Sort standards by applicability score descending so the highest score is primary
+  standards.sort((a, b) => (b.applicabilityScore || 0) - (a.applicabilityScore || 0));
+  
+  // The highest scored standard is the primary code
+  if (standards[0]) standards[0].relationshipRole = 'primary';
   const findingFor = (reqId: string) => findings.find((f) => f.requirement_id === reqId);
 
   const analysisId = String(raw?.id ?? '');
@@ -266,21 +271,31 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
 
   const regulatory: RegulatoryRequirement[] = standards
     .filter((s) => s.regulatory)
-    .map((s) => ({
-      id: `reg-${s.id}`,
-      analysisId,
-      requirement: `BIS certification — ${s.number}`,
-      type: 'certification',
-      status: 'applicable',
-      relatedStandard: s.number,
-      relatedStandardId: s.id,
-      issuingAuthority: 'Bureau of Indian Standards (BIS)',
-      sourceDocument: 'Quality Control Order notification',
-      whyAppliesText: s.regulatoryNote || `${s.number} is notified under a Quality Control Order; BIS certification is mandatory for supply.`,
-      whyAppliesCriteria: [],
-      evidenceAvailable: true,
-      reviewConfidence: 'high-confidence',
-    }));
+    .map((s) => {
+      // Find the raw standard from get_analysis response if possible
+      const rawS = raw?.standards?.find((rs: any) => String(rs.id) === String(s.id)) || {};
+      return {
+        id: `reg-${s.id}`,
+        analysisId,
+        requirement: `BIS certification — ${s.number}`,
+        type: 'certification',
+        status: 'applicable',
+        relatedStandard: s.number,
+        relatedStandardId: s.id,
+        issuingAuthority: rawS.qco_issuing_ministry || 'Bureau of Indian Standards (BIS)',
+        sourceDocument: 'Quality Control Order notification',
+        orderNumber: rawS.qco_gazette_so_number || '-',
+        effectiveDate: rawS.qco_effective_date || '-',
+        validityInfo: rawS.qco_effective_date ? `Effective from ${rawS.qco_effective_date}` : 'Active / Mandatory',
+        whyAppliesText: s.regulatoryNote || `${s.number} is notified under a Quality Control Order; BIS certification is mandatory for supply.`,
+        whyAppliesCriteria: [
+          { text: `Standard ${s.number} is officially notified by ${rawS.qco_issuing_ministry || 'MeitY/DPIIT/BIS'}`, matched: true },
+          { text: 'Mandatory BIS certification is required for vendor eligibility', matched: true }
+        ],
+        evidenceAvailable: true,
+        reviewConfidence: 'high-confidence',
+      };
+    });
 
   const evidence: EvidenceChainItem[] = findings.map((f) => {
     const r = requirements.find((x) => x.id === f.requirement_id);
@@ -302,17 +317,39 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
     };
   });
 
-  const relationships: StandardRelationship[] = standards.flatMap((s) =>
-    (s.references || []).slice(0, 4).map((ref, i) => ({
-      id: `rel-${s.id}-${i}`,
-      analysisId,
-      fromStandardId: s.id,
-      toStandardId: '',
-      type: 'references' as const,
-      label: `${s.number} → ${ref}`,
-      description: `${s.number} cites ${ref} as a normative reference.`,
-    })),
+  const relationships: StandardRelationship[] = findings.flatMap((f) =>
+    (f.cross_references || []).flatMap((xref: any, fi: number) =>
+      (xref.references || []).slice(0, 4).map((ref: string, ri: number) => ({
+        id: `rel-${f.id}-${fi}-${ri}`,
+        analysisId,
+        fromStandardId: xref.source || '',
+        toStandardId: '',
+        type: 'references' as const,
+        label: `${xref.source_designation || xref.source} → ${ref}`,
+        description: xref.note || `${xref.source_designation || xref.source} cites ${ref} as a normative reference.`,
+      })),
+    ),
   );
+  
+  // Inject superseding relationships dynamically for real standards
+  standards.forEach((std) => {
+    if (std.supersededBy) {
+      const cleanSup = std.supersededBy.replace(/\s/g, '').toLowerCase();
+      const newStd = standards.find(s => s.number.replace(/\s/g, '').toLowerCase() === cleanSup || (s.title && s.title.replace(/\s/g, '').toLowerCase() === cleanSup));
+      if (newStd) {
+        relationships.push({
+          id: `rel-sup-${std.id}-${newStd.id}`,
+          analysisId,
+          fromStandardId: newStd.id,
+          toStandardId: std.id,
+          type: 'supersedes' as any,
+          role: 'supersedes' as any,
+          label: 'Superseded By',
+          description: `Standard ${std.number} has been officially superseded by ${newStd.number}.`
+        });
+      }
+    }
+  });
 
   const gapsFound = findings.filter((f) => (f.verdict || '').toLowerCase() !== 'justified').length;
   const confidences = findings.map((f) => norm(f.confidence)).filter((n) => n > 0);
@@ -373,15 +410,73 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
       evidenceSnippet: r.supportingEvidence,
       reviewConfidence: r.reviewConfidence,
     }));
+
+    // Overlay fresh status from the backend if available (so BIS sync works on the demo)
+    const normalizeDesig = (n: string) => {
+      let v = n.replace(/\s+/g, ' ').replace(/\s*:\s*\d{4}.*$/, '');
+      v = v.replace(/(?:\s*:\s*|\s+)(Part\s*\d+[a-zA-Z]*)(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)/gi, '($1/$2)');
+      v = v.replace(/(?:\s*:\s*|\s+)(Part\s*\d+[a-zA-Z]*)/gi, '($1)');
+      v = v.replace(/(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)/gi, '($1)');
+      return v.replace(/\(\s*(Part|Sec)\s+/gi, '($1 ').replace(/\s*\)/g, ')').replace(/([^\s])\(/g, '$1 (').toUpperCase().trim();
+    };
+
+    const mappedDemoNorms = new Set<string>();
+    const overlayStandards = LED_STANDARDS.map((demoStd) => {
+      const demoNorm = normalizeDesig(demoStd.number);
+      mappedDemoNorms.add(demoNorm);
+      const backendMatch = standards.find((s) => normalizeDesig(s.number) === demoNorm);
+      if (backendMatch) {
+        return {
+          ...demoStd,
+          status: backendMatch.status,
+          reaffirmationYear: backendMatch.reaffirmationYear,
+          withdrawalDate: backendMatch.withdrawalDate,
+          supersededBy: backendMatch.supersededBy,
+          amendments: backendMatch.amendments,
+          committee: backendMatch.committee,
+          ministry: backendMatch.ministry,
+        };
+      }
+      return demoStd;
+    });
+
+    // Inject any new standards found by the backend (like superseding standards)
+    const dynamicRelationships = [...fixedRelationships];
+    standards.forEach((backendStd) => {
+      const backendNorm = normalizeDesig(backendStd.number);
+      if (!mappedDemoNorms.has(backendNorm)) {
+        overlayStandards.push(backendStd);
+      }
+    });
+
+    // Wire up superseding relationships dynamically
+    overlayStandards.forEach((oldStd) => {
+      if (oldStd.supersededBy) {
+        const supersededNorm = normalizeDesig(oldStd.supersededBy);
+        const newStd = overlayStandards.find(s => normalizeDesig(s.number) === supersededNorm);
+        if (newStd) {
+          dynamicRelationships.push({
+            id: `rel-dyn-supersedes-${Date.now()}-${oldStd.id}`,
+            analysisId: fixedId,
+            fromStandardId: newStd.id,
+            toStandardId: oldStd.id,
+            type: 'supersedes',
+            label: 'Superseded By',
+            description: `This standard has been superseded by ${newStd.number}.`
+          });
+        }
+      }
+    });
+
     return {
       analysis: fixedAnalysis,
-      standards: LED_STANDARDS,
-      primaryStandard: LED_STANDARDS[0],
+      standards: overlayStandards,
+      primaryStandard: overlayStandards[0],
       matchedRequirements: fixedMatchedReqs,
       specRequirements: fixedSpecReqs,
       regulatory: fixedRegulatory,
       evidence: fixedEvidence,
-      relationships: fixedRelationships,
+      relationships: dynamicRelationships,
       degradedReason: null,
       analysisMode: 'led_demo_fixture',
     };

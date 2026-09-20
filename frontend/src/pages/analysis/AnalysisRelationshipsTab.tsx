@@ -50,6 +50,7 @@ import {
   statusConfig,
   relationships as allRelationships,
 } from '@/data/mockData';
+import { getRealStandardById } from '@/data/runtimeStore';
 import type {
   Standard,
   StandardRelationship,
@@ -102,7 +103,22 @@ export function AnalysisRelationshipsTab({ analysis, analysisId, isReal = false 
   const sourceAnalysisId = analysis?.id || analysisId;
   let standardDirectory = [...standards];
   
-  const localGetStandardById = (id) => standardDirectory.find(s => s.id === id) || getStandardById(id);
+  const localGetStandardById = (id) => {
+    const fromStore = getRealStandardById(id);
+    if (fromStore) return fromStore;
+    const fromMock = standardDirectory.find(s => s.id === id) || getStandardById(id);
+    if (fromMock) return fromMock;
+    
+    // Stub for unseen cross-references
+    return {
+      id,
+      number: id,
+      title: 'Referenced Standard',
+      category: 'Cross-reference',
+      status: 'current',
+      isCertified: false
+    } as any;
+  };
 
   let rels = getRelationshipsByAnalysisId(sourceAnalysisId);
   let primaryStd = localGetStandardById('std-10322') || standards[0];

@@ -25,10 +25,12 @@ from typing import List, Union
 from shared.models import Standard
 
 _IS_REF_RE = re.compile(
-    r"IS\s+"                # "IS " prefix (case-insensitive)
-    r"(\d+)"                # IS number digits
-    r"(?:\s*\(([^)]+)\))?"  # optional (Part N/Sec M)
-    r"(?:\s*:\s*(\d{4}))?"  # optional :YYYY year
+    r"(?:IS/IEC|IS/ISO|IS)\s+"  # prefix (case-insensitive)
+    r"(\d+)"                    # IS number digits
+    r"(?:\s*:\s*Part\s*\d+)?"   # optional Part N (ignoring capture)
+    r"(?:\s*:\s*Sec\s*\d+)?"    # optional Sec M
+    r"(?:\s*\([^)]+\))?"        # optional (Part N/Sec M) alternative format
+    r"(?:\s*:\s*(\d{4}))?"      # optional :YYYY year
     r"(?:\s+Amd\.?\s*(\d+))?",  # optional Amd.N
     re.IGNORECASE,
 )

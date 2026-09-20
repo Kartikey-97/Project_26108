@@ -10,19 +10,24 @@ from shared.models import Amendment, DocumentType, Evidence, EvidenceSourceType,
 PORTAL_URL = "https://standards.bis.gov.in/"
 
 _IS_RE = re.compile(
-    r"^\s*(IS\s*\d+)\s*(?:\((Part\s*\d+)(?:\s*/\s*(Sec\s*\d+))?\))?\s*(?::\s*(\d{4}))?\s*$",
+    r"^\s*(IS(?:/[A-Z]+)?\s*\d+)\s*(?:\((Part\s*\d+(?:\s+and\s+\d+)?)(?:\s*/\s*(Sec\s*\d+))?\))?\s*(?::\s*(\d{4}))?\s*$",
     re.IGNORECASE,
 )
 
 
 def normalize_designation(value: str) -> str:
     value = re.sub(r"\s+", " ", value.strip())
-    value = re.sub(r"\s*/\s*", "/", value)
-    value = re.sub(r"\(\s*Part\s*", "(Part ", value, flags=re.I)
-    value = re.sub(r"\(\s*Sec\s*", "(Sec ", value, flags=re.I)
+    value = re.sub(r"\s*:\s*\d{4}.*$", "", value)
+    value = re.sub(r"(?:\s*:\s*|\s+)(Part\s*\d+(?:\s+and\s+\d+)?[a-zA-Z]*)(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)", r"(\1/\2)", value, flags=re.I)
+    value = re.sub(r"(?:\s*:\s*|\s+)(Part\s*\d+(?:\s+and\s+\d+)?[a-zA-Z]*)", r"(\1)", value, flags=re.I)
+    value = re.sub(r"(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)", r"(\1)", value, flags=re.I)
+    value = re.sub(r"\(\s*Part\s+", "(Part ", value, flags=re.I)
+    value = re.sub(r"\(\s*Sec\s+", "(Sec ", value, flags=re.I)
     value = re.sub(r"\s*\)", ")", value)
-    value = re.sub(r"\s*:\s*", ":", value)
-    return value
+    # Ensure exactly one space before (Part X)
+    value = re.sub(r"\s*\(Part", " (Part", value, flags=re.I)
+    value = re.sub(r"\s*\(Sec", " (Sec", value, flags=re.I)
+    return value.upper().strip()
 
 
 def parse_designation(value: str) -> tuple[str, str | None, str | None, int | None]:
@@ -140,8 +145,16 @@ def normalize_standard(
     *,
     source_url: str = PORTAL_URL,
 ) -> tuple[Standard, list[Evidence]]:
-    designation = normalize_designation(str(detail.get("standardNumber") or ""))
-    is_number, part, section, year = parse_designation(designation)
+    raw_designation = str(detail.get("standardNumber") or "")
+    designation = normalize_designation(raw_designation)
+    is_number, part, section, _ = parse_designation(designation)
+    
+    # Extract year safely before it gets stripped
+    year = None
+    import re
+    year_match = re.search(r":\s*(\d{4})", raw_designation)
+    if year_match:
+        year = int(year_match.group(1))
     retrieved_at = datetime.now(timezone.utc)
     parsed_amendments = normalize_amendments(amendments or [], source_url)
 
@@ -157,6 +170,8 @@ def normalize_standard(
         ics_code=detail.get("icsCode") or detail.get("ics_code"),
         division_council=detail.get("groupName") or detail.get("divisionCouncil"),
         technical_committee=detail.get("committeeName") or detail.get("technicalCommittee"),
+        ministry=detail.get("ministryName") or None,
+        equivalents=[detail.get("equivalentIs")] if detail.get("equivalentIs") else [],
         status=_explicit_status(detail),
         reaffirmation_year=_year(detail.get("reAffirmationYear") or detail.get("reaffirmationYear")),
         superseded_by=detail.get("superseded_byis") or detail.get("supersededBy") or None,

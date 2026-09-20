@@ -60,7 +60,20 @@ async def search_standards(
     return [c.standard for c in result.candidates]
 
 
+
+
+
+@router.get("/bis-sync-status")
+async def bis_sync_status(analysis_id: str | None = Query(None)) -> dict:
+    """
+    Returns BIS live sync status from memory.
+    Pass ?analysis_id=<id> to get status scoped to a specific analysis.
+    """
+    from shared.sync_state import get_sync_status
+    return get_sync_status(analysis_id=analysis_id)
+
 @router.get("/{standard_id}", response_model=Standard)
+
 async def get_standard(standard_id: str) -> Standard:
     """
     Get the full details of a specific standard by its internal ID.
@@ -79,12 +92,3 @@ async def get_standard(standard_id: str) -> Standard:
         )
     return standard
 
-@router.get("/bis-sync-status")
-async def bis_sync_status() -> dict:
-    """
-    Returns current BIS live sync status.
-    Safe to call with zero syncs — returns nulls gracefully.
-    Never raises.
-    """
-    from shared.sync_state import get_sync_status
-    return get_sync_status()

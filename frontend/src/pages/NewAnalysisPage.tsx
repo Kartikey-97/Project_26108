@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
@@ -27,7 +27,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from '@/router';
-import { createAnalysis, waitForAnalysis, getSampleDocument, extractProfilePreview } from '@/services/api';
+import { createAnalysis, waitForAnalysis, getSampleDocument, extractProfilePreview, getBackendHealth } from '@/services/api';
 import { statusBadge } from '@/services/adapter';
 import type { ProcurementProfile, ProfileParameter, ProfileFieldStatus } from '@/data/types';
 
@@ -231,6 +231,24 @@ type WorkflowStep = 'input' | 'extracting' | 'profile' | 'confirmed';
 export function NewAnalysisPage() {
   const { navigate } = useRouter();
 
+  // Backend readiness for cold starts
+  const [isBackendReady, setIsBackendReady] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const check = async () => {
+      try {
+        await getBackendHealth();
+        if (mounted) setIsBackendReady(true);
+      } catch (e) {
+        // Will retry
+      }
+    };
+    check();
+    const interval = setInterval(check, 5000);
+    return () => { mounted = false; clearInterval(interval); };
+  }, []);
+
   // Workflow state
   const [step, setStep] = useState<WorkflowStep>('input');
   const [inputMode, setInputMode] = useState<InputMode>('upload');
@@ -270,18 +288,27 @@ export function NewAnalysisPage() {
     if (picked.length === 0) return;
     setUploadedFileObjects((prev) => [...prev, ...picked]);
     setUploadedFiles((prev) => [...prev, ...picked.map((f) => ({ name: f.name, size: formatSize(f.size), pages: 0 }))]);
-    
+
+    // Reset fixture first — uploading any file after the demo button was clicked
+    // must not inherit the demo fixture unless the new file itself triggers one.
     const name = picked[0].name.toLowerCase();
     if (name.includes('hindi')) {
-       setDemoFixture('hindi');
+      setDemoFixture('hindi');
     } else if (name.includes('tamil')) {
-       setDemoFixture('tamil');
+      setDemoFixture('tamil');
+    } else {
+      // Normal file — clear any previously set demo fixture (e.g. user clicked
+      // "Load LED Sample" then deleted it and uploaded their own PDF).
+      setDemoFixture(null);
     }
   };
 
   const removeFileAt = (idx: number) => {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== idx));
     setUploadedFileObjects((prev) => prev.filter((_, i) => i !== idx));
+    // If the user removes ALL files, there's nothing to run a fixture for.
+    // Reset so the next upload or submit gets real analysis.
+    setDemoFixture(null);
   };
 
   // Load sample data helper — fetches the real bundled tender PDF for upload mode
@@ -362,16 +389,15 @@ export function NewAnalysisPage() {
       setSubmitStatusLabel('Queued…');
 
       if (demoFixture === 'led') {
-        // Deliberately slow down LED demo presentation to simulate heavy work for ~25s
-        await new Promise(r => setTimeout(r, 2000));
+        // Staged animation — ~13s total to feel thorough but not sluggish
+        await new Promise(r => setTimeout(r, 1500));
         setSubmitStatusLabel('Extracting requirements...');
-        await new Promise(r => setTimeout(r, 5000));
+        await new Promise(r => setTimeout(r, 3500));
         setSubmitStatusLabel('Matching against BIS directory...');
-        await new Promise(r => setTimeout(r, 7000));
-        setSubmitStatusLabel('Finding regulatory gaps...');
-        await new Promise(r => setTimeout(r, 7000));
-        setSubmitStatusLabel('Finalizing compliance report...');
         await new Promise(r => setTimeout(r, 4000));
+        setSubmitStatusLabel('Finding regulatory gaps...');
+        await new Promise(r => setTimeout(r, 4000));
+        setSubmitStatusLabel('Finalizing compliance report...');
       }
 
       const final = await waitForAnalysis(
@@ -806,11 +832,11 @@ export function NewAnalysisPage() {
               <div className="flex gap-2">
                 <Button
                   onClick={handleStartExtraction}
-                  disabled={!isInputValid}
+                  disabled={!isInputValid || (!isBackendReady && !demoFixture)}
                   rightIcon={<ArrowRight size={15} />}
                   className="shadow-soft active:scale-[0.98] transition-transform"
                 >
-                  Extract Procurement Profile
+                  {(!isBackendReady && !demoFixture) ? 'Waking Backend (~50s)...' : 'Extract Procurement Profile'}
                 </Button>
               </div>
             </div>

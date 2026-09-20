@@ -46,7 +46,9 @@ export interface Standard {
   regulatoryNote: string | null;
   supersededBy?: string;
   previousEdition?: string;
-  amendments?: string[];
+  amendments?: any[]; // string from mock, object from backend
+  committee?: string;
+  ministry?: string;
   technicalCoverage?: string;
   testingRequirements?: string;
   internationalEquivalents?: string[];

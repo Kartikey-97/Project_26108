@@ -59,7 +59,7 @@ function qcoFindingToRegulatoryRequirement(
   return {
     id: `reg-qco-${qco.is_number.replace(/\W+/g, '-')}`,
     analysisId,
-    type: 'mandatory-standard',
+    type: 'regulatory-order',
     status: 'needs-review',
     reviewConfidence: qco.confidence >= 0.95 ? 'high-confidence' : 'needs-review',
     title: `Mandatory BIS Certification: ${qco.is_number}`,
@@ -87,22 +87,7 @@ export function AnalysisCertificationTab({ analysis }: Props) {
     rawRequirements = analysis.qco_findings.map(q => qcoFindingToRegulatoryRequirement(q, analysis.id));
   }
   
-  if (analysis?.standards_intelligence?.length > 0 && rawRequirements.length === 0) {
-     rawRequirements = analysis.standards_intelligence.slice(0, 2).map((std, i) => ({
-        id: `reg-${i}`,
-        analysisId: analysis.id,
-        requirement: `Compulsory Registration for ${std.standardTitle}`,
-        type: 'qco',
-        status: 'applicable',
-        relatedStandard: std.standardCode,
-        relatedStandardId: std.id,
-        issuingAuthority: 'Bureau of Indian Standards / MeitY',
-        sourceDocument: 'QCO Gazette Notification 2023',
-        whyAppliesText: `Mandatory certification under the BIS Compulsory Registration Scheme as per QCO guidelines for ${std.standardCode}.`,
-        whyAppliesCriteria: [{ text: 'Target entity classification', matched: true }],
-        evidenceAvailable: true
-     }));
-  }
+
 
 
 

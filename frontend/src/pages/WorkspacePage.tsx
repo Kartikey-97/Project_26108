@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   TrendingUp,
   Users,
+  X,
 } from 'lucide-react';
 import { TopNav } from '@/components/TopNav';
 import { Card } from '@/components/ui/Card';
@@ -35,6 +36,23 @@ import type { Analysis } from '@/data/types';
 export function WorkspacePage() {
   const { navigate } = useRouter();
 
+  // Track demos the user has explicitly dismissed, persisted across refreshes
+  const [hiddenDemoIds, setHiddenDemoIds] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('standiq-hidden-demos');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  const hideDemo = (id: string) => {
+    setHiddenDemoIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      try { localStorage.setItem('standiq-hidden-demos', JSON.stringify([...next])); } catch {}
+      return next;
+    });
+  };
+
   // Real analyses from the live backend, merged ahead of the seeded demo showcases.
   const [realRows, setRealRows] = useState<Analysis[]>([]);
   useEffect(() => {
@@ -50,7 +68,9 @@ export function WorkspacePage() {
     };
   }, []);
 
-  const analysesList = [...realRows, ...analyses.filter((m) => !realRows.some((r) => r.id === m.id))];
+  // Merge real rows first; only show demos that haven't been hidden
+  const visibleDemos = analyses.filter((m) => !realRows.some((r) => r.id === m.id) && !hiddenDemoIds.has(m.id));
+  const analysesList = [...realRows, ...visibleDemos];
 
   const completedAnalyses = analysesList.filter((a) => a.status === 'completed');
   const processingAnalyses = analysesList.filter((a) => a.status === 'processing');
@@ -131,48 +151,61 @@ export function WorkspacePage() {
               <div className="divide-y divide-ink-100">
                 {analysesList.map((analysis) => {
                   const status = analysisStatusConfig[analysis.status];
+                  // Demo IDs are the hardcoded mock IDs (an-001, an-002, an-003, an-hindi, an-tamil)
+                  const isDemo = ['an-001','an-002','an-003','an-hindi','an-tamil'].includes(analysis.id);
                   return (
-                    <button
-                      key={analysis.id}
-                      onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'overview' })}
-                      className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory-50"
-                    >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ivory-100 text-ink-500">
-                        {analysis.status === 'completed' ? (
-                          <CheckCircle2 size={18} className="text-success-500" />
-                        ) : analysis.status === 'processing' ? (
-                          <Clock size={18} className="text-blue-500" />
-                        ) : (
-                          <FileText size={18} className="text-ink-400" />
-                        )}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="truncate text-sm font-medium text-ink-900">{analysis.title}</p>
-                        </div>
-                        <div className="mt-1 flex items-center gap-3 text-xs text-ink-400">
-                          <span>{analysis.category}</span>
-                          <span className="text-ink-200">·</span>
-                          <span>{formatDate(analysis.createdAt)}</span>
-                          {analysis.standardsIdentified > 0 && (
-                            <>
-                              <span className="text-ink-200">·</span>
-                              <span>{analysis.standardsIdentified} standards</span>
-                            </>
-                          )}
-                          {analysis.gapsFound > 0 && (
-                            <>
-                              <span className="text-ink-200">·</span>
-                              <span className="text-warning-600">{analysis.gapsFound} gaps</span>
-                            </>
+                    <div key={analysis.id} className="group relative flex w-full items-center">
+                      <button
+                        onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'overview' })}
+                        className="flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory-50"
+                      >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ivory-100 text-ink-500">
+                          {analysis.status === 'completed' ? (
+                            <CheckCircle2 size={18} className="text-success-500" />
+                          ) : analysis.status === 'processing' ? (
+                            <Clock size={18} className="text-blue-500" />
+                          ) : (
+                            <FileText size={18} className="text-ink-400" />
                           )}
                         </div>
-                      </div>
 
-                      <Badge variant={status.variant}>{status.label}</Badge>
-                      <ArrowRight size={15} className="shrink-0 text-ink-300" />
-                    </button>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="truncate text-sm font-medium text-ink-900">{analysis.title}</p>
+                            {isDemo && <span className="shrink-0 rounded bg-ink-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-400 uppercase tracking-wide">demo</span>}
+                          </div>
+                          <div className="mt-1 flex items-center gap-3 text-xs text-ink-400">
+                            <span>{analysis.category}</span>
+                            <span className="text-ink-200">·</span>
+                            <span>{formatDate(analysis.createdAt)}</span>
+                            {analysis.standardsIdentified > 0 && (
+                              <>
+                                <span className="text-ink-200">·</span>
+                                <span>{analysis.standardsIdentified} standards</span>
+                              </>
+                            )}
+                            {analysis.gapsFound > 0 && (
+                              <>
+                                <span className="text-ink-200">·</span>
+                                <span className="text-warning-600">{analysis.gapsFound} gaps</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <Badge variant={status.variant}>{status.label}</Badge>
+                        <ArrowRight size={15} className="shrink-0 text-ink-300" />
+                      </button>
+                      {isDemo && (
+                        <button
+                          title="Hide this demo"
+                          onClick={(e) => { e.stopPropagation(); hideDemo(analysis.id); }}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex h-6 w-6 items-center justify-center rounded text-ink-400 hover:bg-ink-100 hover:text-ink-700 transition-colors"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>

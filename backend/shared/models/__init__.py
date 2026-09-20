@@ -225,6 +225,20 @@ class Standard(BaseModel):
     amendments: list[Amendment] = []        # list of applied amendments
 
     @computed_field
+    def base_designation(self) -> str:
+        """
+        Return the base IS designation string without year or amendments.
+        e.g. "IS 10322 (Part 5/Sec 3)"
+        """
+        d = self.is_number
+        if self.part and self.part.lower() not in d.lower():
+            if self.section:
+                d += f" ({self.part}/{self.section})"
+            else:
+                d += f" ({self.part})"
+        return d
+
+    @computed_field
     def designation(self) -> str:
         """
         Return the canonical IS designation string.
@@ -246,6 +260,9 @@ class Standard(BaseModel):
     # Descriptive metadata
     # ------------------------------------------------------------------
     title: str
+    committee: str | None = None
+    ministry: str | None = None
+    equivalents: list[str] | None = Field(default_factory=list)
     scope: str | None = None               # text describing coverage and exclusions
     # Standards a procurement officer cannot ignore once this one is cited.
     # normative_references are binding (the citing standard's requirements are

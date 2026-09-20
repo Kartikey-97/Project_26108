@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   AlertCircle,
@@ -66,17 +66,27 @@ export function AnalysisGapsTab({ analysisId }: Props) {
   const [statusFilter, setStatusFilter] = useState<SpecificationRequirementStatus | 'all'>('all');
   
   // Local human review decisions
-  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>({
-    'req-sp-1': 'accepted',
-    'req-sp-2': 'accepted',
-    'req-sp-3': 'accepted',
-    'req-sp-4': 'accepted',
-    'req-sp-5': 'reviewed',
-    'req-sp-6': 'reviewed',
-    'req-sp-7': 'accepted',
-    'req-sp-10': 'reviewed',
-    'req-sp-11': 'accepted',
+  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>(() => {
+    const saved = localStorage.getItem(`decisions-mock`);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      'req-sp-1': 'accepted',
+      'req-sp-2': 'accepted',
+      'req-sp-3': 'accepted',
+      'req-sp-4': 'accepted',
+      'req-sp-5': 'reviewed',
+      'req-sp-6': 'reviewed',
+      'req-sp-7': 'accepted',
+      'req-sp-10': 'reviewed',
+      'req-sp-11': 'accepted',
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem(`decisions-mock`, JSON.stringify(decisions));
+  }, [decisions]);
 
   const handleDecision = (reqId: string, decision: HumanDecision) => {
     setDecisions((prev) => ({ ...prev, [reqId]: decision }));

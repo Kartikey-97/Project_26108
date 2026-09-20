@@ -153,7 +153,7 @@ def _standard_from_catalogue(item: dict):
         qco_effective_date=_parse_date(certification.get("qco_effective_date")),
         required_certification_scheme=scheme,
 
-        source_url=(item.get("provenance") or {}).get("url") or "https://standardsbis.gov.in",
+        source_url=(item.get("provenance") or {}).get("url") or "https://standards.bis.gov.in",
         provenance=item.get("provenance"),
         field_availability=item.get("field_availability") or {},
         retrieved_at=date.today(),

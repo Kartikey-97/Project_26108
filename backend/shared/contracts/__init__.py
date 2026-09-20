@@ -73,6 +73,7 @@ class AnalysisResponse(BaseModel):
     input_type: InputType
     tender_id: str | None
     tender_title: str | None
+    document_id: str | None = None
 
     created_at: str   # ISO-8601
     updated_at: str   # ISO-8601
