@@ -16,7 +16,9 @@ _IS_RE = re.compile(
 
 
 def normalize_designation(value: str) -> str:
-    value = re.sub(r"\s+", " ", value.strip())
+    value = value.strip().upper()
+    value = re.sub(r"^(IS(?:/[A-Z]+)?)\s*(\d+)", r"\g<1> \g<2>", value)
+    value = re.sub(r"\s+", " ", value)
     value = re.sub(r"\s*:\s*\d{4}.*$", "", value)
     value = re.sub(r"(?:\s*:\s*|\s+)(Part\s*\d+(?:\s+and\s+\d+)?[a-zA-Z]*)(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)", r"(\1/\2)", value, flags=re.I)
     value = re.sub(r"(?:\s*:\s*|\s+)(Part\s*\d+(?:\s+and\s+\d+)?[a-zA-Z]*)", r"(\1)", value, flags=re.I)
