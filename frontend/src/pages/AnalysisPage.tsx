@@ -196,7 +196,7 @@ export function AnalysisPage({ analysisId, tab }: Props) {
     standards: analysis.standardsIdentified,
     relationships: rels.length,
     gaps: analysis.gapsFound,
-    certification: regRequirements.length,
+    certification: analysis.certificationsRequired || regRequirements.length,
     evidence: evChains.length,
   };
 

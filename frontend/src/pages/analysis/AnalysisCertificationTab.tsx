@@ -94,7 +94,7 @@ function testingRequirementToRegulatoryRequirement(
     analysisId,
     requirement: `Testing & Accreditation — ${req.label || 'Parameters'}`,
     type: 'testing-accreditation',
-    status: 'applicable',
+    status: 'conditional',
     reviewConfidence: 'high-confidence',
     relatedStandard: 'NABL / ISO/IEC 17025',
     issuingAuthority: 'National Accreditation Board for Testing and Calibration Laboratories (NABL)',
