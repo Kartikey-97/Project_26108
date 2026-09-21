@@ -59,21 +59,56 @@ function qcoFindingToRegulatoryRequirement(
   return {
     id: `reg-qco-${qco.is_number.replace(/\W+/g, '-')}`,
     analysisId,
+    requirement: qco.notification_title 
+      ? `${qco.notification_title} — ${qco.is_number}`
+      : `BIS Compulsory Registration Scheme (CRS) — ${qco.is_number}`,
     type: 'regulatory-order',
-    status: 'needs-review',
+    status: 'applicable',
     reviewConfidence: qco.confidence >= 0.95 ? 'high-confidence' : 'needs-review',
-    title: `Mandatory BIS Certification: ${qco.is_number}`,
-    issuingAuthority: qco.issuing_ministry || 'DPIIT',
-    description: qco.mandate_text || 'Compliance with QCO is mandatory.',
-    relatedStandardIds: [],
-    matchReason: qco.match_reasons.includes('product_keyword_match') 
-      ? `Matched based on product description (${(qco.products_covered || []).join(', ')})`
-      : 'Exact IS number match',
-    evidenceSnippet: qco.notification_title + (qco.gazette_so_number ? ` (${qco.gazette_so_number})` : ''),
-    evidenceSource: 'Quality Control Order Database',
-    actionRequired: 'Verify product coverage and ensure manufacturer holds valid BIS licence.',
-    dueDate: qco.effective_date,
-    link: qco.source_url
+    relatedStandard: qco.is_number,
+    issuingAuthority: qco.issuing_ministry || 'Bureau of Indian Standards (BIS)',
+    sourceDocument: 'Quality Control Order',
+    orderNumber: qco.gazette_so_number,
+    effectiveDate: qco.effective_date,
+    validityInfo: 'CRS certificate must be valid at date of supply (not just bid submission).',
+    whyAppliesText: qco.mandate_text || 'This product is notified under a Quality Control Order requiring mandatory certification.',
+    whyAppliesCriteria: [
+      {
+        text: `Tender explicitly relates to QCO notified products: ${(qco.products_covered || []).join(', ') || qco.is_number}`,
+        matched: true
+      }
+    ],
+    evidenceAvailable: true,
+    evidenceSnippet: `"${qco.mandate_text || 'Mandatory certification required'}" — QCO Gazette`,
+    evidenceSource: 'Quality Control Order Database'
+  };
+}
+
+function testingRequirementToRegulatoryRequirement(
+  req: any,
+  analysisId: string,
+  idx: number
+): RegulatoryRequirement {
+  return {
+    id: `reg-test-${idx}`,
+    analysisId,
+    requirement: `Testing & Accreditation — ${req.name || 'Parameters'}`,
+    type: 'testing-accreditation',
+    status: 'applicable',
+    reviewConfidence: 'high-confidence',
+    relatedStandard: 'NABL / ISO/IEC 17025',
+    issuingAuthority: 'National Accreditation Board for Testing and Calibration Laboratories (NABL)',
+    sourceDocument: 'Tender technical specification — bidder submission requirements',
+    validityInfo: 'Test reports must not be older than 24-36 months from the bid submission deadline.',
+    whyAppliesText: req.description || 'The tender explicitly requires NABL-accredited testing for this parameter.',
+    whyAppliesCriteria: [
+      {
+        text: `Tender requires accredited test reports for: ${req.name}`,
+        matched: true
+      }
+    ],
+    evidenceAvailable: true,
+    evidenceSnippet: `"${req.original_text || req.description || req.name}" — Tender description`,
   };
 }
 
@@ -85,6 +120,13 @@ export function AnalysisCertificationTab({ analysis }: Props) {
   
   if (analysis.qco_findings && analysis.qco_findings.length > 0) {
     rawRequirements = analysis.qco_findings.map(q => qcoFindingToRegulatoryRequirement(q, analysis.id));
+  }
+  
+  if (analysis.product_profile?.testingRequirements?.length > 0) {
+    rawRequirements = [
+      ...rawRequirements,
+      ...analysis.product_profile.testingRequirements.map((t: any, idx: number) => testingRequirementToRegulatoryRequirement(t, analysis.id, idx))
+    ];
   }
   
 

@@ -639,5 +639,23 @@
     ],
     "exemptions": "Self-help groups are exempt from the mandatory Standard Mark requirement. Export-only goods are exempt. Pre-certified old stock may be sold without the ISI mark until 31 December 2025.",
     "verification_note": "Every fact here (date, ministry, IS number, compliance deadlines) is confirmed by multiple independent sources including a direct BIS PDF and the amendment order's own gazette number. The ONE thing not found in a confirmable source is the principal 2024 order's own S.O. number \u2014 only its later amendment's S.O. 3526(E) was locatable. Treat gazette_so_number as unverified until you can pull the original notification."
+  },
+  {
+    "gazette_so_number": "S.O. 2357(E)",
+    "is_number": "IS 10322 : Part 5 : Sec 3",
+    "notification_title": "Electronics and IT Goods (Requirements for Compulsory Registration) Order",
+    "issuing_ministry": "Ministry of Electronics and Information Technology (MeitY)",
+    "effective_date": "2012-10-03",
+    "publication_date": "2012-09-07",
+    "certification_scheme": "crs",
+    "is_mandatory": true,
+    "mandate_text": "LED Luminaires for Road and Street lighting must mandatorily carry BIS CRS registration under the Electronics and IT Goods Quality Control Order. Bidders must submit valid CRS certificate numbers; certificates must be current at time of supply.",
+    "source_url": "https://www.meity.gov.in/esdm/standards",
+    "products_covered": [
+      "LED luminaires",
+      "Road and street lighting",
+      "LED street lights"
+    ],
+    "exemptions": "None."
   }
 ]

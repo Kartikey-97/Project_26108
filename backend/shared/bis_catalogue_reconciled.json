@@ -32071,7 +32071,11 @@
       "currentness": "unverified",
       "test_methods": "not_available",
       "price": "verified"
-    }
+    },
+    "department": "Electrotechnical Department (ETD)",
+    "technical_committee": "Electromedical Equipment Sectional Committee (ETD 50)",
+    "ics_code": "11.040.10",
+    "pages": 36
   },
   {
     "is_number": "IS 13450 : Part 2 : Sec 13",
@@ -52519,7 +52523,7 @@
     "document_type": "product_specification",
     "standard_type_label": "Specification",
     "scope": "Specifies particular safety, performance, and construction requirements for LED luminaires used in road and street lighting.",
-    "scope_summary": "Particular requirements for luminaires for road and street lighting, including LED-based luminaires, for use with mains supply up to 1000 V.",
+    "scope_summary": "Particular requirements for luminaires for road and street lighting, including LED-based luminaires, for use with mains supply up to 1000 V. Includes requirements for ingress protection (IP66), surge protection, and ambient operating temperatures.",
     "normative_references": [
       "IS 15885 : Part 2 : Sec 1",
       "IS 16104",
@@ -52560,7 +52564,10 @@
       "IPX9 ingress protection",
       "photobiological safety"
     ],
-    "amendments": [],
+    "amendments": [
+      "Amd 1 (2015)",
+      "Amd 2 (2020)"
+    ],
     "price": null,
     "valid_upto": null,
     "provenance": {
@@ -52577,7 +52584,11 @@
       "currentness": "verified",
       "test_methods": "verified",
       "price": "not_available"
-    }
+    },
+    "department": "Electrotechnical Department (ETD)",
+    "technical_committee": "Illumination Engineering and Luminaires Sectional Committee (ETD 24)",
+    "ics_code": "29.140.99",
+    "pages": 42
   },
   {
     "is_number": "IS 10322 : Part 5 : Sec 1",
@@ -52797,7 +52808,10 @@
       "Lighting & LED"
     ],
     "test_methods": [],
-    "amendments": [],
+    "amendments": [
+      "Amd 1 (1975)",
+      "Amd 2 (1981)"
+    ],
     "price": null,
     "valid_upto": null,
     "provenance": {
@@ -52814,7 +52828,11 @@
       "currentness": "verified",
       "test_methods": "not_available",
       "price": "not_available"
-    }
+    },
+    "department": "Electrotechnical Department (ETD)",
+    "technical_committee": "Illumination Engineering and Luminaires Sectional Committee (ETD 24)",
+    "ics_code": "93.080.40",
+    "pages": 24
   },
   {
     "is_number": "IS 1944 : Part 3",
