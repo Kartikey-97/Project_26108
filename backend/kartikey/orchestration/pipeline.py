@@ -233,7 +233,7 @@ async def _step_extract(analysis: Analysis) -> str:
 
     ai_extraction_succeeded = False
     try:
-        ai_requirements = await asyncio.wait_for(
+        ai_requirements, profile_dict = await asyncio.wait_for(
             asyncio.to_thread(
                 extract_requirements,
                 analysis_id=analysis.id,
@@ -243,6 +243,7 @@ async def _step_extract(analysis: Analysis) -> str:
         )
         analysis.requirements = ai_requirements
         analysis.total_requirements = len(ai_requirements)
+        analysis.product_profile = profile_dict
         ai_extraction_succeeded = True
         logger.info(
             "_step_extract: AI extraction succeeded — %d requirements found. analysis_id=%s",

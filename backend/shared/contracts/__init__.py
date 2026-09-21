@@ -87,6 +87,7 @@ class AnalysisResponse(BaseModel):
     findings: list[Finding] = []
     issues_found: int = 0
     qco_findings: list[dict] | None = None
+    product_profile: dict | None = None
 
     # Populated after completion
     summary: str | None = None

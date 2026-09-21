@@ -241,6 +241,8 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
                     superseding = next((s for s in store.list_all() if (s.is_number and s.is_number.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower()) or (hasattr(s, 'designation') and s.designation.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower())), None)
                     if superseding and superseding.id not in seen_standard_ids:
                         # Inherit the applicability score from the standard it supersedes
+                        if hasattr(standard, 'relevance_score') and standard.relevance_score is not None:
+                            superseding.relevance_score = standard.relevance_score
                         if hasattr(standard, 'semantic_score') and standard.semantic_score is not None:
                             superseding.semantic_score = standard.semantic_score
                         all_standards.append(superseding)
@@ -265,6 +267,7 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
         standards=all_standards,
         findings=analysis.findings,
         qco_findings=getattr(analysis, "qco_findings", None) or [],
+        product_profile=getattr(analysis, "product_profile", None),
         issues_found=analysis.issues_found,
         summary=analysis.summary,
         error_message=analysis.error_message,

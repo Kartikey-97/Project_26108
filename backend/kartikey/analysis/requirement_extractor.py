@@ -25,13 +25,13 @@ def extract_requirements(
     analysis_id: str,
     document_text: str,
     max_text_length: int = 150000,
-) -> list[Requirement]:
+) -> tuple[list[Requirement], dict]:
     """
     Deterministically extract technical requirements from document text.
     """
     if not document_text or not document_text.strip():
         logger.warning("extract_requirements: empty document_text for analysis_id=%s", analysis_id)
-        return []
+        return [], {}
 
     # 1. Deterministically extract profile buckets
     profile = extract_profile(document_text)
@@ -105,5 +105,5 @@ def extract_requirements(
         "extract_requirements: extracted %d requirements deterministically "
         "for analysis_id=%s", len(all_requirements), analysis_id
     )
-    return all_requirements
+    return all_requirements, profile.as_dict()
 
