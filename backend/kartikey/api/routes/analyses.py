@@ -240,6 +240,9 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
                     norm_target = normalize_designation(standard.superseded_by)
                     superseding = next((s for s in store.list_all() if (s.is_number and s.is_number.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower()) or (hasattr(s, 'designation') and s.designation.replace(' ', '').lower() == standard.superseded_by.replace(' ', '').lower())), None)
                     if superseding and superseding.id not in seen_standard_ids:
+                        # Inherit the applicability score from the standard it supersedes
+                        if hasattr(standard, 'semantic_score') and standard.semantic_score is not None:
+                            superseding.semantic_score = standard.semantic_score
                         all_standards.append(superseding)
                         seen_standard_ids.add(superseding.id)
                         # We also attach it to the finding so adapter.ts sees it in findings

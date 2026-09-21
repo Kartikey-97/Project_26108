@@ -9,7 +9,11 @@ export async function getBackendHealth() {
     headers: { 'X-API-Key': API_KEY }
   });
   if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  let data;
+  try { data = JSON.parse(text); } catch(e) { throw new Error('Not JSON'); }
+  if (data.status !== 'ok') throw new Error('Not healthy');
+  return data;
 }
 
 async function request(path, options = {}) {

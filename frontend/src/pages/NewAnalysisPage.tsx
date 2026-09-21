@@ -832,11 +832,11 @@ export function NewAnalysisPage() {
               <div className="flex gap-2">
                 <Button
                   onClick={handleStartExtraction}
-                  disabled={!isInputValid || (!isBackendReady && !demoFixture)}
+                  disabled={!isInputValid || !isBackendReady}
                   rightIcon={<ArrowRight size={15} />}
                   className="shadow-soft active:scale-[0.98] transition-transform"
                 >
-                  {(!isBackendReady && !demoFixture) ? 'Waking Backend (~50s)...' : 'Extract Procurement Profile'}
+                  {!isBackendReady ? 'Waking Backend (~50s)...' : 'Extract Procurement Profile'}
                 </Button>
               </div>
             </div>
