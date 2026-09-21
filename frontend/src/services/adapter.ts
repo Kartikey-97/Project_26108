@@ -355,6 +355,10 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const confidences = findings.map((f) => norm(f.confidence)).filter((n) => n > 0);
   const avgConfidence = confidences.length ? Math.round((confidences.reduce((a, b) => a + b, 0) / confidences.length) * 100) : 0;
 
+
+  const qcoCount = raw?.qco_findings?.length || 0;
+  const testingCount = raw?.product_profile?.testingRequirements?.length || 0;
+  const totalCertifications = (qcoCount + testingCount) > 0 ? (qcoCount + testingCount) : regulatory.length;
   const analysis: Analysis = {
     id: analysisId,
     title: raw?.tender_title || raw?.metadata?.tender_title || 'Procurement analysis',
@@ -365,7 +369,7 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
     documentCount: raw?.input_type?.toLowerCase() === 'document' ? 1 : 0,
     standardsIdentified: standards.length,
     gapsFound,
-    certificationsRequired: regulatory.length,
+    certificationsRequired: totalCertifications,
     confidence: avgConfidence,
     // The backend writes a real one-line summary ("3 requirement(s) analysed
     // against 1 BIS standard(s)…"). It used to be discarded in favour of

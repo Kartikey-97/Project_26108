@@ -92,7 +92,7 @@ function testingRequirementToRegulatoryRequirement(
   return {
     id: `reg-test-${idx}`,
     analysisId,
-    requirement: `Testing & Accreditation — ${req.name || 'Parameters'}`,
+    requirement: `Testing & Accreditation — ${req.label || 'Parameters'}`,
     type: 'testing-accreditation',
     status: 'applicable',
     reviewConfidence: 'high-confidence',
@@ -100,15 +100,15 @@ function testingRequirementToRegulatoryRequirement(
     issuingAuthority: 'National Accreditation Board for Testing and Calibration Laboratories (NABL)',
     sourceDocument: 'Tender technical specification — bidder submission requirements',
     validityInfo: 'Test reports must not be older than 24-36 months from the bid submission deadline.',
-    whyAppliesText: req.description || 'The tender explicitly requires NABL-accredited testing for this parameter.',
+    whyAppliesText: req.value || 'The tender explicitly requires NABL-accredited testing for this parameter.',
     whyAppliesCriteria: [
       {
-        text: `Tender requires accredited test reports for: ${req.name}`,
+        text: `Tender requires accredited test reports for: ${req.label || 'this parameter'}`,
         matched: true
       }
     ],
     evidenceAvailable: true,
-    evidenceSnippet: `"${req.original_text || req.description || req.name}" — Tender description`,
+    evidenceSnippet: `"${req.sourceClause || req.value}" — Tender description`,
   };
 }
 
