@@ -195,6 +195,7 @@ export interface Analysis {
   gapIds: string[];
   documentIds: string[];
   qco_findings?: any[];
+  product_profile?: any;
 }
 
 export interface Gap {

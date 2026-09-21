@@ -376,113 +376,11 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
     matchedStandardIds: standards.map((s) => s.id),
     gapIds: specRequirements.filter((s) => s.status !== 'covered').map((s) => s.id),
     documentIds: raw?.tender_id ? [String(raw.tender_id)] : [],
+    qco_findings: raw?.qco_findings || [],
+    product_profile: raw?.product_profile || null,
   };
 
-  // ── LED Demo Fixture Overlay ──────────────────────────────────────────────
-  // Activated only when the tender title contains the LED sample marker
-  // (set by NewAnalysisPage when "Load LED Street-Lighting Example" is pressed).
-  // All other analyses pass through unchanged.
-  if (isLedDemoRaw(raw)) {
-    const fixedId = analysisId;
-    const fixedAnalysis: Analysis = {
-      ...analysis,
-      documentCount: 1,               // show "1 document" — the bundled PDF
-      standardsIdentified: LED_STANDARDS.length,  // 5
-      gapsFound: 2,                   // 2 review items (req 10 + 11)
-      certificationsRequired: LED_REGULATORY.length, // 2
-      confidence: 82,
-      summary: '5 applicable BIS standards identified. 9 of 11 requirements mapped. 2 items require procurement officer review. BIS CRS (QCO 2020) certification mandatory.',
-      matchedStandardIds: LED_STANDARDS.map((s) => s.id),
-      gapIds: LED_SPEC_REQUIREMENTS.filter((r) => r.status !== 'covered').map((r) => r.id),
-    };
-    const fixedSpecReqs = LED_SPEC_REQUIREMENTS.map((r) => ({ ...r, analysisId: fixedId }));
-    const fixedRegulatory = LED_REGULATORY.map((r) => ({ ...r, analysisId: fixedId }));
-    const fixedEvidence = LED_EVIDENCE.map((e) => ({ ...e, analysisId: fixedId }));
-    const fixedRelationships = LED_RELATIONSHIPS.map((r) => ({ ...r, analysisId: fixedId }));
-    const fixedMatchedReqs: MatchedRequirementItem[] = LED_SPEC_REQUIREMENTS.map((r) => ({
-      id: r.id,
-      requirement: r.requirement,
-      parameterValue: r.tenderEvidence,
-      standardCode: r.applicableStandard,
-      standardId: r.standardId,
-      clause: r.clause,
-      status: r.status === 'covered' ? 'covered' : r.status === 'review' ? 'needs-review' : 'not-found',
-      evidenceSnippet: r.supportingEvidence,
-      reviewConfidence: r.reviewConfidence,
-    }));
-
-    // Overlay fresh status from the backend if available (so BIS sync works on the demo)
-    const normalizeDesig = (n: string) => {
-      let v = n.replace(/\s+/g, ' ').replace(/\s*:\s*\d{4}.*$/, '');
-      v = v.replace(/(?:\s*:\s*|\s+)(Part\s*\d+[a-zA-Z]*)(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)/gi, '($1/$2)');
-      v = v.replace(/(?:\s*:\s*|\s+)(Part\s*\d+[a-zA-Z]*)/gi, '($1)');
-      v = v.replace(/(?:\s*:\s*|\s+)(Sec\s*\d+[a-zA-Z]*)/gi, '($1)');
-      return v.replace(/\(\s*(Part|Sec)\s+/gi, '($1 ').replace(/\s*\)/g, ')').replace(/([^\s])\(/g, '$1 (').toUpperCase().trim();
-    };
-
-    const mappedDemoNorms = new Set<string>();
-    const overlayStandards = LED_STANDARDS.map((demoStd) => {
-      const demoNorm = normalizeDesig(demoStd.number);
-      mappedDemoNorms.add(demoNorm);
-      const backendMatch = standards.find((s) => normalizeDesig(s.number) === demoNorm);
-      if (backendMatch) {
-        return {
-          ...demoStd,
-          status: backendMatch.status,
-          reaffirmationYear: backendMatch.reaffirmationYear,
-          withdrawalDate: backendMatch.withdrawalDate,
-          supersededBy: backendMatch.supersededBy,
-          amendments: backendMatch.amendments,
-          committee: backendMatch.committee,
-          ministry: backendMatch.ministry,
-        };
-      }
-      return demoStd;
-    });
-
-    // Inject any new standards found by the backend (like superseding standards)
-    const dynamicRelationships = [...fixedRelationships];
-    standards.forEach((backendStd) => {
-      const backendNorm = normalizeDesig(backendStd.number);
-      if (!mappedDemoNorms.has(backendNorm)) {
-        overlayStandards.push(backendStd);
-      }
-    });
-
-    // Wire up superseding relationships dynamically
-    overlayStandards.forEach((oldStd) => {
-      if (oldStd.supersededBy) {
-        const supersededNorm = normalizeDesig(oldStd.supersededBy);
-        const newStd = overlayStandards.find(s => normalizeDesig(s.number) === supersededNorm);
-        if (newStd) {
-          dynamicRelationships.push({
-            id: `rel-dyn-supersedes-${Date.now()}-${oldStd.id}`,
-            analysisId: fixedId,
-            fromStandardId: newStd.id,
-            toStandardId: oldStd.id,
-            type: 'supersedes',
-            label: 'Superseded By',
-            description: `This standard has been superseded by ${newStd.number}.`
-          });
-        }
-      }
-    });
-
     return {
-      analysis: fixedAnalysis,
-      standards: overlayStandards,
-      primaryStandard: overlayStandards[0],
-      matchedRequirements: fixedMatchedReqs,
-      specRequirements: fixedSpecReqs,
-      regulatory: fixedRegulatory,
-      evidence: fixedEvidence,
-      relationships: dynamicRelationships,
-      degradedReason: null,
-      analysisMode: 'led_demo_fixture',
-    };
-  }
-
-  return {
     analysis,
     standards,
     primaryStandard: standards[0] || null,
