@@ -126,16 +126,33 @@ async def health() -> dict:
     Health check — confirms the server is up and returns basic stack info.
     Frontend and DevOps can poll this to verify the backend is reachable.
 
-    Also reports live model/catalog values so the UI doesn't have to hardcode them.
+    Returns {"status": "starting"} (HTTP 200) while on_startup() is still
+    running — the registry hasn't been initialized yet. The frontend poller
+    treats any status other than "ok" as "not ready yet" and keeps retrying,
+    so this avoids a 500 that would be silently swallowed and indistinguishable
+    from a cold-start hang.
     """
     from kartikey.orchestration.knowledge_registry import get_registry
 
-    registry = get_registry()
+    try:
+        registry = get_registry()
+    except RuntimeError:
+        # on_startup() hasn't finished initializing the knowledge registry yet.
+        return {
+            "status": "starting",
+            "service": "sih26108-backend",
+            "version": "0.1.0",
+            "environment": settings.app_env,
+        }
 
     standards_count = None
+    retrieval_mode = None
+    retrieval_reason = None
     try:
         standards_count = registry.standards_store.count()
-    except Exception:  # pragma: no cover - count is best-effort telemetry
+        retrieval_mode = registry.retrieval_mode
+        retrieval_reason = registry.retrieval_reason
+    except Exception:  # pragma: no cover - best-effort telemetry
         pass
 
     return {
@@ -143,8 +160,8 @@ async def health() -> dict:
         "service": "sih26108-backend",
         "version": "0.1.0",
         "environment": settings.app_env,
-        "retrieval_mode": registry.retrieval_mode,
-        "retrieval_reason": registry.retrieval_reason,
+        "retrieval_mode": retrieval_mode,
+        "retrieval_reason": retrieval_reason,
         "gemini_model": settings.gemini_model,
         "standards_count": standards_count,
         "aiml_service_configured": bool(settings.aiml_service_url),

@@ -233,20 +233,33 @@ export function NewAnalysisPage() {
 
   // Backend readiness for cold starts
   const [isBackendReady, setIsBackendReady] = useState(false);
+  const healthIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     let mounted = true;
     const check = async () => {
       try {
         await getBackendHealth();
-        if (mounted) setIsBackendReady(true);
+        if (mounted) {
+          setIsBackendReady(true);
+          // Stop polling — backend is up, no need to keep checking
+          if (healthIntervalRef.current !== null) {
+            clearInterval(healthIntervalRef.current);
+            healthIntervalRef.current = null;
+          }
+        }
       } catch (e) {
-        // Will retry
+        // Will retry on next interval tick
       }
     };
     check();
-    const interval = setInterval(check, 5000);
-    return () => { mounted = false; clearInterval(interval); };
+    healthIntervalRef.current = setInterval(check, 5000);
+    return () => {
+      mounted = false;
+      if (healthIntervalRef.current !== null) {
+        clearInterval(healthIntervalRef.current);
+      }
+    };
   }, []);
 
   // Workflow state

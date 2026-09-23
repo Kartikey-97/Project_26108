@@ -5,15 +5,22 @@ export const API_KEY = import.meta.env.VITE_STANDIQ_API_KEY || 'sk_standiq_dev_2
 
 // The backend exposes /health at the root, outside the /api/v1 prefix.
 export async function getBackendHealth() {
-  const response = await fetch(`${API_BASE}/health`, {
-    headers: { 'X-API-Key': API_KEY }
-  });
-  if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
-  const text = await response.text();
-  let data;
-  try { data = JSON.parse(text); } catch(e) { throw new Error('Not JSON'); }
-  if (data.status !== 'ok') throw new Error('Not healthy');
-  return data;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000); // fail fast after 10s
+  try {
+    const response = await fetch(`${API_BASE}/health`, {
+      signal: controller.signal,
+      headers: { 'X-API-Key': API_KEY }
+    });
+    if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
+    const text = await response.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { throw new Error('Not JSON'); }
+    if (data.status !== 'ok') throw new Error(`Not healthy: ${data.status}`);
+    return data;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function request(path, options = {}) {
