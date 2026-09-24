@@ -68,19 +68,38 @@ class EmbeddingService:
         return [x / norm for x in vec]
 
     def _curl_request(self, url: str, payload: dict) -> dict:
-        """Helper to run curl -4 to bypass python DNS hanging on macOS"""
-        try:
-            # -4 forces IPv4, which immediately fixes macOS Python 75-second DNS hangs!
-            cmd = ["curl", "-4", "-s", "-X", "POST", "-H", "Content-Type: application/json", "-d", json.dumps(payload), url]
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            data = json.loads(result.stdout)
-            if "error" in data:
-                raise Exception(data["error"])
-            return data
-        except subprocess.CalledProcessError as e:
-            raise Exception(f"Curl failed with output: {e.stderr or e.stdout}")
-        except Exception as e:
-            raise Exception(f"Request failed: {e}")
+        """Helper to run request. Uses curl on macOS to bypass IPv6 DNS hangs, and native urllib on Linux/Production."""
+        import sys
+        if sys.platform == "darwin":
+            try:
+                # -4 forces IPv4, which immediately fixes macOS Python 75-second DNS hangs!
+                cmd = ["curl", "-4", "-s", "-X", "POST", "-H", "Content-Type: application/json", "-d", json.dumps(payload), url]
+                result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                data = json.loads(result.stdout)
+                if "error" in data:
+                    raise Exception(data["error"])
+                return data
+            except subprocess.CalledProcessError as e:
+                raise Exception(f"Curl failed with output: {e.stderr or e.stdout}")
+            except Exception as e:
+                raise Exception(f"Request failed: {e}")
+        else:
+            import urllib.request
+            try:
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=30.0) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                    if "error" in data:
+                        raise Exception(data["error"])
+                    return data
+            except Exception as e:
+                raise Exception(f"Native request failed: {e}")
+
 
     def encode_text(self, text: str) -> List[float]:
         """Generate vector for a single query string using RETRIEVAL_QUERY."""
