@@ -387,12 +387,12 @@ export function StandardsPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded border border-ink-200 bg-white px-2 py-1 text-xs text-ink-700 focus:border-teal-500 focus:outline-none"
+                className="rounded border border-ink-200 bg-white px-2 py-1 text-xs text-ink-700 focus:border-teal-500 focus:outline-none max-w-xs"
               >
                 <option value="all">All Categories</option>
-                {procurementCategories.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
+                {Array.from(new Set(baseStandards.map(s => s.category).filter(Boolean))).sort().map((cat) => (
+                  <option key={cat} value={cat!}>
+                    {cat}
                   </option>
                 ))}
               </select>

@@ -467,7 +467,7 @@ export function AnalysisRelationshipsTab({ analysis, analysisId, isReal = false 
                   <div className="flex items-stretch gap-3 mb-5">
                     {/* Source standard box */}
                     <button
-                      onClick={() => fromStd && navigate({ name: 'standard', standardId: fromStd.id })}
+                      onClick={() => fromStd && navigate({ name: 'standard', standardId: fromStd.id, analysisId: analysis.id })}
                       className={`flex-1 min-w-0 rounded-lg border-2 p-3 text-left transition-colors ${
                         fromStd ? 'hover:border-teal-400 cursor-pointer' : 'cursor-default'
                       } border-ink-200 bg-ink-50/50`}
@@ -491,7 +491,7 @@ export function AnalysisRelationshipsTab({ analysis, analysisId, isReal = false 
 
                     {/* Target standard box */}
                     <button
-                      onClick={() => toStd && navigate({ name: 'standard', standardId: toStd.id })}
+                      onClick={() => toStd && navigate({ name: 'standard', standardId: toStd.id, analysisId: analysis.id })}
                       className={`flex-1 min-w-0 rounded-lg border-2 p-3 text-left transition-colors ${
                         toStd ? 'hover:border-teal-400 cursor-pointer' : 'cursor-default'
                       } border-ink-200 bg-ink-50/50`}
@@ -640,14 +640,14 @@ export function AnalysisRelationshipsTab({ analysis, analysisId, isReal = false 
                     {/* Source → Target */}
                     <div className="flex items-center gap-2 mt-1">
                       <button
-                        onClick={() => fromStd && navigate({ name: 'standard', standardId: fromStd.id })}
+                        onClick={() => fromStd && navigate({ name: 'standard', standardId: fromStd.id, analysisId: analysis.id })}
                         className={`font-mono font-bold text-sm ${fromStd ? 'text-ink-900 hover:text-teal-700 underline underline-offset-2' : 'text-ink-600 cursor-default'}`}
                       >
                         {fromLabel}
                       </button>
                       <ArrowRight size={14} className="text-ink-400 shrink-0" />
                       <button
-                        onClick={() => toStd && navigate({ name: 'standard', standardId: toStd.id })}
+                        onClick={() => toStd && navigate({ name: 'standard', standardId: toStd.id, analysisId: analysis.id })}
                         className={`font-mono font-bold text-sm ${toStd ? 'text-ink-900 hover:text-teal-700 underline underline-offset-2' : 'text-ink-600 cursor-default'}`}
                       >
                         {toLabel}

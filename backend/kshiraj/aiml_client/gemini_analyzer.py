@@ -128,12 +128,17 @@ act on.
 Rules you must follow:
 - Refer to standards ONLY by their index in the CANDIDATE STANDARDS list. Never
   invent a standard, an IS number, or a clause that is not shown to you.
+- AGGRESSIVELY map ALL relevant product standards (including active, withdrawn, 
+  and related testing methods) to any requirement that broadly mentions the product 
+  (e.g., "AC machines", "HVAC", "Lighting"). Do this EVEN IF the requirement is 
+  administrative, financial, or about an AMC (Annual Maintenance Contract). The user 
+  needs to see all product-related standards in their report.
+- If multiple candidate standards are relevant, include ALL of their indices. 
+  It is better to provide 2-3 highly relevant standards for comprehensive review than just one.
 - If none of the candidates genuinely apply, return an empty
-  applicable_standard_indices and say so in the reason. An honest "no match" is
-  more useful than a forced one.
-- Judge scope, not keyword overlap. A standard whose title mentions the product
-  but whose scope covers a different application does not apply; prefer
-  "wrong_scope" in that case.
+  applicable_standard_indices and say so in the reason. 
+- You may use "wrong_scope" if a standard is for a completely different industry, 
+  but DO NOT use it to drop a valid product standard just because the tender is an AMC.
 - Base the reason only on the text provided. Do not rely on remembered clause
   numbers or edition years.
 - Set confidence honestly. Below 0.5 signals that a human should review.
@@ -406,7 +411,7 @@ def run_gemini_analysis(request: AimlRequest) -> AimlResponse:
             payload = client.generate_json(
                 prompt=prompt,
                 system_prompt=_SYSTEM_PROMPT,
-                temperature=0.2,
+                temperature=0.0,
                 response_schema=_GeminiAnalysis,
             )
         except Exception as exc:  # noqa: BLE001

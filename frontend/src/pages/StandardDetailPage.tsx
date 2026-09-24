@@ -57,7 +57,7 @@ interface Props {
 }
 
 export function StandardDetailPage({ standardId }: Props) {
-  const { navigate } = useRouter();
+  const { route, navigate } = useRouter();
   const mockStandard = getStandardById(standardId);
 
   // For catalog standards not in the seeded/registered set, fetch the real record from the backend.
@@ -82,6 +82,25 @@ export function StandardDetailPage({ standardId }: Props) {
   }, [standardId, mockStandard]);
 
   const standard = mockStandard || fetchedStandard;
+
+  if (loadingStandard) {
+    return (
+      <div className="min-h-screen bg-sand-50/50 flex items-center justify-center">
+        <div className="text-ink-500 font-mono text-sm animate-pulse">Loading standard details...</div>
+      </div>
+    );
+  }
+
+  if (!standard) {
+    return (
+      <div className="min-h-screen bg-sand-50/50 flex flex-col items-center justify-center p-8">
+        <AlertTriangle size={32} className="text-danger-500 mb-4" />
+        <h2 className="text-xl font-bold text-ink-900 mb-2">Standard Not Found</h2>
+        <p className="text-ink-600 mb-6 text-center max-w-md">The standard "{standardId}" could not be found or failed to load.</p>
+        <Button variant="primary" onClick={() => window.history.back()}>Go Back</Button>
+      </div>
+    );
+  }
 
   // Comparison modal state
   const [isCompareOpen, setIsCompareOpen] = useState(false);
@@ -112,14 +131,21 @@ export function StandardDetailPage({ standardId }: Props) {
   const references = standard.references.map((id) => getStandardById(id)).filter((s): s is Standard => s !== undefined);
   const supersededBy = standard.supersededBy ? getStandardById(standard.supersededBy) : null;
 
+  // Get the active analysis ID from the route, fallback to mock if none
+  const activeAnalysisId = (route.name === 'standard' && route.analysisId) 
+    ? route.analysisId 
+    : 'an-001';
+
   // Filter matched requirements relevant to this standard
-  const allRequirements = getMatchedRequirementsByAnalysisId('an-001');
+  const allRequirements = getMatchedRequirementsByAnalysisId(activeAnalysisId);
   const relevantRequirements = allRequirements.filter(
-    (req) => req.standardId === standard.id || req.standardCode.includes(standard.number.split(' ')[1] || '')
+    (req) => req.standardId === standard.id || 
+             req.standardIds?.includes(standard.id) || 
+             req.standardCode.includes(standard.number.split(' ')[1] || '')
   );
 
   // Evidence chains linked to this standard
-  const allEvidence = getEvidenceChainsByAnalysisId('an-001');
+  const allEvidence = getEvidenceChainsByAnalysisId(activeAnalysisId);
   const relevantEvidence = allEvidence.filter((ev) => ev.standard.includes(standard.number));
 
   // Organize related references into categories
@@ -217,13 +243,17 @@ export function StandardDetailPage({ standardId }: Props) {
               <ArrowLeft size={14} />
               Standards Intelligence
             </button>
-            <span>/</span>
-            <button
-              onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'standards' })}
-              className="hover:text-ink-900 transition-colors"
-            >
-              Analysis #001
-            </button>
+            {route.name === 'standard' && route.analysisId && (
+              <>
+                <span>/</span>
+                <button
+                  onClick={() => navigate({ name: 'analysis', analysisId: route.analysisId!, tab: 'standards' })}
+                  className="hover:text-ink-900 transition-colors"
+                >
+                  Return to Analysis
+                </button>
+              </>
+            )}
             <span>/</span>
             <span className="font-mono text-ink-800 font-semibold">{standard.number}</span>
           </div>
@@ -244,7 +274,7 @@ export function StandardDetailPage({ standardId }: Props) {
               variant="secondary"
               size="sm"
               leftIcon={<FileText size={14} />}
-              onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'standards' })}
+              onClick={() => navigate({ name: 'analysis', analysisId: activeAnalysisId, tab: 'standards' })}
             >
               Return to Analysis
             </Button>
@@ -286,7 +316,7 @@ export function StandardDetailPage({ standardId }: Props) {
                   <span>·</span>
                   <span>Bureau: {standard.bureau} ({standard.section})</span>
                   <span>·</span>
-                  <span>{standard.pages} pages</span>
+                  <span>{standard.pages > 0 ? `${standard.pages} pages` : 'Metadata only'}</span>
                   <span>·</span>
                   <span>Published {standard.yearPublished}</span>
                 </div>
@@ -402,12 +432,12 @@ export function StandardDetailPage({ standardId }: Props) {
                       PREVIOUS / HISTORICAL CODE
                     </span>
                     <span className="font-mono text-xs font-semibold text-ink-800">
-                      {standard.previousEdition || 'Initial primary specification'}
+                      {standard.previousEdition || 'Origin code not indexed'}
                     </span>
                     <p className="text-[11px] text-ink-500 mt-0.5 leading-relaxed">
                       {standard.previousEdition
                         ? 'Previous governing edition superseded upon formal BIS publication of current standard.'
-                        : 'First edition published by Bureau of Indian Standards.'}
+                        : 'Historical superseded versions are not currently available in the intelligence index.'}
                     </p>
                   </div>
                 </div>
@@ -423,10 +453,10 @@ export function StandardDetailPage({ standardId }: Props) {
                     </span>
                     {standard.amendments && standard.amendments.length > 0 ? (
                       <div className="mt-1 space-y-1">
-                        {standard.amendments.map((am, idx) => (
+                        {standard.amendments.map((am: any, idx) => (
                           <div key={idx} className="flex items-center gap-1.5 font-mono text-[11px] text-ink-700 bg-ivory-50 p-1.5 rounded border border-ink-100">
                             <Check size={11} className="text-teal-600 shrink-0" />
-                            <span>{am}</span>
+                            <span>{typeof am === 'string' ? am : `Amd. ${am.amendment_number || (idx+1)}${am.year ? ` (${am.year})` : ''}`}</span>
                           </div>
                         ))}
                       </div>
@@ -505,20 +535,31 @@ export function StandardDetailPage({ standardId }: Props) {
                 {relevantRequirements.length > 0 ? (
                   <div className="space-y-2">
                     {relevantRequirements.map((req) => (
-                      <div
+                      <details
                         key={req.id}
-                        className="rounded-lg border border-ink-100 bg-ivory-50/40 p-2.5 text-xs flex items-center justify-between gap-2"
+                        className="group rounded-lg border border-ink-100 bg-ivory-50/40 text-xs"
                       >
-                        <div className="min-w-0 flex-1">
-                          <span className="font-semibold text-ink-900">{req.requirement}</span>
-                          <div className="flex items-center gap-2 mt-0.5 text-ink-500 font-mono text-[11px]">
-                            <span>Spec: <strong>{req.parameterValue}</strong></span>
-                            <span>·</span>
-                            <span className="text-teal-800">{req.clause}</span>
+                        <summary className="cursor-pointer p-2.5 flex items-center justify-between gap-2 list-none">
+                          <div className="flex items-start gap-2">
+                            <span className="text-ink-400 mt-0.5">•</span>
+                            <span className="text-ink-800 line-clamp-2">{req.requirement}</span>
                           </div>
+                          {renderReqStatusBadge(req.status)}
+                        </summary>
+                        
+                        <div className="p-3 pt-0 border-t border-ink-100 bg-white/50 mt-1 space-y-2">
+                          <div className="text-ink-600">
+                            <span className="font-semibold">Tender Location: </span>
+                            <span className="text-ink-900">{req.clause || 'Unspecified'}</span>
+                          </div>
+                          {req.evidenceSnippet && (
+                            <div className="bg-ink-50 p-2 rounded border border-ink-100 text-ink-600">
+                              <span className="font-semibold">Standard Proof: </span>
+                              <span className="text-ink-900 italic">"{req.evidenceSnippet}"</span>
+                            </div>
+                          )}
                         </div>
-                        {renderReqStatusBadge(req.status)}
-                      </div>
+                      </details>
                     ))}
                   </div>
                 ) : (
@@ -539,7 +580,7 @@ export function StandardDetailPage({ standardId }: Props) {
                   </h3>
                 </div>
                 <button
-                  onClick={() => navigate({ name: 'analysis', analysisId: 'an-001', tab: 'relationships' })}
+                  onClick={() => navigate({ name: 'analysis', analysisId: activeAnalysisId, tab: 'relationships' })}
                   className="text-xs text-teal-700 hover:text-teal-900 font-medium inline-flex items-center gap-0.5"
                 >
                   Explore relationships <ArrowRight size={11} />
@@ -704,7 +745,7 @@ export function StandardDetailPage({ standardId }: Props) {
                   { icon: <Layers size={13} />, label: 'Revision Cycle', value: standard.revision },
                   { icon: <Calendar size={13} />, label: 'Year Published', value: String(standard.yearPublished) },
                   { icon: <Clock size={13} />, label: 'Last Indexed Update', value: standard.lastUpdatedDate || '2022' },
-                  { icon: <FileText size={13} />, label: 'Page Count', value: `${standard.pages} pages` },
+                  { icon: <FileText size={13} />, label: 'Page Count', value: standard.pages > 0 ? `${standard.pages} pages` : 'Metadata only' },
                   { icon: <BookOpen size={13} />, label: 'Sectional Committee', value: standard.section },
                   { icon: <Building2 size={13} />, label: 'Standardization Body', value: standard.bureau },
                 ].map((detail) => (

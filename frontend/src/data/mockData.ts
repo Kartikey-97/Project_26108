@@ -1045,6 +1045,23 @@ export const specificationRequirements: SpecificationRequirement[] = [
     tenderSection: 'Tender §3.1.2, Page 12',
     applicableStandard: 'IS 10322 (Part 5/Sec 3)',
     standardId: 'std-10322',
+    standardIds: ['std-10322', 'std-60529'],
+    standardCompliance: {
+      'std-10322': {
+        standard_label: 'IS 10322 (Part 5/Sec 3)',
+        status: 'active',
+        status_note: 'Standard is active and usable.',
+        version_note: 'Tender did not cite year, implicitly latest edition.',
+        action: 'No action required.'
+      },
+      'std-60529': {
+        standard_label: 'IS/IEC 60529',
+        status: 'active',
+        status_note: 'Standard is active.',
+        version_note: 'Current edition.',
+        action: 'No action required.'
+      }
+    },
     clause: 'Clause 7.2 & IS/IEC 60529',
     status: 'covered',
     whyMatters: 'IP66 rating ensures complete protection against high-pressure water jets and fine particulate dust on outdoor highways.',

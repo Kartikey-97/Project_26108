@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   AlertTriangle,
@@ -112,11 +112,13 @@ function testingRequirementToRegulatoryRequirement(
   };
 }
 
+import { isSeededAnalysisId } from '@/data/runtimeStore';
+
 export function AnalysisCertificationTab({ analysis }: Props) {
   const { navigate } = useRouter();
   
   // Use mock data for demo, or generate from real standards if available
-  let rawRequirements = getRegulatoryRequirementsByAnalysisId(analysis.id);
+  let rawRequirements = isSeededAnalysisId(analysis.id) ? getRegulatoryRequirementsByAnalysisId(analysis.id) : [];
   
   if (analysis.qco_findings && analysis.qco_findings.length > 0) {
     rawRequirements = analysis.qco_findings.map(q => qcoFindingToRegulatoryRequirement(q, analysis.id));
@@ -138,15 +140,25 @@ export function AnalysisCertificationTab({ analysis }: Props) {
   const [selectedStatus, setSelectedStatus] = useState<RegulatoryRequirementStatus | 'all'>('all');
   const [expandedCardId, setExpandedCardId] = useState<string | null>(rawRequirements[0]?.id || null);
 
-  // Local human review decisions
-  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>({
-    'reg-001': 'accepted',
-    'reg-002': 'accepted',
-    'reg-003': 'accepted',
-    'reg-004': 'reviewed',
-    'reg-005': 'accepted',
-    'reg-006': 'accepted',
+  // Local human review decisions - persisted to localStorage
+  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>(() => {
+    const saved = localStorage.getItem(`decisions-cert-${analysis.id}`);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      'reg-001': 'accepted',
+      'reg-002': 'accepted',
+      'reg-003': 'accepted',
+      'reg-004': 'reviewed',
+      'reg-005': 'accepted',
+      'reg-006': 'accepted',
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem(`decisions-cert-${analysis.id}`, JSON.stringify(decisions));
+  }, [decisions, analysis.id]);
 
   const handleDecision = (id: string, dec: HumanDecision) => {
     setDecisions((prev) => ({ ...prev, [id]: dec }));
@@ -419,7 +431,7 @@ export function AnalysisCertificationTab({ analysis }: Props) {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => navigate({ name: 'standard', standardId: item.relatedStandardId! })}
+                        onClick={() => navigate({ name: 'standard', standardId: item.relatedStandardId!, analysisId: analysis.id })}
                         rightIcon={<ExternalLink size={12} />}
                       >
                         {item.relatedStandard}
@@ -524,7 +536,7 @@ export function AnalysisCertificationTab({ analysis }: Props) {
                     <div className="flex-1 text-xs">
                       <div className="flex items-center gap-1.5 text-teal-900 font-mono text-[11px] font-semibold mb-0.5">
                         <FileSearch size={12} className="text-teal-700" />
-                        <span>Source Evidence ({item.evidenceLocation})</span>
+                        <span>Source Evidence{item.evidenceLocation ? ` (${item.evidenceLocation})` : ''}</span>
                       </div>
                       <p className="italic text-ink-700 text-xs font-sans line-clamp-2">
                         {item.evidenceSnippet}

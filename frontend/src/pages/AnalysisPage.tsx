@@ -204,24 +204,28 @@ export function AnalysisPage({ analysisId, tab }: Props) {
 
 
 
+  const forceRefreshAnalysis = async () => {
+    if (!isReal) return;
+    try {
+      const raw = await getAnalysis(analysisId);
+      const bundle = adaptAnalysis(raw);
+      registerRealAnalysis(bundle);
+      setAnalysis(bundle.analysis);
+    } catch (e) {
+      console.error('Failed to refresh analysis', e);
+    }
+  };
+
   const renderTab = () => {
     switch (activeTab) {
       case 'overview':
         return <AnalysisOverviewTab analysis={analysis} isReal={isReal} />;
       case 'standards':
-        return <AnalysisStandardsTab analysis={analysis} isReal={isReal} onSyncComplete={async () => {
-          // Re-fetch the full analysis so standards cards reflect BIS sync updates
-          try {
-            const raw = await getAnalysis(analysisId);
-            const bundle = adaptAnalysis(raw);
-            registerRealAnalysis(bundle);
-            setAnalysis(bundle.analysis);
-          } catch {}
-        }} />;
+        return <AnalysisStandardsTab analysis={analysis} isReal={isReal} onSyncComplete={forceRefreshAnalysis} />;
       case 'relationships':
         return <AnalysisRelationshipsTab analysis={analysis} isReal={isReal} />;
       case 'gaps':
-        return <AnalysisGapsTab analysisId={analysis.id} />;
+        return <AnalysisGapsTab analysisId={analysis.id} analysis={analysis} onSyncComplete={forceRefreshAnalysis} />;
       case 'certification':
         return <AnalysisCertificationTab analysis={analysis} />;
       case 'evidence':

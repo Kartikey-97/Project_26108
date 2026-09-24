@@ -230,7 +230,7 @@ class HybridRetrievalService:
             # Minimum similarity threshold to drop noise (e.g., out-of-domain queries 
             # dragging in the "least bad" candidates). Genuine matches typically score > 0.70.
             logger.info(f"Hybrid retrieval candidate: {std_obj.is_number} with final_score={final_score}, norm_vec={norm_vec}")
-            if final_score < 0.45:
+            if final_score < 0.35:
                 continue
 
             matched_terms = lex_candidate.matched_terms if lex_candidate else []

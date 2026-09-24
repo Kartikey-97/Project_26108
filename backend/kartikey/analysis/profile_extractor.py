@@ -121,17 +121,16 @@ class ProcurementProfile:
 # prose like "the supplier shall" does not match.
 _PRODUCT_LEAD = re.compile(
     r"\b("
-    r"supply,?\s+(?:installation|erection)[^.]{0,60}?\s+of"
+    r"comprehensive\s+(?:amc|maintenance|service)\s+for(?:\s+\d+\s+(?:nos\.?\s+)?(?:of\s+)?)?"
+    r"|supply,?\s+(?:installation|erection)[^.]{0,60}?\s+of"
     r"|design,?\s+manufacture[^.]{0,60}?\s+of"
     r"|manufacture\s+and\s+supply\s+of"
     r"|supply\s+and\s+installation\s+of"
     r"|procurement\s+of"
     r"|purchase\s+of"
     r"|supply\s+of"
-    r"|tender\s+for(?:\s+the\s+supply\s+of)?"
+    r"|tender\s+for\s+the\s+supply\s+of"
     r"|nit\s+for"
-    r"|name\s+of\s+work\s*[:\-]"
-    r"|subject\s*[:\-]"
     r")\s*",
     re.IGNORECASE,
 )
@@ -140,7 +139,7 @@ _PRODUCT_LEAD = re.compile(
 # municipal roads" splits the product from its application, which is exactly the
 # distinction the two fields are supposed to draw.
 _PRODUCT_TAIL = re.compile(
-    r"\s+(?:for|to\s+be\s+|as\s+per|conforming|in\s+accordance|at\s+the|under\s+)\b",
+    r"\s+(?:for|to\s+be\s+|as\s+per|conforming|in\s+accordance|at|under\s+)\b",
     re.IGNORECASE,
 )
 
@@ -150,15 +149,27 @@ _MAX_PRODUCT_CHARS = 90
 def _extract_product(clauses: list[tuple[int, str]]) -> str:
     """
     Read the subject of the procurement out of the document's own phrasing.
-
-    Earlier clauses win: a tender names what it is buying in its title or first
-    line, and a later "supply of spare fuses" is a detail, not the subject.
     """
     for _, clause in clauses:
+        # Strip common prefixes that might otherwise match first and cause premature truncation
+        has_prefix = False
+        if clause.lower().startswith("name of work"):
+            clause = clause.split(":", 1)[-1].split("-", 1)[-1].strip()
+            has_prefix = True
+        if clause.lower().startswith("subject"):
+            clause = clause.split(":", 1)[-1].split("-", 1)[-1].strip()
+            has_prefix = True
+            
         match = _PRODUCT_LEAD.search(clause)
         if not match:
-            continue
-        rest = clause[match.end():].strip(" :—-")
+            # Fallback if no lead words are found but it had a prefix
+            if has_prefix and len(clause) > 4:
+                rest = clause
+            else:
+                continue
+        else:
+            rest = clause[match.end():].strip(" :—-")
+            
         if not rest:
             continue
         tail = _PRODUCT_TAIL.search(rest)
@@ -166,6 +177,8 @@ def _extract_product(clauses: list[tuple[int, str]]) -> str:
             rest = rest[: tail.start()]
         rest = rest.strip(" ,.;:")
         if len(rest) < 4:
+            continue
+        if "contract" in rest.lower() or "promise" in rest.lower() or "demand" in rest.lower():
             continue
         if len(rest) > _MAX_PRODUCT_CHARS:
             # Cut on a word boundary rather than mid-word; a truncated product
@@ -189,19 +202,27 @@ def _extract_product(clauses: list[tuple[int, str]]) -> str:
 # matched.
 _CATEGORY_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Outdoor Lighting", ("street light", "luminaire", "lamp post", "flood light",
-                          "led driver", "lm/w", "street lighting")),
+                          "led driver", "street lighting")),
+    ("Medical Devices", ("syringe", "surgical", "medical device", "sterile",
+                         "patient", "diagnostic", "hospital bed")),
+    ("IT Equipment", ("laptop", "desktop", "server", "router", "switch port",
+                      "computer", "software", "printer")),
+    ("HVAC & Air Conditioning", ("hvac", "air condition", "split ac", "cassette ac", 
+                                 "chiller", "refrigeration", "compressor", "ventilation")),
+    ("Heavy Machinery", ("crane", "excavator", "bulldozer", "forklift", "tractor")),
+    ("Automotive & Transport", ("vehicle", "bus", "truck", "tyre", "battery", "automotive")),
     ("Electrical Cables & Conductors", ("cable", "conductor", "xlpe", "sheathed",
                                         "armoured", "sqmm", "insulated wire")),
     ("Electrical Equipment", ("switchgear", "transformer", "circuit breaker",
                               "panel board", "distribution board", "motor",
                               "earthing", "busbar")),
-    ("Construction Materials", ("cement", "aggregate", "reinforcement bar",
-                                "structural steel", "concrete", "brick", "tmt")),
-    ("Pipes & Fittings", ("pipe", "fitting", "valve", "flange", "gasket")),
-    ("Medical Devices", ("syringe", "surgical", "medical device", "sterile",
-                         "patient", "diagnostic")),
-    ("IT Equipment", ("laptop", "desktop", "server", "router", "switch port",
-                      "workstation", "printer")),
+    ("Pipes & Fittings", ("pipe", "fitting", "valve", "flange", "gasket", "plumbing")),
+    ("Construction Materials", ("cement", "aggregate", "reinforcement bar", "tmt",
+                                "structural steel", "concrete", "brick", "tiles")),
+    ("Civil Construction", ("construction of", "renovation", "civil works", "building work", 
+                            "earthwork", "masonry", "painting")),
+    ("Textiles & Garments", ("uniform", "fabric", "cotton", "textile", "garment")),
+    ("Chemicals & Fertilizers", ("chemical", "fertilizer", "pesticide", "acid", "solvent")),
     ("Personal Protective Equipment", ("helmet", "safety shoe", "glove",
                                        "respirator", "protective clothing")),
     ("Furniture", ("furniture", "chair", "desk", "cupboard", "table top")),
@@ -240,6 +261,8 @@ def _extract_application(clauses: list[tuple[int, str]]) -> str:
             continue
         phrase = " ".join(match.group(1).split()).strip(" ,.;:")
         if len(phrase) < 5:
+            continue
+        if "tender" in phrase.lower() or "participation" in phrase.lower() or "execution" in phrase.lower():
             continue
         return phrase[:_MAX_APPLICATION_CHARS].rstrip(" ,.;:")
     return NOT_STATED
@@ -334,8 +357,8 @@ _PERFORMANCE_TERMS = (
 _MEASURED_VALUE = re.compile(
     r"\d+(?:\.\d+)?\s?"
     r"(?:kv|v\b|kw|w\b|va\b|kva|a\b|ma\b|hz|mm|cm|m\b|km|sqmm|sq\.?\s?mm|mm2"
-    r"|kg|g\b|ton|tonne|%|lm/w|lm\b|lux|k\b|°c|deg\s?c|nm|bar|mpa|n/mm2"
-    r"|years?|months?|hours?|hrs?|core|way|watt|amp)",
+    r"|kg|g\b|ton|tonne|tr\b|hp\b|machines?|units?|nos\.?|%|lm/w|lm\b|lux|k\b|°c|deg\s?c|nm|bar|mpa|n/mm2"
+    r"|hours?|hrs?|core|way|watt|amp)",
     re.IGNORECASE,
 )
 
@@ -385,7 +408,7 @@ def _classify(clause: str, has_is_reference: bool) -> str | None:
 
     if has_is_reference or any(t in lowered for t in _CERTIFICATION_TERMS):
         return "regulatory"
-    if any(t in lowered for t in _TESTING_TERMS):
+    if any(re.search(r'\b' + re.escape(t) + r'\b', lowered) for t in _TESTING_TERMS):
         return "testing"
     if any(t in lowered for t in _PERFORMANCE_TERMS) and _states_a_figure(clause):
         return "performance"
@@ -407,7 +430,7 @@ def _label_for(bucket: str, clause: str) -> str:
         return "Regulatory requirement"
     if bucket == "testing":
         for term in _TESTING_TERMS:
-            if term in lowered:
+            if re.search(r'\b' + re.escape(term) + r'\b', lowered):
                 return term.title()
         return "Testing requirement"
     if bucket == "performance":

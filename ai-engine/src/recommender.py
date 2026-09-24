@@ -152,7 +152,102 @@ class Recommender:
             logger.error("Failed to build retrieval index: %s", exc)
             self.retriever = None
 
+    def _load_precomputed_retriever(self) -> bool:
+        """
+        Reconstruct the HybridRetriever from the artifacts produced by
+        build_index.py (`*_faiss.index` + `*_bm25.pkl`), validated against
+        `*_index_meta.json`, WITHOUT re-embedding or re-fitting anything.
 
+        Returns True if the retriever was loaded and wired up; False to tell
+        the caller to fall back to building indexes from scratch.
+        """
+        is_render = os.getenv("RENDER") == "true" or os.getenv("ENVIRONMENT") == "production"
+
+        def fail(msg: str, exc: Exception = None):
+            if is_render:
+                logger.error(f"PREBUILT INDEX FATAL ERROR (RENDER): {msg}")
+                if exc:
+                    raise RuntimeError(f"Render prebuilt index failure: {msg}") from exc
+                else:
+                    raise RuntimeError(f"Render prebuilt index failure: {msg}")
+            else:
+                if exc:
+                    logger.warning(f"Local prebuilt index bypass: {msg} - {exc}")
+                else:
+                    logger.warning(f"Local prebuilt index bypass: {msg}")
+                return False
+
+        try:
+            import faiss
+            logger.info("Diagnostic (c): FAISS import SUCCESS")
+        except Exception as e:
+            return fail("FAISS import failed", e)
+
+        import joblib
+
+        base      = os.path.splitext(self.data_path)[0]
+        bm25_path = f"{base}_bm25.pkl"
+        idx_path  = f"{base}_faiss.index"
+        meta_path = f"{base}_index_meta.json"
+
+        if not (os.path.exists(bm25_path) and os.path.exists(idx_path)):
+            return fail("Pre-built artifacts missing from disk")
+
+        if os.path.exists(meta_path):
+            try:
+                with open(meta_path, "r", encoding="utf-8") as f:
+                    meta = json.load(f)
+                logger.info("Diagnostic (a): metadata read SUCCESS")
+            except Exception as exc:
+                return fail(f"Unreadable index metadata {meta_path}", exc)
+
+            expected_sha = meta.get("kb_sha256")
+            if expected_sha:
+                import hashlib
+                h = hashlib.sha256()
+                with open(self.data_path, "rb") as fh:
+                    for chunk in iter(lambda: fh.read(65536), b""):
+                        h.update(chunk)
+                actual_sha = h.hexdigest()
+                if actual_sha != expected_sha:
+                    return fail(f"KB checksum changed. Expected: {expected_sha}, Actual: {actual_sha}")
+                logger.info("Diagnostic (b): knowledge-base SHA256 validation SUCCESS")
+
+        try:
+            try:
+                bm25 = joblib.load(bm25_path)
+                logger.info("Diagnostic (e): BM25/joblib load SUCCESS")
+            except Exception as e:
+                return fail("BM25 joblib load failed", e)
+
+            if getattr(bm25, "n_docs", None) != len(self.standards):
+                return fail(f"BM25 pickle has {getattr(bm25, 'n_docs', '?')} docs but KB has {len(self.standards)}")
+
+            try:
+                index = faiss.read_index(idx_path)
+                logger.info("Diagnostic (d): FAISS index load SUCCESS")
+            except Exception as e:
+                return fail("FAISS index load failed", e)
+
+            if index.ntotal != len(self.standards):
+                return fail(f"FAISS index has {index.ntotal} vectors but KB has {len(self.standards)}")
+
+            logger.info("Diagnostic (f): document/index count validation SUCCESS")
+
+            retriever = HybridRetriever()
+            retriever.standards = self.standards
+            retriever.bm25 = bm25
+            vector_store = VectorStore(dimension=index.d)
+            vector_store.index = index
+            retriever.vector_store = vector_store
+            self.retriever = retriever
+
+            logger.info(
+                "Diagnostic (g): final prebuilt retriever initialization SUCCESS. Loaded: BM25=%s (%d docs), FAISS=%s (%d vectors, dim=%d).",
+                os.path.basename(bm25_path), bm25.n_docs,
+                os.path.basename(idx_path), index.ntotal, index.d,
+            )
+            return True
 
         except Exception as exc:
             return fail("Unexpected failure during prebuilt artifact loading", exc)

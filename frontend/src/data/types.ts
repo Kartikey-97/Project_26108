@@ -19,7 +19,7 @@ export interface ProcurementCategory {
 }
 
 export type StandardRelationshipRole = 'primary' | 'normative' | 'testing' | 'safety' | 'installation' | 'related';
-export type MatchedRequirementStatus = 'covered' | 'partial' | 'needs-review' | 'not-found';
+export type MatchedRequirementStatus = 'covered' | 'partial' | 'needs-review' | 'not-found' | 'conflicting';
 export type HumanReviewConfidence = 'high-confidence' | 'needs-review' | 'insufficient-evidence';
 export type HumanDecision = 'accepted' | 'reviewed' | 'rejected';
 
@@ -71,6 +71,7 @@ export interface MatchedRequirementItem {
   parameterValue: string;
   standardCode: string;
   standardId: string;
+  standardIds?: string[];
   clause: string;
   status: MatchedRequirementStatus;
   evidenceSnippet?: string;
@@ -94,6 +95,8 @@ export interface SpecificationRequirement {
   tenderSection: string;
   applicableStandard: string;
   standardId: string;
+  standardIds?: string[];
+  standardCompliance?: Record<string, any>;
   clause: string;
   status: SpecificationRequirementStatus;
   whyMatters: string;
@@ -104,6 +107,8 @@ export interface SpecificationRequirement {
   decision?: HumanDecision;
   restrictivenessNote?: string;
   restrictivenessConfidence?: HumanReviewConfidence;
+  originalVerdict?: string;
+  isReference?: boolean;
 }
 
 export type RegulatoryRequirementType =
@@ -179,6 +184,8 @@ export interface Document {
 }
 
 export interface Analysis {
+  standard_decisions?: Record<string, any>;
+  finding_decisions?: Record<string, any>;
   id: string;
   title: string;
   category: string;
@@ -262,6 +269,7 @@ export interface ProfileParameter {
   id: string;
   label: string;
   value: string;
+  originalValue?: string;
   status: ProfileFieldStatus;
   sourceClause?: string;
 }

@@ -258,7 +258,11 @@ def initialize_knowledge_registry() -> KnowledgeRegistry:
     if settings.semantic_retrieval_enabled:
       try:
         embedding_service = EmbeddingService(model_name="gemini-embedding-001")
-        vector_store = VectorStore(dimension=embedding_service.dimension)
+        vector_store = VectorStore(
+            dimension=embedding_service.dimension,
+            url=settings.qdrant_url,
+            api_key=settings.qdrant_api_key
+        )
         vector_store.create_collections_if_needed()
 
         existing_count = vector_store.count_standards()
@@ -284,8 +288,8 @@ def initialize_knowledge_registry() -> KnowledgeRegistry:
             lexical_service=lexical_service,
             embedding_service=embedding_service,
             vector_store=vector_store,
-            lexical_weight=0.4,
-            vector_weight=0.6,
+            lexical_weight=0.6,
+            vector_weight=0.4,
         )
         retrieval_mode = "hybrid"
         retrieval_reason = None

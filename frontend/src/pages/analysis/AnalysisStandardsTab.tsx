@@ -22,7 +22,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Sparkles,
-  X,
+  X, Undo2,
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -133,18 +133,55 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
 
 
   // Local state for officer human decisions on standards
-  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>({
-    'std-10322': 'accepted',
-    'std-15885': 'accepted',
-    'std-16107': 'accepted',
-    'std-60529': 'accepted',
-    'std-14700': 'reviewed',
-    'std-1944': 'reviewed',
-    'std-sp-72': 'accepted',
+  // Extract decisions from the live backend analysis
+  const [decisions, setDecisions] = useState<Record<string, HumanDecision>>(() => {
+    const initial: Record<string, HumanDecision> = {};
+    if (analysis.standard_decisions) {
+      for (const [id, decisionObj] of Object.entries(analysis.standard_decisions)) {
+        initial[id] = (decisionObj as any).decision;
+      }
+    } else {
+      // Mock defaults for seeded analysis
+      initial['std-10322'] = 'accepted';
+      initial['std-15885'] = 'accepted';
+      initial['std-16107'] = 'accepted';
+      initial['std-60529'] = 'accepted';
+      initial['std-14700'] = 'reviewed';
+      initial['std-1944'] = 'reviewed';
+      initial['std-sp-72'] = 'accepted';
+    }
+    return initial;
   });
 
-  const handleDecision = (stdId: string, decision: HumanDecision) => {
+  const handleDecision = async (stdId: string, decision: HumanDecision) => {
+    const prevDecision = decisions[stdId];
     setDecisions((prev) => ({ ...prev, [stdId]: decision }));
+    try {
+      const { patchStandardDecision } = await import('@/services/api');
+      await patchStandardDecision(analysis.id, stdId, decision);
+      
+      // Mutate the global analysis object so the state persists if the user switches tabs and comes back
+      if (!analysis.standard_decisions) {
+        analysis.standard_decisions = {};
+      }
+      if (!analysis.standard_decisions[stdId]) {
+        analysis.standard_decisions[stdId] = { decision, notes: '' };
+      } else {
+        analysis.standard_decisions[stdId].decision = decision;
+      }
+    } catch (err) {
+      console.error('Failed to save decision:', err);
+      // Revert on error
+      if (prevDecision) {
+        setDecisions((prev) => ({ ...prev, [stdId]: prevDecision }));
+      } else {
+        setDecisions((prev) => {
+          const next = { ...prev };
+          delete next[stdId];
+          return next;
+        });
+      }
+    }
   };
 
   const filtered = matchedStandards.filter((s) => {
@@ -156,9 +193,14 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
     ) {
       return false;
     }
+    if (filter === 'rejected') return decisions[s.id] === 'rejected';
+    
+    // Hide rejected standards from other tabs (except 'all')
+    if (decisions[s.id] === 'rejected' && filter !== 'all') {
+      return false;
+    }
+    
     if (filter === 'primary') return s.relationshipRole === 'primary';
-    if (filter === 'normative') return s.relationshipRole === 'normative' || s.relationshipRole === 'safety';
-    if (filter === 'testing') return s.relationshipRole === 'testing' || s.relationshipRole === 'installation';
     if (filter === 'issues') return s.status !== 'current' || s.reviewConfidence === 'needs-review';
     return true;
   });
@@ -294,9 +336,8 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
             {[
               { id: 'all', label: `All Standards (${matchedStandards.length})` },
               { id: 'primary', label: 'Primary' },
-              { id: 'normative', label: 'Normative / Safety' },
-              { id: 'testing', label: 'Testing / Design' },
               { id: 'issues', label: 'Needs Attention' },
+              { id: 'rejected', label: 'Rejected' },
             ].map((f) => (
               <button
                 key={f.id}
@@ -325,12 +366,29 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
       {/* Standards list */}
       <div className="space-y-3.5">
         {filtered.map((standard) => {
+          const isRejected = decisions[standard.id] === 'rejected';
+          if (isRejected) {
+            return (
+              <div key={standard.id} className="opacity-60 bg-ivory-50 border border-ink-200 rounded-lg p-3 flex justify-between items-center transition-opacity hover:opacity-100">
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-ink-500 line-through mr-2">{standard.number}</span>
+                  <span className="text-sm text-ink-400 line-through">{standard.title}</span>
+                </div>
+                <button onClick={() => handleDecision(standard.id, 'accepted')} className="text-[11px] font-semibold text-ink-500 hover:text-ink-800 flex items-center gap-1 bg-ivory-100 px-2 py-1 rounded">
+                  <Undo2 size={12} /> Undo Reject
+                </button>
+              </div>
+            );
+          }
+          
           const status = statusConfig[standard.status];
           const hasIssue = standard.status !== 'current';
           const decision = decisions[standard.id] || 'accepted';
 
           const standardReqs = allMatchedRequirements.filter(
-            (req) => req.standardId === standard.id || req.standardCode.includes(standard.number.split(' ')[1] || '')
+            (req) => req.standardId === standard.id || 
+                     req.standardIds?.includes(standard.id) || 
+                     req.standardCode.includes(standard.number.split(' ')[1] || '')
           );
 
           return (
@@ -362,7 +420,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <button
-                          onClick={() => navigate({ name: 'standard', standardId: standard.id })}
+                          onClick={() => navigate({ name: 'standard', standardId: standard.id, analysisId: analysis.id })}
                           className="text-base font-semibold text-ink-900 hover:text-teal-700 flex items-center gap-1.5 font-mono"
                         >
                           {standard.number}
@@ -449,7 +507,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
                       {standardReqs.length > 0 && (
                         <span className="text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200 flex items-center gap-1 font-semibold">
                           <FileCheck2 size={11} />
-                          {standardReqs.length} matched requirement{standardReqs.length > 1 ? 's' : ''}
+                          {standardReqs.length} matched requirement{standardReqs.length !== 1 ? 's' : ''}
                         </span>
                       )}
                       {standard.evidenceAvailable && (
@@ -510,7 +568,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
                     {standard.supersededBy && (
                       <>
                         <span>·</span>
-                        <span className="text-warning-700 font-semibold cursor-pointer hover:underline" onClick={() => navigate({ name: 'standard', standardId: standard.supersededBy! })}>
+                        <span className="text-warning-700 font-semibold cursor-pointer hover:underline" onClick={() => navigate({ name: 'standard', standardId: standard.supersededBy!, analysisId: analysis.id })}>
                            → Upgraded to {getStandardById(standard.supersededBy!)?.number || standard.supersededBy}
                         </span>
                       </>
@@ -551,7 +609,7 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
                       <Columns size={12} /> Compare
                     </button>
                     <button
-                      onClick={() => navigate({ name: 'standard', standardId: standard.id })}
+                      onClick={() => navigate({ name: 'standard', standardId: standard.id, analysisId: analysis.id })}
                       className="font-sans font-medium text-teal-700 hover:text-teal-900 inline-flex items-center gap-1 text-xs"
                     >
                       View details & clauses <ArrowRight size={13} />

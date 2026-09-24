@@ -4,7 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  CheckCircle2,
+  BookOpen, CheckCircle2,
   FileCheck2,
   FileText,
   FileUp,
@@ -201,33 +201,146 @@ const INITIAL_PROFILE: ProcurementProfile = {
   application: 'Urban arterial roads and public highway lighting',
   environment: 'IP66 outdoor installation (-10°C to +50°C, high humidity)',
   technicalParameters: [
-    { id: 'tp-1', label: 'Rated Power', value: '90W to 120W (230V AC ± 10%, 50 Hz)', status: 'detected', sourceClause: 'Section 3.1' },
-    { id: 'tp-2', label: 'System Efficacy', value: '≥ 135 Lumens / Watt', status: 'detected', sourceClause: 'Section 3.2' },
-    { id: 'tp-3', label: 'Color Temp (CCT)', value: '4000K – 5000K (Neutral / Cool White)', status: 'detected', sourceClause: 'Section 3.3' },
-    { id: 'tp-4', label: 'Harmonic Distortion', value: 'THD < 10% at full load', status: 'detected', sourceClause: 'Section 3.5' },
-    { id: 'tp-5', label: 'Surge Protection', value: '≥ 10 kV internal SPD', status: 'detected', sourceClause: 'Section 3.6' },
+    { id: 'tp-1', label: 'Rated Power', value: '90W to 120W (230V AC ± 10%, 50 Hz)', originalValue: '90W to 120W (230V AC ± 10%, 50 Hz)', status: 'detected', sourceClause: 'Section 3.1' },
+    { id: 'tp-2', label: 'System Efficacy', value: '≥ 135 Lumens / Watt', originalValue: '≥ 135 Lumens / Watt', status: 'detected', sourceClause: 'Section 3.2' },
+    { id: 'tp-3', label: 'Color Temp (CCT)', value: '4000K – 5000K (Neutral / Cool White)', originalValue: '4000K – 5000K (Neutral / Cool White)', status: 'detected', sourceClause: 'Section 3.3' },
+    { id: 'tp-4', label: 'Harmonic Distortion', value: 'THD < 10% at full load', originalValue: 'THD < 10% at full load', status: 'detected', sourceClause: 'Section 3.5' },
+    { id: 'tp-5', label: 'Surge Protection', value: '≥ 10 kV internal SPD', originalValue: '≥ 10 kV internal SPD', status: 'detected', sourceClause: 'Section 3.6' },
   ],
   performanceRequirements: [
-    { id: 'pr-1', label: 'Lumen Maintenance', value: 'L70 > 50,000 burning hours @ 25°C', status: 'detected', sourceClause: 'Section 4.2' },
-    { id: 'pr-2', label: 'Color Rendering', value: 'CRI (Ra) ≥ 70', status: 'detected', sourceClause: 'Section 3.4' },
-    { id: 'pr-3', label: 'System Power Factor', value: '> 0.95 at rated operating voltage', status: 'needs-review', sourceClause: 'Implicit requirement' },
-    { id: 'pr-4', label: 'Driver Protection', value: 'Thermal auto-cutoff & 440V withstand (2 hrs)', status: 'detected', sourceClause: 'Section 3.7' },
+    { id: 'pr-1', label: 'Lumen Maintenance', value: 'L70 > 50,000 burning hours @ 25°C', originalValue: 'L70 > 50,000 burning hours @ 25°C', status: 'detected', sourceClause: 'Section 4.2' },
+    { id: 'pr-2', label: 'Color Rendering', value: 'CRI (Ra) ≥ 70', originalValue: 'CRI (Ra) ≥ 70', status: 'detected', sourceClause: 'Section 3.4' },
+    { id: 'pr-3', label: 'System Power Factor', value: '> 0.95 at rated operating voltage', originalValue: '> 0.95 at rated operating voltage', status: 'needs-review', sourceClause: 'Implicit requirement' },
+    { id: 'pr-4', label: 'Driver Protection', value: 'Thermal auto-cutoff & 440V withstand (2 hrs)', originalValue: 'Thermal auto-cutoff & 440V withstand (2 hrs)', status: 'detected', sourceClause: 'Section 3.7' },
   ],
   testingRequirements: [
-    { id: 'tr-1', label: 'Ingress Protection Test', value: 'IP66 test report from NABL-accredited laboratory (IS/IEC 60529)', status: 'detected', sourceClause: 'Section 4.1' },
-    { id: 'tr-2', label: 'Driver Safety & Endurance', value: 'Thermal endurance & safety testing per IS 15885-2-13', status: 'detected', sourceClause: 'Section 3.7' },
-    { id: 'tr-3', label: 'Harmonic Emissions Test', value: 'EMC harmonics verification per IS 14700-3-2', status: 'needs-review', sourceClause: 'Section 3.5' },
+    { id: 'tr-1', label: 'Ingress Protection Test', value: 'IP66 test report from NABL-accredited laboratory (IS/IEC 60529)', originalValue: 'IP66 test report from NABL-accredited laboratory (IS/IEC 60529)', status: 'detected', sourceClause: 'Section 4.1' },
+    { id: 'tr-2', label: 'Driver Safety & Endurance', value: 'Thermal endurance & safety testing per IS 15885-2-13', originalValue: 'Thermal endurance & safety testing per IS 15885-2-13', status: 'detected', sourceClause: 'Section 3.7' },
+    { id: 'tr-3', label: 'Harmonic Emissions Test', value: 'EMC harmonics verification per IS 14700-3-2', originalValue: 'EMC harmonics verification per IS 14700-3-2', status: 'needs-review', sourceClause: 'Section 3.5' },
   ],
   regulatoryMentions: [
-    { id: 'rm-1', label: 'BIS Compulsory Registration', value: 'CRS registration for electronic controlgear & LED module', status: 'detected', sourceClause: 'Section 4.3' },
-    { id: 'rm-2', label: 'Quality Control Order (QCO)', value: 'Applicable mandatory QCO for LED luminaires', status: 'detected', sourceClause: 'Section 4.3' },
-    { id: 'rm-3', label: 'National Lighting Code', value: 'Code of practice SP 72:2010 for public roadway illumination', status: 'detected', sourceClause: 'Section 4.4' },
+    { id: 'rm-1', label: 'BIS Compulsory Registration', value: 'CRS registration for electronic controlgear & LED module', originalValue: 'CRS registration for electronic controlgear & LED module', status: 'detected', sourceClause: 'Section 4.3' },
+    { id: 'rm-2', label: 'Quality Control Order (QCO)', value: 'Applicable mandatory QCO for LED luminaires', originalValue: 'Applicable mandatory QCO for LED luminaires', status: 'detected', sourceClause: 'Section 4.3' },
+    { id: 'rm-3', label: 'National Lighting Code', value: 'Code of practice SP 72:2010 for public roadway illumination', originalValue: 'Code of practice SP 72:2010 for public roadway illumination', status: 'detected', sourceClause: 'Section 4.4' },
   ],
 };
 
 type InputMode = 'upload' | 'paste' | 'describe';
 type WorkflowStep = 'input' | 'extracting' | 'profile' | 'confirmed';
 
+function ProfileFieldCard({ 
+  item, 
+  section,
+  handleUpdateField, 
+  handleRemoveField 
+}: { 
+  item: ProfileParameter, 
+  section: 'technicalParameters' | 'performanceRequirements' | 'testingRequirements' | 'regulatoryMentions',
+  handleUpdateField: (section: any, id: string, key: any, val: string) => void,
+  handleRemoveField: (section: any, id: string) => void 
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [showEvidence, setShowEvidence] = useState(false);
+
+  const renderStatusBadge = (status: ProfileFieldStatus) => {
+    switch (status) {
+      case 'detected':
+        return <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-700 tracking-wide"><div className="w-1.5 h-1.5 rounded-full bg-teal-500" /> Detected</span>;
+      case 'edited':
+        return <span className="inline-flex items-center gap-1 rounded bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-700 tracking-wide"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> Manually Added</span>;
+      case 'needs-review':
+        return <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 tracking-wide border border-amber-200"><ShieldAlert size={10} /> Needs Review</span>;
+      case 'not-found':
+        return <span className="inline-flex items-center gap-1 rounded bg-error-50 px-2 py-0.5 text-[10px] font-semibold text-error-700 tracking-wide"><div className="w-1.5 h-1.5 rounded-full bg-error-500" /> Not found in text</span>;
+    }
+  };
+
+
+
+  return (
+    <div className="rounded-lg border border-ink-100 bg-white overflow-hidden shadow-xs hover:border-ink-200 transition-colors">
+      <div className="p-4 space-y-3">
+        {isEditing ? (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={item.label}
+              onChange={(e) => handleUpdateField(section, item.id, 'label', e.target.value)}
+              className="w-full font-bold text-ink-800 uppercase tracking-wider font-sans text-[10px] bg-ivory-50 border border-ink-200 px-2 py-1 rounded focus:outline-none focus:border-teal-500"
+              placeholder="Label"
+            />
+            <textarea
+              value={item.value}
+              onChange={(e) => handleUpdateField(section, item.id, 'value', e.target.value)}
+              className="w-full font-mono text-sm font-semibold text-ink-900 bg-ivory-50 border border-ink-200 px-2 py-1 rounded focus:outline-none focus:border-teal-500 resize-y min-h-[80px]"
+              placeholder="Value"
+            />
+          </div>
+        ) : (
+          <div>
+            <h4 className="text-[10px] font-bold text-ink-500 uppercase tracking-wider font-sans mb-1">
+              {item.label}
+            </h4>
+            <p className="font-mono text-[13px] font-semibold text-ink-900 line-clamp-3">
+              {item.value}
+            </p>
+          </div>
+        )}
+        
+        <div className="flex items-center gap-2">
+          {renderStatusBadge(item.status)}
+          {item.status === 'needs-review' && (
+            <span className="text-[10px] text-amber-800 bg-amber-50/50 px-2 py-0.5 rounded">Reason: Ambiguous extraction; implied but not explicitly stated in text.</span>
+          )}
+        </div>
+
+        {showEvidence && (
+          <div className="mt-3 bg-ivory-50 rounded-lg p-3 border border-ink-100 text-xs">
+            <div className="flex items-center gap-1.5 text-ink-400 font-semibold tracking-wider uppercase text-[10px] mb-2">
+              <BookOpen size={11} /> Source: {item.sourceClause || 'Extracted from text'}
+            </div>
+            <p className="text-ink-700 italic border-l-2 border-teal-200 pl-3 py-0.5 whitespace-pre-wrap font-mono text-[11px] leading-relaxed">
+              "{item.originalValue || item.value}"
+            </p>
+          </div>
+        )}
+      </div>
+      
+      <div className="flex items-center justify-between px-4 py-2 bg-ivory-50/50 border-t border-ink-100 text-[11px] font-medium">
+        <div className="flex items-center gap-4 text-teal-800">
+          <button 
+            onClick={() => setShowEvidence(!showEvidence)}
+            className="hover:text-teal-900 font-semibold"
+          >
+            {showEvidence ? 'Hide Evidence' : 'View Evidence'}
+          </button>
+          <button 
+            onClick={() => setIsEditing(!isEditing)}
+            className="flex items-center gap-1 hover:text-teal-900 font-semibold"
+          >
+            {isEditing ? <Check size={12} /> : <Pencil size={12} />} 
+            {isEditing ? 'Done' : 'Edit'}
+          </button>
+          
+          {item.status === 'needs-review' && (
+             <button
+               onClick={() => handleUpdateField(section, item.id, 'status', 'detected')}
+               className="flex items-center gap-1 ml-2 bg-success-50 text-success-800 border border-success-200 px-2 py-0.5 rounded-full hover:bg-success-100 transition-colors"
+             >
+               <Check size={12} /> Confirm
+             </button>
+          )}
+        </div>
+        <button 
+          onClick={() => handleRemoveField(section, item.id)}
+          className="text-error-700 hover:text-error-800 font-semibold"
+        >
+          Exclude
+        </button>
+      </div>
+    </div>
+  );
+}
 export function NewAnalysisPage() {
   const { navigate } = useRouter();
 
@@ -303,17 +416,8 @@ export function NewAnalysisPage() {
     setUploadedFiles((prev) => [...prev, ...picked.map((f) => ({ name: f.name, size: formatSize(f.size), pages: 0 }))]);
 
     // Reset fixture first — uploading any file after the demo button was clicked
-    // must not inherit the demo fixture unless the new file itself triggers one.
-    const name = picked[0].name.toLowerCase();
-    if (name.includes('hindi')) {
-      setDemoFixture('hindi');
-    } else if (name.includes('tamil')) {
-      setDemoFixture('tamil');
-    } else {
-      // Normal file — clear any previously set demo fixture (e.g. user clicked
-      // "Load LED Sample" then deleted it and uploaded their own PDF).
-      setDemoFixture(null);
-    }
+    // must not inherit the demo fixture.
+    setDemoFixture(null);
   };
 
   const removeFileAt = (idx: number) => {
@@ -352,25 +456,6 @@ export function NewAnalysisPage() {
     setSubmitStatusLabel('Waking the analysis service (first run can take ~50s)…');
     try {
       let file: File | undefined = (inputMode === 'upload' && uploadedFileObjects[0]) ? uploadedFileObjects[0] : undefined;
-      const isHindiFile = file && file.name.toLowerCase().includes('hindi');
-      const isTamilFile = file && file.name.toLowerCase().includes('tamil');
-
-      if (demoFixture === 'hindi' || demoFixture === 'tamil' || isHindiFile || isTamilFile) {
-        setSubmitStatusLabel('Queued...');
-        await new Promise(r => setTimeout(r, 1500));
-        setSubmitStatusLabel('Extracting text and identifying IS references...');
-        await new Promise(r => setTimeout(r, 3000));
-        setSubmitStatusLabel('Retrieving BIS standards metadata...');
-        await new Promise(r => setTimeout(r, 4000));
-        setSubmitStatusLabel('Running cross-lingual NLP mapping...');
-        await new Promise(r => setTimeout(r, 4000));
-        setSubmitStatusLabel('Generating compliance report...');
-        await new Promise(r => setTimeout(r, 2500));
-        
-        const fixtureType = (demoFixture === 'hindi' || isHindiFile) ? 'an-hindi' : 'an-tamil';
-        navigate({ name: 'analysis', analysisId: fixtureType, tab: 'overview' });
-        return;
-      }
 
       let text: string | undefined;
       // We already declared `file` above for the mock check, but we need to reassign it
@@ -474,6 +559,14 @@ export function NewAnalysisPage() {
 
       let res;
       res = await extractProfilePreview({ text, file, category: profile.category });
+      
+      // Preserve the original text for the evidence block so it stays intact even if user edits the value
+      const populateOriginals = (items: ProfileParameter[]) => items?.map(i => ({ ...i, originalValue: i.value })) || [];
+      res.technicalParameters = populateOriginals(res.technicalParameters);
+      res.performanceRequirements = populateOriginals(res.performanceRequirements);
+      res.testingRequirements = populateOriginals(res.testingRequirements);
+      res.regulatoryMentions = populateOriginals(res.regulatoryMentions);
+      
       setProfile(res);
       if (res.document_id) {
         setDocumentId(res.document_id);
@@ -1020,45 +1113,13 @@ export function NewAnalysisPage() {
 
               <div className="space-y-2">
                 {profile.technicalParameters.map((item) => (
-                  <div
+                  <ProfileFieldCard
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg border border-ink-100 bg-ivory-50/50 p-2.5 text-xs hover:border-ink-200 transition-colors"
-                  >
-                    <div className="flex-1 grid sm:grid-cols-3 gap-2">
-                      <input
-                        type="text"
-                        value={item.label}
-                        onChange={(e) => handleUpdateField('technicalParameters', item.id, 'label', e.target.value)}
-                        className="font-medium text-ink-800 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.value}
-                        onChange={(e) => handleUpdateField('technicalParameters', item.id, 'value', e.target.value)}
-                        className="sm:col-span-2 font-mono text-ink-900 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-ink-100">
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleUpdateField('technicalParameters', item.id, 'status', e.target.value as ProfileFieldStatus)}
-                        className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[10px] text-ink-600 focus:outline-none"
-                      >
-                        <option value="detected">Detected</option>
-                        <option value="needs-review">Needs review</option>
-                        <option value="not-found">Not found</option>
-                      </select>
-                      {renderStatusBadge(item.status)}
-                      <button
-                        onClick={() => handleRemoveField('technicalParameters', item.id)}
-                        className="text-ink-400 hover:text-error-600 p-1"
-                        aria-label="Delete field"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </div>
+                    item={item}
+                    section="technicalParameters"
+                    handleUpdateField={handleUpdateField}
+                    handleRemoveField={handleRemoveField}
+                  />
                 ))}
               </div>
 
@@ -1123,45 +1184,13 @@ export function NewAnalysisPage() {
 
               <div className="space-y-2">
                 {profile.performanceRequirements.map((item) => (
-                  <div
+                  <ProfileFieldCard
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg border border-ink-100 bg-ivory-50/50 p-2.5 text-xs hover:border-ink-200 transition-colors"
-                  >
-                    <div className="flex-1 grid sm:grid-cols-3 gap-2">
-                      <input
-                        type="text"
-                        value={item.label}
-                        onChange={(e) => handleUpdateField('performanceRequirements', item.id, 'label', e.target.value)}
-                        className="font-medium text-ink-800 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.value}
-                        onChange={(e) => handleUpdateField('performanceRequirements', item.id, 'value', e.target.value)}
-                        className="sm:col-span-2 font-mono text-ink-900 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-ink-100">
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleUpdateField('performanceRequirements', item.id, 'status', e.target.value as ProfileFieldStatus)}
-                        className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[10px] text-ink-600 focus:outline-none"
-                      >
-                        <option value="detected">Detected</option>
-                        <option value="needs-review">Needs review</option>
-                        <option value="not-found">Not found</option>
-                      </select>
-                      {renderStatusBadge(item.status)}
-                      <button
-                        onClick={() => handleRemoveField('performanceRequirements', item.id)}
-                        className="text-ink-400 hover:text-error-600 p-1"
-                        aria-label="Delete field"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </div>
+                    item={item}
+                    section="performanceRequirements"
+                    handleUpdateField={handleUpdateField}
+                    handleRemoveField={handleRemoveField}
+                  />
                 ))}
               </div>
 
@@ -1226,45 +1255,13 @@ export function NewAnalysisPage() {
 
               <div className="space-y-2">
                 {profile.testingRequirements.map((item) => (
-                  <div
+                  <ProfileFieldCard
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg border border-ink-100 bg-ivory-50/50 p-2.5 text-xs hover:border-ink-200 transition-colors"
-                  >
-                    <div className="flex-1 grid sm:grid-cols-3 gap-2">
-                      <input
-                        type="text"
-                        value={item.label}
-                        onChange={(e) => handleUpdateField('testingRequirements', item.id, 'label', e.target.value)}
-                        className="font-medium text-ink-800 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.value}
-                        onChange={(e) => handleUpdateField('testingRequirements', item.id, 'value', e.target.value)}
-                        className="sm:col-span-2 font-mono text-ink-900 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-ink-100">
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleUpdateField('testingRequirements', item.id, 'status', e.target.value as ProfileFieldStatus)}
-                        className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[10px] text-ink-600 focus:outline-none"
-                      >
-                        <option value="detected">Detected</option>
-                        <option value="needs-review">Needs review</option>
-                        <option value="not-found">Not found</option>
-                      </select>
-                      {renderStatusBadge(item.status)}
-                      <button
-                        onClick={() => handleRemoveField('testingRequirements', item.id)}
-                        className="text-ink-400 hover:text-error-600 p-1"
-                        aria-label="Delete field"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </div>
+                    item={item}
+                    section="testingRequirements"
+                    handleUpdateField={handleUpdateField}
+                    handleRemoveField={handleRemoveField}
+                  />
                 ))}
               </div>
 
@@ -1329,45 +1326,13 @@ export function NewAnalysisPage() {
 
               <div className="space-y-2">
                 {profile.regulatoryMentions.map((item) => (
-                  <div
+                  <ProfileFieldCard
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg border border-ink-100 bg-ivory-50/50 p-2.5 text-xs hover:border-ink-200 transition-colors"
-                  >
-                    <div className="flex-1 grid sm:grid-cols-3 gap-2">
-                      <input
-                        type="text"
-                        value={item.label}
-                        onChange={(e) => handleUpdateField('regulatoryMentions', item.id, 'label', e.target.value)}
-                        className="font-medium text-ink-800 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.value}
-                        onChange={(e) => handleUpdateField('regulatoryMentions', item.id, 'value', e.target.value)}
-                        className="sm:col-span-2 font-mono text-ink-900 bg-transparent border-b border-transparent hover:border-ink-200 focus:border-teal-500 focus:bg-white px-1.5 py-0.5 rounded focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-ink-100">
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleUpdateField('regulatoryMentions', item.id, 'status', e.target.value as ProfileFieldStatus)}
-                        className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[10px] text-ink-600 focus:outline-none"
-                      >
-                        <option value="detected">Detected</option>
-                        <option value="needs-review">Needs review</option>
-                        <option value="not-found">Not found</option>
-                      </select>
-                      {renderStatusBadge(item.status)}
-                      <button
-                        onClick={() => handleRemoveField('regulatoryMentions', item.id)}
-                        className="text-ink-400 hover:text-error-600 p-1"
-                        aria-label="Delete field"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </div>
+                    item={item}
+                    section="regulatoryMentions"
+                    handleUpdateField={handleUpdateField}
+                    handleRemoveField={handleRemoveField}
+                  />
                 ))}
               </div>
 

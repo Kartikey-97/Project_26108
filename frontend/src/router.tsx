@@ -9,7 +9,7 @@ export type Route =
   | { name: 'standards' }
   | { name: 'reports' }
   | { name: 'analysis'; analysisId: string; tab?: AnalysisTab }
-  | { name: 'standard'; standardId: string };
+  | { name: 'standard'; standardId: string; analysisId?: string };
 
 export type AnalysisTab = 'overview' | 'standards' | 'relationships' | 'gaps' | 'certification' | 'evidence';
 
@@ -27,8 +27,10 @@ export function useRouter() {
 }
 
 function parseHash(): Route {
-  const hash = window.location.hash.replace(/^#/, '') || '/';
-  const parts = hash.split('/').filter(Boolean);
+  const hashString = window.location.hash.replace(/^#/, '') || '/';
+  const [path, queryString] = hashString.split('?');
+  const parts = path.split('/').filter(Boolean);
+  const params = new URLSearchParams(queryString || '');
 
   if (parts.length === 0) return { name: 'landing' };
   if (parts[0] === 'how-it-works') return { name: 'how-it-works' };
@@ -42,7 +44,8 @@ function parseHash(): Route {
     return { name: 'analysis', analysisId: parts[1], tab };
   }
   if (parts[0] === 'standard' && parts[1]) {
-    return { name: 'standard', standardId: parts[1] };
+    const analysisId = params.get('analysisId') || undefined;
+    return { name: 'standard', standardId: decodeURIComponent(parts[1]), analysisId };
   }
   return { name: 'landing' };
 }
@@ -66,7 +69,8 @@ function routeToHash(route: Route): string {
     case 'analysis':
       return `#/analysis/${route.analysisId}${route.tab ? `/${route.tab}` : ''}`;
     case 'standard':
-      return `#/standard/${route.standardId}`;
+      const encodedId = encodeURIComponent(route.standardId);
+      return route.analysisId ? `#/standard/${encodedId}?analysisId=${route.analysisId}` : `#/standard/${encodedId}`;
   }
 }
 

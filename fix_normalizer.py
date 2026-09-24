@@ -1,40 +1,22 @@
+import re
+
 with open('backend/kshiraj/bis_live_ingestion/normalizer.py', 'r') as f:
     content = f.read()
 
-old_block = """
-def normalize_standard(
-    detail: dict[str, Any],
-    amendments: list[dict[str, Any]] | None = None,
-    *,
-    source_url: str = PORTAL_URL,
-) -> tuple[Standard, list[Evidence]]:
-    designation = normalize_designation(str(detail.get("standardNumber") or ""))
-    is_number, part, section, year = parse_designation(designation)
-"""
+def replacer(match):
+    return match.group(1)
 
-new_block = """
-def normalize_standard(
-    detail: dict[str, Any],
-    amendments: list[dict[str, Any]] | None = None,
-    *,
-    source_url: str = PORTAL_URL,
-) -> tuple[Standard, list[Evidence]]:
-    raw_designation = str(detail.get("standardNumber") or "")
-    designation = normalize_designation(raw_designation)
-    is_number, part, section, _ = parse_designation(designation)
-    
-    # Extract year safely before it gets stripped
-    year = None
-    import re
-    year_match = re.search(r":\s*(\d{4})", raw_designation)
-    if year_match:
-        year = int(year_match.group(1))
-"""
+old_func = """def normalize_designation(value: str) -> str:
+    value = re.sub(r"\\s+", " ", value.strip())"""
+new_func = """def normalize_designation(value: str) -> str:
+    value = value.strip().upper()
+    value = re.sub(r"^(IS(?:/[A-Z]+)?)\s*(\d+)", r"\g<1> \g<2>", value)
+    value = re.sub(r"\s+", " ", value)"""
 
-if old_block in content:
-    content = content.replace(old_block, new_block)
+if old_func in content:
+    content = content.replace(old_func, new_func)
     with open('backend/kshiraj/bis_live_ingestion/normalizer.py', 'w') as f:
         f.write(content)
-    print("Fixed normalizer.py")
+    print("Fixed")
 else:
-    print("Could not find block in normalizer.py")
+    print("Not found")

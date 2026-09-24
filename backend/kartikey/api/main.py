@@ -16,6 +16,14 @@ from __future__ import annotations
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import socket
+
+# MacOS DNS hang patch for Qdrant client
+old_getaddrinfo = socket.getaddrinfo
+def new_getaddrinfo(*args, **kwargs):
+    responses = old_getaddrinfo(*args, **kwargs)
+    return [response for response in responses if response[0] == socket.AF_INET]
+socket.getaddrinfo = new_getaddrinfo
 
 from shared.config import settings
 from shared.config import DEV_API_KEY as _SHIPPED_DEV_API_KEY
@@ -104,11 +112,12 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 # Uncomment each router as it is implemented.
 # ---------------------------------------------------------------------------
 
-from kartikey.api.routes import documents, analyses, standards, reports, simulator, translation, procurement, extract
+from kartikey.api.routes import documents, analyses, standards, reports, simulator, translation, procurement, extract, decisions
 
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(analyses.router,  prefix="/api/v1")
 app.include_router(extract.router, prefix="/api/v1")
+app.include_router(decisions.router, prefix="/api/v1")
 
 app.include_router(standards.router, prefix="/api/v1")
 app.include_router(reports.router,   prefix="/api/v1")

@@ -543,7 +543,7 @@ export function AnalysisEvidenceTab({ analysis }: Props) {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => navigate({ name: 'standard', standardId: selectedItem.standardId! })}
+                    onClick={() => navigate({ name: 'standard', standardId: selectedItem.standardId!, analysisId: analysis.id })}
                     rightIcon={<ExternalLink size={13} />}
                   >
                     View Standard

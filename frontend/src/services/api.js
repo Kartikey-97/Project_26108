@@ -350,3 +350,19 @@ export async function extractProfilePreview({ text, file, category }) {
   
   return { ...profileData, document_id };
 }
+
+export async function patchFindingDecision(analysisId, findingId, decision) {
+  return request(`/analyses/${analysisId}/findings/${findingId}/decision`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ decision })
+  });
+}
+
+export async function patchStandardDecision(analysisId, standardId, decision) {
+  return request(`/analyses/${analysisId}/standards/${standardId}/decision`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ decision })
+  });
+}

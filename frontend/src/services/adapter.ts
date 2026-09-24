@@ -68,15 +68,16 @@ function mapAnalysisStatus(status = ''): AnalysisStatus {
 }
 
 // finding.verdict is one of ~11 backend verdicts; collapse to UI statuses.
-function verdictToSpecStatus(verdict = ''): SpecificationRequirement['status'] {
+function verdictToSpecStatus(verdict = '', isReference?: string | null): SpecificationRequirement['status'] {
   const v = verdict.toLowerCase();
   if (v === 'justified') return 'covered';
   if (v.includes('restrict')) return 'restrictive';
-  // A standard cited outside its scope, or simply the wrong standard, is a
-  // conflict between the specification and the citation — not a generic
-  // "needs a look". These are the findings the product exists to produce, and
-  // 'review' buried them in with everything else.
-  if (v.includes('conflict') || v.includes('wrong_scope') || v.includes('incorrect')) return 'conflicting';
+  
+  // A standard cited outside its scope, or simply the wrong standard, is mapped to review
+  if (v.includes('conflict') || v.includes('wrong_scope') || v.includes('incorrect')) {
+    return 'review';
+  }
+  
   if (v.includes('missing') || v.includes('not_found') || v.includes('absent')) return 'missing';
   return 'review';
 }
@@ -84,6 +85,7 @@ function verdictToSpecStatus(verdict = ''): SpecificationRequirement['status'] {
 function verdictToMatchedStatus(verdict = ''): MatchedRequirementItem['status'] {
   const v = verdict.toLowerCase();
   if (v === 'justified') return 'covered';
+  if (v.includes('conflict') || v.includes('wrong_scope') || v.includes('incorrect')) return 'needs-review';
   if (v.includes('missing') || v.includes('not_found') || v.includes('absent')) return 'not-found';
   if (v.includes('partial')) return 'partial';
   return 'needs-review';
@@ -132,10 +134,21 @@ function displayStandard(f: any): { std: any; wronglyCited: boolean } {
 // honest when nothing was identified at all; when a standard was cited and
 // judged inapplicable, saying so is the finding.
 function standardLabel(f: any, absent: string): string {
-  const { std, wronglyCited } = displayStandard(f);
-  if (!std) return absent;
-  const designation = std.designation || std.is_number || absent;
-  return wronglyCited ? `${designation} (cited — see finding)` : designation;
+  // If there are applicable standards, join all of them
+  if (f?.applicable_standards?.length > 0) {
+    return f.applicable_standards
+      .map((s: any) => s.designation || s.is_number || absent)
+      .join(', ');
+  }
+
+  // Fallback to the cited standard if wrongly cited
+  const cited = f?.cited_standards?.[0];
+  if (cited) {
+    const designation = cited.designation || cited.is_number || absent;
+    return `${designation} (cited — see finding)`;
+  }
+
+  return absent;
 }
 
 // The deterministic scope check's own words, when it made a judgement. Prefer
@@ -216,16 +229,39 @@ export interface AdaptedAnalysis {
 
 export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const rawStandards: any[] = raw?.standards || [];
-  const findings: any[] = raw?.findings || [];
-  const requirements: any[] = raw?.requirements || [];
+  
+  // Exclude logically deleted findings and their corresponding requirements
+  const allFindings: any[] = raw?.findings || [];
+  const findings: any[] = allFindings.filter((f) => f.officer_decision !== 'deleted');
+  const deletedReqIds = new Set(allFindings.filter((f) => f.officer_decision === 'deleted').map((f) => f.requirement_id));
+  const requirements: any[] = (raw?.requirements || []).filter((r: any) => !deletedReqIds.has(r.id));
 
   const standards = rawStandards.map(adaptStandard);
   const stdById = new Map(standards.map((s, i) => [String(rawStandards[i].id ?? s.id), s]));
-  
-  // Sort standards by applicability score descending so the highest score is primary
-  standards.sort((a, b) => (b.applicabilityScore || 0) - (a.applicabilityScore || 0));
-  
-  // The highest scored standard is the primary code
+
+  // Build a map of standard id -> number of findings that list it as applicable.
+  // This is computed before sort so we can use it as the primary ranking key.
+  const reqCountByStdId = new Map<string, number>();
+  for (const f of findings) {
+    const applicable: any[] = f?.applicable_standards || [];
+    const ids: string[] = applicable.length > 0
+      ? applicable.map((s: any) => String(s.id))
+      : (f?.applicable_standard_ids || []).map(String);
+    for (const sid of ids) {
+      reqCountByStdId.set(sid, (reqCountByStdId.get(sid) || 0) + 1);
+    }
+  }
+
+  // Sort: primary = matched-requirement count (more is better);
+  // secondary = applicabilityScore (higher ML score is better).
+  // This prevents IS 1356 with 1 requirement from outranking IS 302 with 5.
+  standards.sort((a, b) => {
+    const countDiff = (reqCountByStdId.get(b.id) || 0) - (reqCountByStdId.get(a.id) || 0);
+    if (countDiff !== 0) return countDiff;
+    return (b.applicabilityScore || 0) - (a.applicabilityScore || 0);
+  });
+
+  // The highest ranked standard is the primary code
   if (standards[0]) standards[0].relationshipRole = 'primary';
   const findingFor = (reqId: string) => findings.find((f) => f.requirement_id === reqId);
 
@@ -234,6 +270,11 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const matchedRequirements: MatchedRequirementItem[] = requirements.map((r) => {
     const f = findingFor(r.id);
     const { std } = displayStandard(f);
+    
+    const locationStr = r.location 
+      ? (r.page ? `Page ${r.page}, ${r.location}` : r.location)
+      : (r.category?.replace(/_/g, ' ') || '');
+      
     return {
       id: r.id,
       requirement: r.text || r.category || 'Requirement',
@@ -241,7 +282,8 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
 
       standardCode: standardLabel(f, 'Not mapped'),
       standardId: std?.id ? String(std.id) : '',
-      clause: r.location || '',
+      standardIds: f?.applicable_standards?.map((s: any) => String(s.id)) || (std?.id ? [String(std.id)] : []),
+      clause: locationStr,
       status: verdictToMatchedStatus(f?.verdict),
       evidenceSnippet: scopeNote(f) || f?.evidence?.[0]?.excerpt,
       evidenceSource: f?.evidence?.[0]?.authority || f?.evidence?.[0]?.source_type,
@@ -252,20 +294,30 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   const specRequirements: SpecificationRequirement[] = requirements.map((r) => {
     const f = findingFor(r.id);
     const { std } = displayStandard(f);
+    
+    // Construct location string with page if available
+    const locationStr = r.location 
+      ? (r.page ? `Page ${r.page}, ${r.location}` : r.location)
+      : (r.category?.replace(/_/g, ' ') || '');
+
     return {
       id: r.id,
       analysisId,
       requirement: r.text || r.category || 'Requirement',
-      tenderEvidence: f?.evidence?.[0]?.excerpt || r.text || '',
-      tenderSection: r.location || r.category?.replace(/_/g, ' ') || '',
+      tenderEvidence: r.text || f?.evidence?.[0]?.excerpt || '',
+      tenderSection: locationStr,
       applicableStandard: standardLabel(f, 'Not mapped'),
       standardId: std?.id ? String(std.id) : '',
+      standardIds: f?.applicable_standards?.map((s: any) => String(s.id)) || (std?.id ? [String(std.id)] : []),
+      standardCompliance: f?.standard_compliance_notes || {},
       clause: '',
-      status: verdictToSpecStatus(f?.verdict),
+      status: verdictToSpecStatus(f?.verdict, r.is_reference),
       whyMatters: explain(f),
       supportingEvidence: f?.evidence?.[0]?.excerpt,
       suggestedAction: f?.recommended_action,
       reviewConfidence: confBand(f?.confidence ?? r.extraction_confidence),
+      originalVerdict: f?.verdict,
+      isReference: !!r.is_reference,
     };
   });
 
@@ -301,6 +353,11 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
     const r = requirements.find((x) => x.id === f.requirement_id);
     const ev = f.evidence?.[0];
     const { std } = displayStandard(f);
+    
+    const locationStr = r?.location 
+      ? (r.page ? `Page ${r.page}, ${r.location}` : r.location)
+      : (r?.category?.replace(/_/g, ' ') || '');
+
     return {
       id: f.id,
       analysisId,
@@ -310,26 +367,37 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
       clause: '',
       evidence: ev?.excerpt || f.reason || '',
       sourceDoc: ev?.authority || ev?.source_type || 'Procurement analysis',
-      sourceLocation: ev?.gazette_so_number || ev?.source_type || '',
+      sourceLocation: locationStr || ev?.gazette_so_number || ev?.source_type || '',
       status: verdictToEvidenceStatus(f.verdict),
       conclusion: explain(f),
       reviewConfidence: confBand(f.confidence),
     };
   });
 
-  const relationships: StandardRelationship[] = findings.flatMap((f) =>
+  const allRelationships = findings.flatMap((f) =>
     (f.cross_references || []).flatMap((xref: any, fi: number) =>
       (xref.references || []).slice(0, 4).map((ref: string, ri: number) => ({
         id: `rel-${f.id}-${fi}-${ri}`,
         analysisId,
         fromStandardId: xref.source || '',
-        toStandardId: '',
+        toStandardId: ref,
         type: 'references' as const,
         label: `${xref.source_designation || xref.source} → ${ref}`,
         description: xref.note || `${xref.source_designation || xref.source} cites ${ref} as a normative reference.`,
       })),
     ),
   );
+  
+  // Deduplicate relationships by from/to pairs
+  const uniquePairs = new Set<string>();
+  const relationships: StandardRelationship[] = [];
+  for (const rel of allRelationships) {
+    const key = `${rel.fromStandardId}->${rel.toStandardId}`;
+    if (!uniquePairs.has(key)) {
+      uniquePairs.add(key);
+      relationships.push(rel);
+    }
+  }
   
   // Inject superseding relationships dynamically for real standards
   standards.forEach((std) => {
@@ -352,8 +420,11 @@ export function adaptAnalysis(raw: any): AdaptedAnalysis {
   });
 
   const gapsFound = findings.filter((f) => (f.verdict || '').toLowerCase() !== 'justified').length;
-  const confidences = findings.map((f) => norm(f.confidence)).filter((n) => n > 0);
-  const avgConfidence = confidences.length ? Math.round((confidences.reduce((a, b) => a + b, 0) / confidences.length) * 100) : 0;
+  
+  const validScores = standards
+    .map(s => s.applicabilityScore)
+    .filter((s): s is number => s !== undefined && s > 0);
+  const avgConfidence = validScores.length ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length) : 0;
 
 
   const qcoCount = raw?.qco_findings?.length || 0;

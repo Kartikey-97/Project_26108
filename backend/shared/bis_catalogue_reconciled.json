@@ -2671,7 +2671,12 @@
     "standard_type_label": "Safety",
     "scope": null,
     "scope_summary": null,
-    "normative_references": [],
+    "normative_references": [
+      "IS 302 : Part 1",
+      "IS 1391 : Part 1",
+      "IS 1391 : Part 2",
+      "IS 2997"
+    ],
     "related_standards": [],
     "certification": null,
     "currentness": {
@@ -2684,12 +2689,26 @@
       "concurrent_running": null
     },
     "keywords": [
-      "Safety",
-      "Household",
-      "Similar",
-      "Electrical",
+      "servicing",
+      "AC",
+      "Tower",
+      "Cooling",
       "Appliances",
-      "Particular"
+      "Cassette",
+      "AMC",
+      "Household",
+      "maintenance",
+      "Safety",
+      "Air Conditioner",
+      "Similar",
+      "Cassette AC",
+      "Maintenance",
+      "Particular",
+      "AC machines",
+      "HVAC",
+      "Split",
+      "Split AC",
+      "Electrical"
     ],
     "product_categories": [
       "Pumps & Fluid Equipment"
@@ -2712,7 +2731,25 @@
       "currentness": "unverified",
       "test_methods": "not_available",
       "price": "verified"
-    }
+    },
+    "cross_references": [
+      {
+        "is_number": "IS 302 : Part 1",
+        "title": "Safety of Household and Similar Electrical Appliances - General Requirements"
+      },
+      {
+        "is_number": "IS 1391 : Part 1",
+        "title": "Room Air Conditioners - Unitary Air Conditioners"
+      },
+      {
+        "is_number": "IS 1391 : Part 2",
+        "title": "Room Air Conditioners - Split Air Conditioners"
+      },
+      {
+        "is_number": "IS 2997",
+        "title": "Air circulator type electric fans and regulators"
+      }
+    ]
   },
   {
     "is_number": "IS 302 : Part 2 : Sec 42",
@@ -45694,14 +45731,17 @@
     "standard_type_label": "Specification",
     "scope": null,
     "scope_summary": null,
-    "normative_references": [],
+    "normative_references": [
+      "IS 302 : Part 1",
+      "IS 1391 : Part 2"
+    ],
     "related_standards": [],
     "certification": null,
     "currentness": {
-      "status": "active",
-      "status_label": "Active",
+      "status": "withdrawn",
+      "status_label": "Withdrawn",
       "supersedes": null,
-      "superseded_by": null,
+      "superseded_by": "IS 302 : Part 2 : Sec 40",
       "latest_known_edition": "IS/IEC 60335",
       "latest_known_year": 2018,
       "concurrent_running": null
@@ -45712,7 +45752,16 @@
       "electrical",
       "appliances",
       "safety",
-      "Particular"
+      "Particular",
+      "AC",
+      "AC machines",
+      "Air Conditioner",
+      "HVAC",
+      "Split AC",
+      "Cassette AC",
+      "AMC",
+      "Maintenance",
+      "Cooling"
     ],
     "product_categories": [
       "Pumps & Fluid Equipment"
@@ -45735,7 +45784,17 @@
       "currentness": "unverified",
       "test_methods": "not_available",
       "price": "verified"
-    }
+    },
+    "cross_references": [
+      {
+        "is_number": "IS 302 : Part 1",
+        "title": "Safety of Household and Similar Electrical Appliances - General Requirements"
+      },
+      {
+        "is_number": "IS 1391 : Part 2",
+        "title": "Room Air Conditioners - Split Air Conditioners"
+      }
+    ]
   },
   {
     "is_number": "IS/IEC 60335 : Part 2 : Sec 89",

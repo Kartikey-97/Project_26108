@@ -56,12 +56,13 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
   const { navigate } = useRouter();
   const isLedDemo = analysis.id === 'an-001' || (isReal && (analysis.title?.includes('Arterial Roads') ?? false));
 
-  const primaryStandard = getStandardById(analysis.matchedStandardIds[0]);
-
   // All matched standards for metrics
   const matchedStandards = analysis.matchedStandardIds
     .map((id) => getStandardById(id))
-    .filter((s): s is Standard => s !== undefined);
+    .filter((s): s is Standard => s !== undefined)
+    .filter((s) => !(analysis.standard_decisions && analysis.standard_decisions[s.id]?.decision === 'rejected'));
+
+  const primaryStandard = matchedStandards[0] || getStandardById(analysis.matchedStandardIds[0]);
 
   const gaps = getGapsByAnalysisId(analysis.id);
   const relatedCount = getRelationshipsByAnalysisId(analysis.id).length;
@@ -388,7 +389,7 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
                   Source-backed evidence available for all matched clauses
                 </span>
                 <button
-                  onClick={() => navigate({ name: 'standard', standardId: primaryStandard.id })}
+                  onClick={() => navigate({ name: 'standard', standardId: primaryStandard.id, analysisId: analysis.id })}
                   className="font-medium text-teal-700 hover:text-teal-900 inline-flex items-center gap-1 text-[11px]"
                 >
                   View full standard specification <ArrowRight size={12} />

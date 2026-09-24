@@ -95,12 +95,20 @@ class VectorStore:
             ) from exc
 
         try:
+            # If Qdrant URL is set but fails, we shouldn't wipe data.
+            # We'll default to a persistent local path instead of :memory:
             if self._url:
-                logger.info("Connecting to Qdrant server at %s...", self._url)
-                self._client = QdrantClient(url=self._url, api_key=self._api_key)
+                try:
+                    logger.info("Connecting to Qdrant server at %s...", self._url)
+                    self._client = QdrantClient(url=self._url, api_key=self._api_key, timeout=5.0)
+                    self._client.get_collections()
+                except Exception as e:
+                    logger.warning("Cloud Qdrant unreachable (%s), falling back to local persistent storage.", e)
+                    self._client = QdrantClient(path="./data/qdrant_local")
             else:
-                logger.info("Initializing in-memory Qdrant client (%s)...", self._location)
-                self._client = QdrantClient(location=self._location or ":memory:")
+                fallback_path = "./data/qdrant_local" if self._location == ":memory:" else self._location
+                logger.info("Initializing persistent local Qdrant client (%s)...", fallback_path)
+                self._client = QdrantClient(path=fallback_path)
             return self._client
         except Exception as exc:
             logger.error("Failed to initialize QdrantClient: %s", exc)

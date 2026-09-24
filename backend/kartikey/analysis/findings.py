@@ -397,6 +397,9 @@ def _assemble_with_aiml(
                 "Low confidence score or QCO-notified product requires officer review."
                 if needs_human else None
             ),
+            standard_compliance_notes=_build_standard_compliance_notes(
+                applicable_standards, compliance_results, cross_references,
+            ),
         )
         findings.append(finding)
 
@@ -967,22 +970,11 @@ def _build_reason(
             parts.append(
                 f"[{_verdict_axis(ai_verdict).title()}] This finding "
                 f"({ai_verdict.value}) still applies independently of the "
-                "version issue below."
+                "version/status issue."
             )
-        parts.append(f"[Compliance override] {best.version_check.note}")
-        parts.append(f"[Status] {best.status_check.note}")
-        if best.scope_check.mismatch:
-            parts.append(f"[Scope] {best.scope_check.note}")
-        if best.qco_check.qco_notified:
-            parts.append(f"[QCO] {best.qco_check.note}")
-    elif compliance_results:
-        best = min(compliance_results, key=lambda cr: _verdict_severity(cr.suggested_verdict))
-        if not best.version_check.is_current:
-            parts.append(f"[Version] {best.version_check.note}")
-        if best.scope_check.mismatch:
-            parts.append(f"[Scope] {best.scope_check.note}")
-        if best.qco_check.qco_notified:
-            parts.append(f"[QCO] {best.qco_check.note}")
+        # Note: Detailed compliance checks (Status, Version, Scope) are now 
+        # populated in `standard_compliance_notes` and rendered in per-standard
+        # UI tabs, so we no longer append them to the general reason string.
 
     return " ".join(parts)
 
@@ -996,13 +988,112 @@ def _build_compliance_reason(
         return "No compliance data available."
 
     best = min(compliance_results, key=lambda cr: _verdict_severity(cr.suggested_verdict))
-    parts = [best.version_check.note, best.status_check.note]
-    if best.scope_check.mismatch:
-        parts.append(best.scope_check.note)
-    if best.qco_check.qco_notified:
-        parts.append(best.qco_check.note)
+    if best.suggested_verdict == Verdict.JUSTIFIED:
+        return "This cited standard appears correct and current."
+    return "Compliance issues were found with the cited standard(s). Check the standard details tabs for specific version, status, or scope warnings."
 
-    return " ".join(parts)
+
+def _build_standard_compliance_notes(
+    applicable_standards: list,
+    compliance_results: list[ComplianceResult],
+    cross_references: list[dict],
+) -> dict:
+    """
+    Build per-standard compliance notes keyed by standard ID.
+
+    Each entry contains the status, version, scope, and action notes for that
+    specific standard — cleanly separated from the AI's general reason prose.
+    The frontend uses this to populate individual standard detail tabs.
+    """
+    # Build lookup from standard ID to compliance result
+    cr_by_std_id: dict[str, ComplianceResult] = {
+        str(cr.standard_id): cr for cr in compliance_results
+    }
+
+    # Unmet deps: which referenced standards are missing from tender
+    all_unmet = sorted({
+        n for entry in cross_references for n in entry.get("unmet", [])
+    })
+
+    notes: dict = {}
+    for std in applicable_standards:
+        std_id = str(std.id)
+        cr = cr_by_std_id.get(std_id)
+
+        status_val = std.status.value if hasattr(std.status, "value") else str(std.status)
+        status_note = ""
+        version_note = ""
+        scope_note = ""
+        action = ""
+
+        if cr is not None:
+            status_note = cr.status_check.note or ""
+            # Neutralise the "Tender cites" wording — the AI found this standard,
+            # the tender author may not have cited it explicitly.
+            version_note = (cr.version_check.note or "").replace(
+                "Tender cites ", "The reference to "
+            )
+            if cr.scope_check.mismatch:
+                scope_note = cr.scope_check.note or "This standard covers a different scope or product category than the one requested."
+
+            action = _build_recommended_action_for_standard(cr, all_unmet)
+
+        notes[std_id] = {
+            "standard_label": std.designation if hasattr(std, "designation") else std.is_number,
+            "status": status_val,
+            "status_note": status_note,
+            "version_note": version_note,
+            "scope_note": scope_note,
+            "action": action,
+            "is_usable": cr.status_check.is_usable if cr else True,
+        }
+
+    return notes
+
+
+def _build_recommended_action_for_standard(
+    cr: ComplianceResult,
+    all_unmet: list[str],
+) -> str:
+    """Build the recommended action for a single standard's compliance result."""
+    from shared.models import Verdict as _Verdict  # local to avoid circulars
+    verdict = cr.suggested_verdict
+
+    if not cr.status_check.is_usable:
+        superseded_by = cr.status_check.superseded_by
+        if superseded_by:
+            action = (
+                f"Update the IS reference to the current edition: {superseded_by}. "
+                "Verify on standardsbis.gov.in."
+            )
+        else:
+            action = (
+                "This standard cannot be used for procurement. "
+                "Identify the correct replacement standard on standardsbis.gov.in."
+            )
+    elif not cr.version_check.is_current and not cr.version_check.is_year_omitted:
+        action = "Specify the current year of this standard to avoid bid disputes."
+    elif cr.version_check.is_year_omitted:
+        action = (
+            "Specify the publication year of this standard explicitly. "
+            "Per BIS convention an omitted year implies the latest edition, "
+            "but can cause bid disputes."
+        )
+    elif cr.scope_check.mismatch:
+        action = (
+            "The requirement may describe a different product than this standard covers. "
+            "Verify the scope on standardsbis.gov.in."
+        )
+    else:
+        action = "No issues detected. Standard appears current and applicable."
+
+    if all_unmet:
+        action += (
+            f" Also add the referenced standard(s) {', '.join(all_unmet)} to the "
+            "technical specification, or state explicitly why they do not apply."
+        )
+    return action
+
 
 
 def _build_recommended_action(

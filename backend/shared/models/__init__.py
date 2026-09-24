@@ -539,12 +539,32 @@ class Finding(BaseModel):
     #
     # Populated by kartikey/analysis/findings.py. Never a substitute for data:
     # a section marked not_available stays empty, it is only labelled.
+    # Per-standard compliance notes, keyed by standard ID (as string).
+    # Each value is a dict describing that standard's compliance status,
+    # version warnings, scope mismatches, and recommended action.
+    # This decouples per-standard diagnostics from the combined `reason` prose,
+    # allowing the frontend to render per-standard detail tabs cleanly.
+    # {
+    #   "std-123": {
+    #     "standard_label": "IS 1356 : Part 1:1972",
+    #     "status": "withdrawn",
+    #     "status_note": "IS 1356 : Part 1:1972 has been WITHDRAWN by BIS...",
+    #     "version_note": "...",
+    #     "scope_note": "...",
+    #     "action": "This standard has been withdrawn...",
+    #   }
+    # }
+    standard_compliance_notes: dict[str, dict[str, Any]] = {}
+
     data_availability: dict[str, str] = {}
 
     # Confidence and verification
     confidence: float                       # 0.0–1.0
     requires_human_verification: bool = False
     verification_reason: str | None = None  # why human verification is needed
+    officer_decision: str | None = None     # "accepted" | "rejected" | "needs_review" | "deleted"
+    officer_decision_at: str | None = None
+    officer_decision_by: str | None = None  # "officer" placeholder
 
 
 # ---------------------------------------------------------------------------
@@ -589,6 +609,9 @@ class Analysis(BaseModel):
 
     # Extra metadata (for internal use)
     metadata: dict[str, Any] = Field(default_factory=dict)
+    
+    # User decisions
+    standard_decisions: dict[str, dict] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

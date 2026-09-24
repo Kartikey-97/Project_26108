@@ -138,3 +138,15 @@ backend/check_models.py
 *.npy
 backend/uploads/
 backend/:memory:*
+
+# -------------------------------------------------------
+# Local test/debug scratch files (keep local, don't commit)
+# -------------------------------------------------------
+test_qdrant.py
+patch_test.py
+test_config.py
+test_timeout.py
+test_local_qdrant.py
+test_registry.py
+patch_local_qdrant.py
+data/qdrant_local/
