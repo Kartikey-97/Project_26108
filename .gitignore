@@ -150,3 +150,14 @@ test_local_qdrant.py
 test_registry.py
 patch_local_qdrant.py
 data/qdrant_local/
+
+backend/data/
+data/
+*.pdf
+*.pyc
+*debug*.py
+*test_*.py
+fix_*.py
+*patch*.js
+__pycache__/
+
