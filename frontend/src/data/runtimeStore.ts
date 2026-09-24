@@ -38,6 +38,33 @@ interface RealBundle {
 const analysisStore = new Map<string, RealBundle>();
 const standardStore = new Map<string, Standard>();
 
+// Hydrate from localStorage on boot
+try {
+  const saved = localStorage.getItem('standiq-analysis-store');
+  if (saved) {
+    const entries = JSON.parse(saved);
+    for (const [id, bundle] of entries) {
+      analysisStore.set(id, bundle);
+      if (bundle.standards) {
+        for (const s of bundle.standards) {
+          standardStore.set(s.id, s);
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.warn('Failed to hydrate runtime store from localStorage', e);
+}
+
+function persistStore() {
+  try {
+    const entries = Array.from(analysisStore.entries());
+    localStorage.setItem('standiq-analysis-store', JSON.stringify(entries));
+  } catch (e) {
+    console.warn('Failed to persist runtime store to localStorage', e);
+  }
+}
+
 export function registerRealAnalysis(bundle: AdaptedAnalysis): void {
   const id = bundle.analysis.id;
   if (!id) return;
@@ -51,6 +78,7 @@ export function registerRealAnalysis(bundle: AdaptedAnalysis): void {
     relationships: bundle.relationships,
   });
   for (const s of bundle.standards) standardStore.set(s.id, s);
+  persistStore();
 }
 
 // Register a single standard fetched on its own (e.g. Standards catalog / detail),
@@ -93,4 +121,9 @@ export function getRealRelationships(id: string): StandardRelationship[] | undef
 
 export function listRealAnalyses(): Analysis[] {
   return Array.from(analysisStore.values()).map((b) => b.analysis);
+}
+
+export function deleteRealAnalysis(id: string): void {
+  analysisStore.delete(id);
+  persistStore();
 }

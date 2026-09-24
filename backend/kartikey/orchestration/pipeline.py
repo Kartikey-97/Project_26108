@@ -352,8 +352,18 @@ async def _step_retrieve(
     semantic_scores: dict[str, float] = {}   # id -> best fused score seen
     semantic_stds: dict[str, object] = {}    # id -> Standard object
 
+    product_context = ""
+    if hasattr(analysis, 'product_profile') and isinstance(analysis.product_profile, dict):
+        product_name = analysis.product_profile.get("product", "")
+        category_name = analysis.product_profile.get("category", "")
+        context_parts = [p for p in [product_name, category_name] if p and p.lower() not in {"not stated", "unknown"}]
+        if context_parts:
+            product_context = f"[{' | '.join(context_parts)}] "
+
     for req in analysis.requirements:
-        query_text = req.is_reference if req.is_reference else req.text
+        base_query = req.is_reference if req.is_reference else req.text
+        query_text = f"{product_context}{base_query}"
+        
         query = RetrievalQuery(
             query_text=query_text,
             top_k=8,
@@ -576,10 +586,7 @@ async def _trigger_bis_sync(analysis: Analysis) -> None:
                 if base and base not in seen:
                     seen.add(base)
                     is_numbers.append(base)
-                if len(is_numbers) >= 5:
-                    break
-            if len(is_numbers) >= 5:
-                break
+
 
         if not is_numbers:
             logger.debug("BIS sync: no designations to sync for analysis %s", analysis.id)

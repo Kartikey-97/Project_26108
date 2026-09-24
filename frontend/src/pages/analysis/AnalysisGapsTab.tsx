@@ -23,6 +23,7 @@ import {
   PlusCircle,
   Scale,
   ScrollText,
+  Trash2,
   Search,
   ShieldAlert,
   ShieldCheck,
@@ -50,75 +51,115 @@ import type {
 
 interface Props {
   analysisId: string;
+  analysis?: any;
+  onSyncComplete?: () => void;
 }
 
-export function AnalysisGapsTab({ analysisId }: Props) {
+export function AnalysisGapsTab({ analysisId, analysis, onSyncComplete }: Props) {
   const { navigate } = useRouter();
   const rawRequirements = getSpecificationRequirementsByAnalysisId(analysisId);
   const isReal = !isSeededAnalysisId(analysisId);
 
   // Detect the built-in LED street-lighting demo so we can show the AI improve panel.
-  const _analysis = isReal ? getAnalysisById(analysisId) : null;
-  const isLedDemo = analysisId === 'an-001' || (isReal && (_analysis?.title?.includes(LED_DEMO_TITLE_MARKER) ?? false));
+  const _analysis = analysis || getAnalysisById(analysisId);
+  const isLedDemo = analysisId === 'an-001' || (isReal && (_analysis.title?.includes(LED_DEMO_TITLE_MARKER) ?? false));
 
   const [showImprove, setShowImprove] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<SpecificationRequirementStatus | 'all'>('all');
   
   // Local human review decisions
+  // Extract decisions from the live backend analysis or local storage
   const [decisions, setDecisions] = useState<Record<string, HumanDecision>>(() => {
-    const saved = localStorage.getItem(`decisions-mock`);
+    const saved = localStorage.getItem(`decisions-${analysisId}`);
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return {
-      'req-sp-1': 'accepted',
-      'req-sp-2': 'accepted',
-      'req-sp-3': 'accepted',
-      'req-sp-4': 'accepted',
-      'req-sp-5': 'reviewed',
-      'req-sp-6': 'reviewed',
-      'req-sp-7': 'accepted',
-      'req-sp-10': 'reviewed',
-      'req-sp-11': 'accepted',
-    };
+    
+    const initial: Record<string, HumanDecision> = {};
+    if (_analysis?.findings) {
+      for (const finding of _analysis?.findings || []) {
+        if (finding.officer_decision) {
+          initial[finding.requirement_id || finding.id] = finding.officer_decision as HumanDecision;
+        }
+      }
+    }
+    return initial;
   });
 
   useEffect(() => {
-    localStorage.setItem(`decisions-mock`, JSON.stringify(decisions));
-  }, [decisions]);
+    localStorage.setItem(`decisions-${analysisId}`, JSON.stringify(decisions));
+  }, [decisions, analysisId]);
 
-  const handleDecision = (reqId: string, decision: HumanDecision) => {
+  const handleDecision = async (reqId: string, decision: HumanDecision) => {
+    const prevDecision = decisions[reqId];
     setDecisions((prev) => ({ ...prev, [reqId]: decision }));
+    
+    // We send reqId to the backend because the frontend doesn't have finding IDs.
+    // The backend decisions endpoint is modified to accept reqId in place of finding_id.
+    try {
+      const { patchFindingDecision } = await import('@/services/api');
+      await patchFindingDecision(analysisId, reqId, decision);
+      
+      if (!_analysis.finding_decisions) {
+        _analysis.finding_decisions = {};
+      }
+      if (!_analysis.finding_decisions[reqId]) {
+        _analysis.finding_decisions[reqId] = { decision, notes: '' };
+      } else {
+        _analysis.finding_decisions[reqId].decision = decision;
+      }
+      
+      if (onSyncComplete) onSyncComplete();
+    } catch (err) {
+      console.error('Failed to save decision:', err);
+      if (prevDecision) {
+        setDecisions((prev) => ({ ...prev, [reqId]: prevDecision }));
+      } else {
+        setDecisions((prev) => {
+          const next = { ...prev };
+          delete next[reqId];
+          return next;
+        });
+      }
+    }
   };
 
   // Compute effective requirements by layering officer decisions over AI verdicts
   const effectiveRequirements = useMemo(() => {
-    return rawRequirements.map((req) => {
-      const decision = decisions[req.id];
-      let effectiveStatus = req.status;
+    return rawRequirements
+      .filter((req) => decisions[req.id] !== 'deleted')
+      .map((req) => {
+        const decision = decisions[req.id];
+        let effectiveStatus = req.status;
 
-      if (decision === 'accepted') {
-        effectiveStatus = 'covered';
-      } else if (decision === 'reviewed') {
-        effectiveStatus = 'review';
-      } else if (decision === 'rejected') {
-        effectiveStatus = (req.status === 'conflicting' || req.status === 'restrictive') 
-          ? req.status 
-          : 'missing';
-      }
+        if (decision === 'accepted') {
+          effectiveStatus = 'covered';
+        } else if (decision === 'reviewed') {
+          effectiveStatus = 'review';
+        } else if (decision === 'rejected') {
+          effectiveStatus = (req.status === 'conflicting' || req.status === 'restrictive') 
+            ? req.status 
+            : 'missing';
+        }
 
-      return {
-        ...req,
-        status: effectiveStatus,
-        aiStatus: req.status, // Preserve original
-        decision: decision || req.decision,
-      };
-    });
+        return {
+          ...req,
+          status: effectiveStatus,
+          aiStatus: req.status, // Preserve original
+          decision: decision || req.decision,
+        };
+      });
   }, [rawRequirements, decisions]);
 
   const [selectedReqId, setSelectedReqId] = useState<string | null>(effectiveRequirements[0]?.id || null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string>('general');
+
+  // Reset tab when selecting a new requirement
+  useEffect(() => {
+    setActiveTab('general');
+  }, [selectedReqId]);
 
   // Seeded demo ids keep their curated headline numbers; real analyses compute
   // the coverage strip and filter counts from the actual requirement verdicts.
@@ -128,6 +169,10 @@ export function AnalysisGapsTab({ analysisId }: Props) {
   const missingCount = effectiveRequirements.filter((r) => r.status === 'missing').length;
   const conflictingCount = effectiveRequirements.filter((r) => r.status === 'conflicting').length;
   const restrictiveCount = effectiveRequirements.filter((r) => r.status === 'restrictive').length;
+
+  // For the top summary cards, we group general review and conflicting scope issues together
+  // so the numbers add up correctly in the 4-column layout without hiding the conflicts.
+  const summaryReviewCount = reviewCount + conflictingCount;
   const coveragePct = total ? Math.round((coveredCount / total) * 100) : 0;
 
 
@@ -184,7 +229,10 @@ export function AnalysisGapsTab({ analysisId }: Props) {
         );
       case 'conflicting':
         return (
-          <span className="inline-flex items-center gap-1 rounded bg-purple-50 text-purple-900 border border-purple-200 px-2 py-0.5 text-[11px] font-mono font-medium">
+          <span 
+            className="inline-flex items-center gap-1 rounded bg-purple-50 text-purple-900 border border-purple-200 px-2 py-0.5 text-[11px] font-mono font-medium cursor-help"
+            title="Scope Mismatch: The cited standard exists, but it covers a different product, material, or application."
+          >
             <AlertTriangle size={11} className="text-purple-600" />
             Conflicting
           </span>
@@ -272,7 +320,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
               Review Recommended
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-2xl font-bold font-mono text-warning-700">{reviewCount}</span>
+              <span className="text-2xl font-bold font-mono text-warning-700">{summaryReviewCount}</span>
               <span className="text-[11px] text-ink-500">needs clarification</span>
             </div>
           </div>
@@ -435,7 +483,6 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 { id: 'covered', label: `Covered (${coveredCount})` },
                 { id: 'review', label: `Review (${reviewCount})` },
                 { id: 'missing', label: `Missing (${missingCount})` },
-                { id: 'conflicting', label: `Conflicting (${conflictingCount})` },
                 { id: 'restrictive', label: `Restrictive (${restrictiveCount})` },
               ].map((tab) => (
                 <button
@@ -480,6 +527,12 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                 <tbody className="divide-y divide-ink-100 font-mono">
                   {filteredRequirements.map((req) => {
                     const isSelected = selectedReqId === req.id && isDrawerOpen;
+                    const isStandardRejected = (() => {
+                      if (!_analysis?.standard_decisions) return false;
+                      const ids = req.standardIds?.length ? req.standardIds : [req.standardId];
+                      return ids.every(id => _analysis.standard_decisions![id]?.decision === 'rejected');
+                    })();
+                    
                     return (
                       <tr
                         key={req.id}
@@ -488,6 +541,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                           setIsDrawerOpen(true);
                         }}
                         className={`cursor-pointer transition-colors ${
+                          isStandardRejected ? 'opacity-40 bg-gray-50' : 
                           isSelected
                             ? 'bg-teal-50/50 hover:bg-teal-50/70'
                             : 'hover:bg-ivory-50/60'
@@ -515,7 +569,15 @@ export function AnalysisGapsTab({ analysisId }: Props) {
 
                         {/* Status Badge */}
                         <td className="py-3 px-2 whitespace-nowrap">
-                          {renderStatusBadge(req.status)}
+                          {isStandardRejected ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-gray-100 text-gray-500 border border-gray-200 px-2 py-0.5 text-[11px] font-mono font-medium">
+                              Waived
+                            </span>
+                          ) : (() => {
+                            if (decisions[req.id] === 'accepted') return renderStatusBadge('covered');
+                            if (decisions[req.id] === 'rejected') return renderStatusBadge('missing');
+                            return renderStatusBadge(req.status);
+                          })()}
                         </td>
 
                         {/* Action Link */}
@@ -554,7 +616,24 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                       Requirement Detail
                     </span>
                     <div className="flex items-center gap-1.5">
-                      {renderStatusBadge(selectedReq.status)}
+                      {(() => {
+                        const isStandardRejected = (() => {
+                          if (!_analysis?.standard_decisions) return false;
+                          if (activeTab !== 'general') return _analysis.standard_decisions[activeTab]?.decision === 'rejected';
+                          const ids = selectedReq.standardIds?.length ? selectedReq.standardIds : [selectedReq.standardId];
+                          return ids.every(id => _analysis.standard_decisions![id]?.decision === 'rejected');
+                        })();
+                        if (isStandardRejected) {
+                          return (
+                            <span className="inline-flex items-center gap-1 rounded bg-gray-100 text-gray-500 border border-gray-200 px-2 py-0.5 text-[11px] font-mono font-medium">
+                              Waived
+                            </span>
+                          );
+                        }
+                        if (decisions[selectedReq.id] === 'accepted') return renderStatusBadge('covered');
+                        if (decisions[selectedReq.id] === 'rejected') return renderStatusBadge('missing');
+                        return renderStatusBadge(selectedReq.status);
+                      })()}
                       <button
                         onClick={() => setIsDrawerOpen(false)}
                         className="rounded p-1 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
@@ -567,62 +646,184 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                   <h3 className="text-sm font-bold text-ink-900 font-sans leading-snug">
                     {selectedReq.requirement}
                   </h3>
+                </div>
 
-                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-500 font-mono">
-                    <span>Standard: <strong className="text-teal-900">{selectedReq.applicableStandard}</strong></span>
-                    <span>·</span>
-                    <span>{selectedReq.clause}</span>
+                {/* Standard Selector Dropdown */}
+                {selectedReq.standardIds && selectedReq.standardIds.length > 0 && (
+                  <div className="mt-4 pb-4 border-b border-ink-100">
+                    <label className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1.5">
+                      Select Standard to View Details
+                    </label>
+                    <select
+                      value={activeTab}
+                      onChange={(e) => setActiveTab(e.target.value)}
+                      className="w-full p-2 text-xs font-mono text-ink-900 border border-ink-200 rounded-lg bg-ivory-50/50 hover:bg-ivory-50 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors cursor-pointer"
+                    >
+                      <option value="general">General Summary</option>
+                      {selectedReq.standardIds.map((sid) => {
+                        const stdComp = selectedReq.standardCompliance?.[sid];
+                        
+                        // Extract a clean label without falling back to the comma-separated mega-string
+                        // If it's a legacy UUID and no stdComp exists, just label it 'Legacy Standard'
+                        let displayLabel = stdComp?.standard_label || 'Legacy Standard';
+                        
+                        if (!displayLabel) {
+                           displayLabel = sid.length > 20 ? 'Legacy Standard' : sid;
+                        }
+                        
+                        if (_analysis?.standard_decisions?.[sid]?.decision === 'rejected') {
+                          displayLabel += ' (Waived)';
+                        }
+                        
+                        return (
+                          <option key={sid} value={sid}>
+                            {displayLabel}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
-                </div>
+                )}
 
-                {/* Why It Matters */}
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
-                    Why this requirement matters
-                  </span>
-                  <p className="text-xs text-ink-700 leading-relaxed bg-ivory-50/70 p-2.5 rounded-lg border border-ink-100">
-                    {selectedReq.whyMatters}
-                  </p>
-                </div>
+                {/* Tab Content */}
+                <div className="pt-2">
+                  {activeTab === 'general' ? (
+                    <div className="space-y-6">
+                      {/* Why It Matters */}
+                      <div>
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                          Why this requirement matters
+                        </span>
+                        <p className="text-xs text-ink-700 leading-relaxed bg-ivory-50/70 p-2.5 rounded-lg border border-ink-100">
+                          {selectedReq.whyMatters}
+                        </p>
+                      </div>
 
-                {/* Tender Document Evidence */}
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
-                    Tender Evidence ({selectedReq.tenderSection})
-                  </span>
-                  <blockquote className="border-l-2 border-teal-500 pl-2.5 text-xs italic text-ink-800 bg-white p-2 rounded-r border border-ink-100 leading-relaxed font-mono text-[11px]">
-                    {selectedReq.tenderEvidence}
-                  </blockquote>
-                </div>
+                      {/* Tender Document Evidence */}
+                      <div>
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                          Tender Evidence ({selectedReq.tenderSection})
+                        </span>
+                        <blockquote className="border-l-2 border-teal-500 pl-2.5 text-xs italic text-ink-800 bg-white p-2 rounded-r border border-ink-100 leading-relaxed font-mono text-[11px]">
+                          {selectedReq.tenderEvidence}
+                        </blockquote>
+                      </div>
 
-                {/* Suggested Wording or Action for Missing/Review */}
-                {selectedReq.suggestedWording && (
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-teal-800 font-mono block mb-1">
-                      Recommended Tender Specification Wording
-                    </span>
-                    <div className="rounded-lg border border-teal-200 bg-teal-50/40 p-2.5 text-xs font-mono text-teal-950 leading-relaxed">
-                      {selectedReq.suggestedWording}
+                      {/* Suggested Wording or Action */}
+                      {selectedReq.suggestedWording && (
+                        <div>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-teal-800 font-mono block mb-1">
+                            Recommended Tender Specification Wording
+                          </span>
+                          <div className="rounded-lg border border-teal-200 bg-teal-50/40 p-2.5 text-xs font-mono text-teal-950 leading-relaxed">
+                            {selectedReq.suggestedWording}
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedReq.suggestedAction && !selectedReq.suggestedWording && (
+                        <div>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                            Suggested Officer Action
+                          </span>
+                          <p className="text-xs text-ink-700 bg-ivory-50 p-2 rounded border border-ink-100">
+                            {selectedReq.suggestedAction}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    (() => {
+                      const stdComp = selectedReq.standardCompliance?.[activeTab];
+                      if (!stdComp) return <div className="text-xs text-ink-500">Standard details unavailable.</div>;
+                      
+                      return (
+                        <div className="space-y-4">
+                          {/* Standard Info Header */}
+                          <div className="flex items-start justify-between gap-2 p-2.5 bg-ivory-50/50 rounded-lg border border-ink-100">
+                            <div>
+                              <div className="font-semibold text-ink-900 text-xs">
+                                {stdComp.standard_label}
+                              </div>
+                            </div>
+                            {stdComp.status && (
+                              <Badge variant={
+                                stdComp.status.toLowerCase() === 'active' ? 'success' : 
+                                stdComp.status.toLowerCase() === 'withdrawn' ? 'error' : 'warning'
+                              }>
+                                {stdComp.status.toUpperCase()}
+                              </Badge>
+                            )}
+                          </div>
 
-                {selectedReq.suggestedAction && !selectedReq.suggestedWording && (
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
-                      Suggested Officer Action
-                    </span>
-                    <p className="text-xs text-ink-700 bg-ivory-50 p-2 rounded border border-ink-100">
-                      {selectedReq.suggestedAction}
-                    </p>
-                  </div>
-                )}
+                          {/* Compliance Notes */}
+                          {stdComp.status_note && (
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                                Status Check
+                              </span>
+                              <div className={`text-xs p-2.5 rounded-lg border leading-relaxed ${
+                                stdComp.is_usable === false 
+                                  ? 'bg-error-50/50 border-error-200 text-error-800' 
+                                  : 'bg-ivory-50/70 border-ink-100 text-ink-700'
+                              }`}>
+                                {stdComp.status_note}
+                              </div>
+                            </div>
+                          )}
+
+                          {stdComp.version_note && (
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                                Edition / Version
+                              </span>
+                              <div className="text-xs text-ink-700 leading-relaxed bg-ivory-50/70 p-2.5 rounded-lg border border-ink-100">
+                                {stdComp.version_note}
+                              </div>
+                            </div>
+                          )}
+
+                          {stdComp.scope_note && (
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1">
+                                Scope Assessment
+                              </span>
+                              <div className="text-xs text-warning-800 leading-relaxed bg-warning-50/50 p-2.5 rounded-lg border border-warning-200">
+                                {stdComp.scope_note}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Recommended Action (Standard specific) */}
+                          {stdComp.action && (
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-teal-800 font-mono block mb-1">
+                                Suggested Officer Action
+                              </span>
+                              <div className="rounded-lg border border-teal-200 bg-teal-50/40 p-2.5 text-xs font-mono text-teal-950 leading-relaxed">
+                                {stdComp.action}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()
+                  )}
+                </div>
+
+
+
 
                 {/* Human Review Decision Buttons */}
                 <div className="pt-2 border-t border-ink-100">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 font-mono block mb-1.5">
                     Officer Decision State
                   </span>
+                  {_analysis.standard_decisions && _analysis.standard_decisions[selectedReq.standardId]?.decision === 'rejected' ? (
+                    <div className="bg-gray-50 p-2 rounded text-xs text-gray-600 font-medium">
+                      This finding is waived because its parent standard was rejected.
+                    </div>
+                  ) : (
                   <div className="flex items-center gap-1.5 text-xs font-mono">
                     <button
                       onClick={() => handleDecision(selectedReq.id, 'accepted')}
@@ -657,7 +858,15 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                       <X size={11} className="inline mr-1" />
                       Reject
                     </button>
+                    <button
+                      onClick={() => handleDecision(selectedReq.id, 'deleted')}
+                      className="flex-none py-1 px-2 rounded text-[11px] font-medium transition-all bg-ivory-100 text-ink-500 hover:bg-error-50 hover:text-error-600"
+                      title="Delete Finding"
+                    >
+                      <Trash2 size={13} />
+                    </button>
                   </div>
+                  )}
                 </div>
               </div>
 
@@ -675,7 +884,7 @@ export function AnalysisGapsTab({ analysisId }: Props) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => navigate({ name: 'standard', standardId: selectedReq.standardId })}
+                    onClick={() => navigate({ name: 'standard', standardId: selectedReq.standardId, analysisId: _analysis.id })}
                     leftIcon={<BookOpen size={13} />}
                   >
                     View Applicable Standard ({selectedReq.applicableStandard})

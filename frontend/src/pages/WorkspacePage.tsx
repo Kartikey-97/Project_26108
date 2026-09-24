@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import {
   Activity as ActivityIcon,
   ArrowRight,
-  CheckCircle2,
+  CheckCircle2, Trash2,
   Clock,
   FileStack,
   FileText,
@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
 import { useRouter } from '@/router';
+import { listRealAnalyses, deleteRealAnalysis } from '@/data/runtimeStore';
 import {
   analyses,
   analysisStatusConfig,
@@ -37,12 +38,29 @@ export function WorkspacePage() {
   const { navigate } = useRouter();
 
   // Track demos the user has explicitly dismissed, persisted across refreshes
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [hiddenDemoIds, setHiddenDemoIds] = useState<Set<string>>(() => {
     try {
       const stored = localStorage.getItem('standiq-hidden-demos');
       return stored ? new Set(JSON.parse(stored)) : new Set();
     } catch { return new Set(); }
   });
+
+  const handleBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    if (confirm(`Are you sure you want to delete ${selectedIds.size} analysis/analyses?`)) {
+      const ids = Array.from(selectedIds);
+      ids.forEach(id => {
+        if (['an-001','an-002','an-003','an-hindi','an-tamil'].includes(id)) {
+          hideDemo(id);
+        } else {
+          deleteRealAnalysis(id);
+        }
+      });
+      setRealRows(prev => prev.filter(r => !selectedIds.has(r.id)));
+      setSelectedIds(new Set());
+    }
+  };
 
   const hideDemo = (id: string) => {
     setHiddenDemoIds((prev) => {
@@ -53,14 +71,39 @@ export function WorkspacePage() {
     });
   };
 
+  const handleDeleteAnalysis = (id: string, isDemo: boolean) => {
+    if (isDemo) {
+      hideDemo(id);
+    } else {
+      if (confirm('Are you sure you want to delete this analysis?')) {
+        deleteRealAnalysis(id);
+        setRealRows(prev => prev.filter(r => r.id !== id));
+      }
+    }
+  };
+
   // Real analyses from the live backend, merged ahead of the seeded demo showcases.
   const [realRows, setRealRows] = useState<Analysis[]>([]);
   useEffect(() => {
     let alive = true;
     listAnalyses()
       .then((res) => {
-        const list = Array.isArray(res) ? res : (res?.analyses || res?.items || res?.data || []);
-        if (alive) setRealRows(list.map(adaptAnalysisSummary));
+        const backendList = Array.isArray(res) ? res : (res?.analyses || res?.items || res?.data || []);
+        const backendAdapted = backendList.map(adaptAnalysisSummary);
+        
+        // Merge with locally stored analyses (localStorage resilience against Render DB wipes)
+        const localList = listRealAnalyses().map(adaptAnalysisSummary);
+        
+        // Deduplicate by ID, preferring backend data if available
+        const backendMap = new Map(backendAdapted.map(a => [a.id, a]));
+        const merged = [...backendAdapted];
+        for (const local of localList) {
+          if (!backendMap.has(local.id)) {
+            merged.push(local);
+          }
+        }
+        
+        if (alive) setRealRows(merged);
       })
       .catch(() => {});
     return () => {
@@ -133,7 +176,15 @@ export function WorkspacePage() {
           <div className="lg:col-span-2">
             <Card padding="none">
               <div className="flex items-center justify-between border-b border-ink-100 px-5 py-4">
-                <h2 className="text-sm font-semibold text-ink-900">Recent Analyses</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-sm font-semibold text-ink-900">Recent Analyses</h2>
+                  {selectedIds.size > 0 && (
+                    <Button variant="secondary" size="sm" onClick={handleBulkDelete} className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+                      <Trash2 size={14} className="mr-1.5" />
+                      Delete Selected ({selectedIds.size})
+                    </Button>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   <div className="relative hidden sm:block">
                     <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400" />
@@ -154,12 +205,21 @@ export function WorkspacePage() {
                   // Demo IDs are the hardcoded mock IDs (an-001, an-002, an-003, an-hindi, an-tamil)
                   const isDemo = ['an-001','an-002','an-003','an-hindi','an-tamil'].includes(analysis.id);
                   return (
-                    <div key={analysis.id} className="group relative flex w-full items-center">
-                      <button
-                        onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'overview' })}
-                        className="flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory-50"
-                      >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ivory-100 text-ink-500">
+                    <div key={analysis.id} className="group relative flex w-full items-center border-b border-ink-100 last:border-0 hover:bg-ivory-50 transition-colors px-5 py-4 gap-4 cursor-pointer" onClick={() => navigate({ name: 'analysis', analysisId: analysis.id, tab: 'overview' })}>
+                      <div className="shrink-0" onClick={e => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-ink-300 text-teal-600 focus:ring-teal-500 cursor-pointer"
+                          checked={selectedIds.has(analysis.id)}
+                          onChange={(e) => {
+                            const next = new Set(selectedIds);
+                            if (e.target.checked) next.add(analysis.id);
+                            else next.delete(analysis.id);
+                            setSelectedIds(next);
+                          }}
+                        />
+                      </div>
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ivory-100 text-ink-500">
                           {analysis.status === 'completed' ? (
                             <CheckCircle2 size={18} className="text-success-500" />
                           ) : analysis.status === 'processing' ? (
@@ -194,17 +254,17 @@ export function WorkspacePage() {
                         </div>
 
                         <Badge variant={status.variant}>{status.label}</Badge>
-                        <ArrowRight size={15} className="shrink-0 text-ink-300" />
-                      </button>
-                      {isDemo && (
-                        <button
-                          title="Hide this demo"
-                          onClick={(e) => { e.stopPropagation(); hideDemo(analysis.id); }}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex h-6 w-6 items-center justify-center rounded text-ink-400 hover:bg-ink-100 hover:text-ink-700 transition-colors"
-                        >
-                          <X size={13} />
-                        </button>
-                      )}
+                        
+                        <div className="shrink-0 flex items-center justify-center w-8">
+                          <button
+                            title={isDemo ? "Hide this demo" : "Delete analysis"}
+                            onClick={(e) => { e.stopPropagation(); handleDeleteAnalysis(analysis.id, isDemo); }}
+                            className="hidden group-hover:flex h-8 w-8 items-center justify-center rounded text-ink-400 hover:bg-red-50 hover:text-red-600 transition-colors bg-white shadow-sm border border-ink-100"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                          <ArrowRight size={15} className="text-ink-300 group-hover:hidden" />
+                        </div>
                     </div>
                   );
                 })}

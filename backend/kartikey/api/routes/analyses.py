@@ -251,7 +251,8 @@ async def get_analysis(analysis_id: str) -> AnalysisResponse:
                         new_stds_to_append.append(superseding)
             
             if new_stds_to_append:
-                stds.extend(new_stds_to_append)
+                # Avoid appending if already present (mutating in-memory cache)
+                stds.extend([s for s in new_stds_to_append if s.id not in [existing.id for existing in stds]])
 
     return AnalysisResponse(
         id=analysis.id,
@@ -333,10 +334,7 @@ async def trigger_manual_bis_sync(analysis_id: str) -> dict:
                 if base and base not in seen:
                     seen.add(base)
                     is_numbers.append(base)
-                if len(is_numbers) >= 5:
-                    break
-            if len(is_numbers) >= 5:
-                break
+
 
         if not is_numbers:
             return {"status": "skipped", "message": "No standards to sync for this analysis"}
