@@ -43,6 +43,8 @@ Two assembly paths, both fully supported:
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 from shared.contracts import AimlFinding, AimlResponse
 from shared.models import (
     Analysis,
@@ -74,6 +76,7 @@ def assemble_findings(
     aiml_response: AimlResponse | None,
     standards_lookup: dict[str, Standard],
     evidence_lookup: dict[str, Evidence],
+    requirement_candidates: dict[str, Iterable[str]] | None = None,
 ) -> list[Finding]:
     """
     Assemble final Finding objects for an analysis.
@@ -93,6 +96,12 @@ def assemble_findings(
     evidence_lookup:
         Dict of evidence_id → Evidence for resolving AI/ML references.
         Populated from the evidence store.
+    requirement_candidates:
+        Optional requirement_id → candidate standard IDs (a dict keyed by
+        standard ID also works) retrieved for that requirement specifically.
+        When given, an AI/ML-proposed standard is attached to a requirement
+        only if it is one of that requirement's own candidates. When None,
+        the previous unscoped behaviour is kept.
 
     Returns
     -------
@@ -116,6 +125,7 @@ def assemble_findings(
             retrieved_standards=retrieved_standards,
             standards_lookup=standards_lookup,
             evidence_lookup=evidence_lookup,
+            requirement_candidates=requirement_candidates,
         )
     else:
         # --- Path B: AI/ML not yet wired — use compliance-only findings ---
@@ -232,12 +242,15 @@ def _assemble_with_aiml(
     retrieved_standards: list[Standard],
     standards_lookup: dict[str, Standard],
     evidence_lookup: dict[str, Evidence],
+    requirement_candidates: dict[str, Iterable[str]] | None = None,
 ) -> list[Finding]:
     """
     Assemble findings using AI/ML output as the primary source.
 
     For each AimlFinding:
-      1. Resolve standard_ids → Standard objects from the knowledge store
+      1. Resolve standard_ids → Standard objects from the knowledge store,
+         keeping only the requirement's own retrieval candidates when
+         `requirement_candidates` is given
       2. Resolve evidence_ids → Evidence objects from the evidence store
       3. Run compliance checks on the matched standards (deterministic override)
       4. Merge: use stricter of (AI verdict, compliance verdict)
@@ -249,6 +262,16 @@ def _assemble_with_aiml(
     # Computed once: "does the tender mention this IS anywhere" is a property of
     # the whole tender, not of one requirement.
     tender_cited = _tender_cited_is_numbers(analysis)
+
+    # Per-requirement candidate sets. The AI/ML component is shown one pooled
+    # list of standards for every requirement, so an ID it returns may have been
+    # retrieved for a different requirement entirely. Only a requirement's own
+    # candidates may be attached to it.
+    candidate_sets: dict[str, set[str]] | None = None
+    if requirement_candidates is not None:
+        candidate_sets = {
+            rid: set(ids or ()) for rid, ids in requirement_candidates.items()
+        }
 
     findings: list[Finding] = []
 
@@ -275,14 +298,22 @@ def _assemble_with_aiml(
 
         # Resolve standard IDs
         assessed_standards: list[Standard] = []
-        for sid in aiml_finding.applicable_standard_ids:
-            std = standards_lookup.get(sid)
-            if std:
-                assessed_standards.append(std)
-            else:
-                logger.warning(
-                    "AimlFinding references unknown standard_id=%s — skipping.", sid,
-                )
+        if candidate_sets is not None:
+            assessed_standards = _resolve_candidate_standards(
+                req_id=req.id,
+                proposed_ids=aiml_finding.applicable_standard_ids,
+                candidate_sets=candidate_sets,
+                standards_lookup=standards_lookup,
+            )
+        else:
+            for sid in aiml_finding.applicable_standard_ids:
+                std = standards_lookup.get(sid)
+                if std:
+                    assessed_standards.append(std)
+                else:
+                    logger.warning(
+                        "AimlFinding references unknown standard_id=%s — skipping.", sid,
+                    )
 
         # Resolve evidence IDs — anti-hallucination guardrail
         ai_evidence: list[Evidence] = []
@@ -404,6 +435,57 @@ def _assemble_with_aiml(
         findings.append(finding)
 
     return findings
+
+
+def _resolve_candidate_standards(
+    req_id: str,
+    proposed_ids: list[str],
+    candidate_sets: dict[str, set[str]],
+    standards_lookup: dict[str, Standard],
+) -> list[Standard]:
+    """
+    Resolve AI/ML-proposed standard IDs for one requirement, keeping only IDs
+    that were retrieved for that requirement and exist in the lookup.
+
+    Rejected IDs are dropped, never replaced: an empty result stays empty, and
+    nothing is back-filled from the requirement's other candidates. A
+    requirement absent from `candidate_sets` has no candidates, so everything
+    proposed for it is rejected.
+    """
+    own = candidate_sets.get(req_id, set())
+    accepted: list[Standard] = []
+    accepted_ids: set[str] = set()
+    rejected: list[str] = []
+
+    for sid in proposed_ids:
+        if sid in accepted_ids:
+            continue
+        std = standards_lookup.get(sid) if sid in own else None
+        if std is not None:
+            accepted.append(std)
+            accepted_ids.add(sid)
+            continue
+
+        if sid not in standards_lookup:
+            reason = "unknown_standard_id"
+        else:
+            owners = sorted(
+                rid for rid, ids in candidate_sets.items() if rid != req_id and sid in ids
+            )
+            reason = (
+                f"belongs_to_other_requirement{owners}" if owners
+                else "not_retrieved_for_requirement"
+            )
+        label = getattr(standards_lookup.get(sid), "is_number", None)
+        rejected.append(f"{sid}({label}):{reason}" if label else f"{sid}:{reason}")
+
+    if rejected:
+        logger.warning(
+            "Candidate guardrail: rejected %d standard ID(s) for requirement_id=%s "
+            "(own candidates=%d): %s",
+            len(rejected), req_id, len(own), "; ".join(rejected),
+        )
+    return accepted
 
 
 def _assemble_compliance_only(

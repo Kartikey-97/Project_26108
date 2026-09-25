@@ -133,11 +133,19 @@ class AimlRequest(BaseModel):
     retrieved_standards: top-K standards from the knowledge base,
     already filtered by relevance. Each includes text_excerpt so
     the model can reason over actual standard content.
+    Pooled across all requirements; kept for compatibility and NOT a
+    reasoning input for any single requirement.
+
+    requirement_candidates: requirement_id → the standards retrieved for
+    that requirement only, each carrying that requirement's own
+    relevance_score. This is the only set a requirement may be reasoned
+    against or mapped to. A requirement with no entry has no candidates.
     """
     analysis_id: str
     extracted_text: str                      # full extracted document/description text
     requirements: list[Requirement]
     retrieved_standards: list[Standard]      # includes text_excerpt from knowledge base
+    requirement_candidates: dict[str, list[Standard]] = Field(default_factory=dict)
 
 
 # ===========================================================================

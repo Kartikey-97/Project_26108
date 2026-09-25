@@ -102,6 +102,10 @@ def sample_aiml_request(sample_requirement_1, sample_requirement_2, sample_stand
         extracted_text="Sample procurement text for LED luminaires and cabling.",
         requirements=[sample_requirement_1, sample_requirement_2],
         retrieved_standards=[sample_standard_1, sample_standard_2],
+        requirement_candidates={
+            "req-1": [sample_standard_1],
+            "req-2": [sample_standard_2],
+        },
     )
 
 
@@ -241,6 +245,39 @@ class TestMockExecution:
         assert f1.applicable_standard_ids == ["std-101"]
         assert f1.verdict == "justified"
         assert f1.confidence == 0.90
+
+    @pytest.mark.asyncio
+    async def test_mock_uses_only_own_candidates(self, sample_aiml_request):
+        """req-2 cites IS 694, but IS 694 is not among its candidates here."""
+        request = sample_aiml_request.model_copy(update={
+            "requirement_candidates": {"req-1": [], "req-2": []},
+        })
+        response = await AimlClient(force_mock=True).run_analysis(request)
+        for f in response.findings:
+            assert f.applicable_standard_ids == []
+            assert f.verdict == "requires_human_verification"
+
+    @pytest.mark.asyncio
+    async def test_mock_gives_uncited_requirement_no_fallback_standard(
+        self, sample_aiml_request, sample_standard_1,
+    ):
+        uncited = Requirement(id="req-3", analysis_id="analysis-100", text="Five-year warranty.")
+        request = sample_aiml_request.model_copy(update={
+            "requirements": [uncited],
+            "requirement_candidates": {"req-3": [sample_standard_1]},
+        })
+        response = await AimlClient(force_mock=True).run_analysis(request)
+        assert response.findings[0].applicable_standard_ids == []
+
+    @pytest.mark.asyncio
+    async def test_mock_matches_citation_by_base_number(self, sample_aiml_request):
+        near_miss = Standard(id="std-900", is_number="IS 6946", title="T", status=StandardStatus.ACTIVE)
+        part = Standard(id="std-901", is_number="IS 694 : Part 1", title="T", status=StandardStatus.ACTIVE)
+        request = sample_aiml_request.model_copy(update={
+            "requirement_candidates": {"req-1": [], "req-2": [near_miss, part]},
+        })
+        response = await AimlClient(force_mock=True).run_analysis(request)
+        assert response.findings[1].applicable_standard_ids == ["std-901"]
 
 
 # ===========================================================================
