@@ -605,12 +605,29 @@ async def _step_enrich(
         _profile = {}
         if hasattr(analysis, 'product_profile') and analysis.product_profile:
             _profile = analysis.product_profile if isinstance(analysis.product_profile, dict) else {}
-        _is_nums = []
-        for std in (retrieved_standards or []):
-            if hasattr(std, 'designation') and std.designation:
-                _is_nums.append(std.designation)
-            elif hasattr(std, 'is_number') and std.is_number:
-                _is_nums.append(std.is_number)
+        # IS numbers genuinely on this tender: standards applicable to a
+        # requirement, plus the catalogue standards each requirement cites
+        # (resolved as the exact-match retrieval pass resolves them, so a cited
+        # standard counts even when the AI/ML found nothing applicable).
+        # Merely retrieved candidates are excluded — an IS-number match is
+        # reported as a hard fact about the tender. is_number, not designation:
+        # designation carries ":<year>", which never equals a QCO key.
+        _is_nums: list[str] = []
+        _seen_is: set[str] = set()
+
+        def _add_is(std) -> None:
+            num = getattr(std, "is_number", None)
+            if num and num not in _seen_is:
+                _seen_is.add(num)
+                _is_nums.append(num)
+
+        for f in findings:
+            for std in f.applicable_standards:
+                _add_is(std)
+        for req in analysis.requirements:
+            if req.is_reference:
+                for std in registry.standards_store.get_by_is_number(req.is_reference):
+                    _add_is(std)
         _qco_results = check_qco_applicability(
             product_profile=_profile,
             matched_is_numbers=_is_nums,
