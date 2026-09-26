@@ -373,8 +373,15 @@ def _assemble_with_aiml(
         for cr in compliance_results:
             all_evidence.extend(cr.evidence)
 
+        # Certification is read from the final applicable standards only.
+        certification_source = _certification_source(
+            compliance_results, applicable_standards,
+        )
+
         # Build currentness context
-        currentness = _build_currentness_context(compliance_results)
+        currentness = _build_currentness_context(
+            compliance_results, certification_source=certification_source,
+        )
 
         # Keep each axis intact — the headline verdict is a summary of these,
         # not a replacement for them.
@@ -384,6 +391,7 @@ def _assemble_with_aiml(
             compliance_results=compliance_results,
             ai_verdict=ai_verdict,
             ai_confidence=aiml_finding.confidence,
+            certification_source=certification_source,
         )
 
         # Dependencies the cited standards pull in. Computed over everything that
@@ -599,6 +607,9 @@ def _assemble_compliance_only(
         applicable_standards, cited_standards = _split_by_applicability(
             matched_standards, compliance_results,
         )
+        certification_source = _certification_source(
+            compliance_results, applicable_standards,
+        )
 
         needs_human = (
             best_cr.suggested_verdict == Verdict.REQUIRES_HUMAN_VERIFICATION
@@ -619,11 +630,14 @@ def _assemble_compliance_only(
 
             applicable_standards=applicable_standards,
             cited_standards=cited_standards,
-            currentness=_build_currentness_context(compliance_results),
+            currentness=_build_currentness_context(
+                compliance_results, certification_source=certification_source,
+            ),
             dimensions=_build_dimensions(
                 headline_verdict=best_cr.suggested_verdict,
                 resolution="compliance_only",
                 compliance_results=compliance_results,
+                certification_source=certification_source,
             ),
             cross_references=cross_references,
             evidence=all_evidence,
@@ -763,6 +777,34 @@ def _split_by_applicability(
     return applicable, cited_only
 
 
+def _certification_source(
+    compliance_results: list[ComplianceResult],
+    applicable_standards: list[Standard],
+) -> ComplianceResult | None:
+    """
+    The compliance result per-finding certification is read from.
+
+    Only the finding's final applicable standards count: a standard the scope
+    check found not to cover the requirement does not govern it, so its QCO does
+    not either. Verdict severity plays no part — how stale a citation is says
+    nothing about which certification applies.
+
+    The first QCO-notified applicable standard wins, so `qco_notified` is true
+    exactly when any applicable standard is QCO-notified, whatever their order.
+    Otherwise the first applicable standard; None when nothing is applicable.
+    When several applicable standards are QCO-notified under different schemes,
+    only the first one's details are reported.
+    """
+    by_id = {cr.standard_id: cr for cr in compliance_results}
+    applicable = [
+        by_id[std.id] for std in applicable_standards if std.id in by_id
+    ]
+    return next(
+        (cr for cr in applicable if cr.qco_check.qco_notified),
+        applicable[0] if applicable else None,
+    )
+
+
 # ===========================================================================
 # Dimensions
 # ===========================================================================
@@ -799,6 +841,8 @@ def _build_dimensions(
     compliance_results: list[ComplianceResult],
     ai_verdict: Verdict | None = None,
     ai_confidence: float | None = None,
+    *,
+    certification_source: ComplianceResult | None,
 ) -> dict:
     """
     Record what each axis concluded, independently of which one leads.
@@ -806,6 +850,9 @@ def _build_dimensions(
     Called on both assembly paths. On the compliance-only path there is no AI
     verdict, so `applicability` reports that it was not assessed rather than
     silently borrowing the deterministic verdict.
+
+    `certification_source` comes from `_certification_source`, not from the
+    most severe result: certification is its own axis.
     """
     best = (
         min(compliance_results, key=lambda cr: _verdict_severity(cr.suggested_verdict))
@@ -890,24 +937,28 @@ def _build_dimensions(
             "note": sc.note,
         }
 
+    cert = certification_source
     certification = {
-        "qco_notified": bool(best and best.qco_check.qco_notified),
+        "qco_notified": bool(cert and cert.qco_check.qco_notified),
         "scheme": (
-            best.qco_check.certification_scheme.value
-            if best and best.qco_check.certification_scheme else None
+            cert.qco_check.certification_scheme.value
+            if cert and cert.qco_check.certification_scheme else None
         ),
-        "issuing_ministry": best.qco_check.issuing_ministry if best else None,
+        "issuing_ministry": cert.qco_check.issuing_ministry if cert else None,
         # The order that imposes the requirement, and the date from which it
         # binds. QCOCheck has carried both all along and this block dropped them,
         # which left the report asserting "BIS certification is mandatory" with
         # nothing an officer could cite when a bidder disputed it. A mandatory-
         # certification claim is only auditable if it names its gazette notification.
-        "gazette_so_number": best.qco_check.gazette_so_number if best else None,
+        "gazette_so_number": cert.qco_check.gazette_so_number if cert else None,
         "effective_date": (
-            best.qco_check.effective_date.isoformat()
-            if best and best.qco_check.effective_date else None
+            cert.qco_check.effective_date.isoformat()
+            if cert and cert.qco_check.effective_date else None
         ),
-        "note": best.qco_check.note if best else None,
+        "note": (
+            cert.qco_check.note if cert else
+            "No applicable standard identified; certification cannot be determined."
+        ),
         "source": "knowledge_base",
     }
 
@@ -1265,8 +1316,18 @@ def _build_recommended_action(
     return action
 
 
-def _build_currentness_context(compliance_results: list[ComplianceResult]) -> dict | None:
-    """Build the 'currentness' dict for a finding from compliance results."""
+def _build_currentness_context(
+    compliance_results: list[ComplianceResult],
+    *,
+    certification_source: ComplianceResult | None,
+) -> dict | None:
+    """
+    Build the 'currentness' dict for a finding from compliance results.
+
+    The QCO fields come from `certification_source` (see
+    `_certification_source`) so they agree with dimensions["certification"];
+    the version/status fields stay with the most severe result.
+    """
     if not compliance_results:
         return None
 
@@ -1284,6 +1345,11 @@ def _build_currentness_context(compliance_results: list[ComplianceResult]) -> di
         "superseded_by": sc.superseded_by,
         "transition_deadline": sc.transition_deadline.isoformat() if sc.transition_deadline else None,
         "within_transition": sc.within_transition,
-        "qco_notified": best.qco_check.qco_notified,
-        "qco_ministry": best.qco_check.issuing_ministry,
+        "qco_notified": bool(
+            certification_source and certification_source.qco_check.qco_notified
+        ),
+        "qco_ministry": (
+            certification_source.qco_check.issuing_ministry
+            if certification_source else None
+        ),
     }
