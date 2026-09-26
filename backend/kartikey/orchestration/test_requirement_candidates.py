@@ -311,3 +311,136 @@ def test_mock_engine_end_to_end_keeps_requirements_isolated(registry, monkeypatc
 
     assert attached[req_a.id] == {"IS 1001"}
     assert attached[req_b.id] == set()
+
+
+# ---------------------------------------------------------------------------
+# Display scaling of the shared relevance_score (lexical score-scale fix)
+#
+# Lexical scores are unbounded weighted sums (e.g. 20.0); the frontend reads
+# relevance_score as [0, 1] or a percentage, so 20.0 was shown as 20%. Only the
+# pooled/display copy is scaled, by raw / max(1.0, top score of that query);
+# the AI/ML engine's per-requirement input keeps the raw scores.
+# ---------------------------------------------------------------------------
+
+
+def _lexical_setup(registry, monkeypatch, hits_by_query, requirements):
+    """Register the standards named in hits_by_query and stub the search."""
+    stds: dict[str, Standard] = {}
+    for hits in hits_by_query.values():
+        for number, _ in hits:
+            if number not in stds:
+                stds[number] = _std(number)
+                registry.standards_store.add(stds[number])
+    monkeypatch.setattr(
+        registry.retrieval_service,
+        "search_standards",
+        _stub_search({
+            key: [(stds[number], score) for number, score in hits]
+            for key, hits in hits_by_query.items()
+        }),
+    )
+    analysis = Analysis(
+        input_type=InputType.TEXT, raw_text="tender", status=AnalysisStatus.QUEUED,
+    )
+    analysis.requirements = [
+        Requirement(analysis_id=analysis.id, text=text, is_reference=ref)
+        for text, ref in requirements
+    ]
+    return analysis, stds
+
+
+def test_lexical_scores_are_scaled_on_the_shared_copy(registry, monkeypatch) -> None:
+    """1. Lexical {20, 10, 1.0} → shared {1.0, 0.5, 0.05}, in the same order."""
+    analysis, _ = _lexical_setup(
+        registry, monkeypatch,
+        {"luminaire": [("IS 2001", 20.0), ("IS 2002", 10.0), ("IS 2003", 1.0)]},
+        [("LED luminaire for street lighting.", None)],
+    )
+
+    retrieved = asyncio.run(_step_retrieve(analysis, "tender"))
+
+    assert [(s.is_number, s.relevance_score) for s in retrieved] == [
+        ("IS 2001", 1.0), ("IS 2002", 0.5), ("IS 2003", 0.05),
+    ]
+
+
+def test_lexical_scaling_leaves_ai_candidate_scores_raw(registry, monkeypatch) -> None:
+    """2. requirement_candidates and the AI/ML request keep the raw lexical scores."""
+    analysis, stds = _lexical_setup(
+        registry, monkeypatch,
+        {"luminaire": [("IS 2001", 20.0), ("IS 2002", 10.0), ("IS 2003", 1.0)]},
+        [("LED luminaire for street lighting.", None)],
+    )
+    req = analysis.requirements[0]
+    captured = _capture_request(monkeypatch)
+
+    async def _run():
+        retrieved = await _step_retrieve(analysis, "tender")
+        await _step_analyze(analysis, "tender", retrieved)
+
+    asyncio.run(_run())
+
+    assert analysis.metadata["requirement_candidates"][req.id] == {
+        stds["IS 2001"].id: 20.0, stds["IS 2002"].id: 10.0, stds["IS 2003"].id: 1.0,
+    }
+    assert [
+        (s.is_number, s.relevance_score)
+        for s in captured["request"].requirement_candidates[req.id]
+    ] == [("IS 2001", 20.0), ("IS 2002", 10.0), ("IS 2003", 1.0)]
+
+
+def test_lexical_scaling_keeps_exact_citation_at_one(registry, monkeypatch) -> None:
+    """3. An exact citation stays 1.0 and first, whatever the lexical scale."""
+    analysis, stds = _lexical_setup(
+        registry, monkeypatch,
+        {"IS 2001": [("IS 2002", 30.0), ("IS 2001", 26.5), ("IS 2003", 15.0)]},
+        [("Shall conform to IS 2001.", "IS 2001")],
+    )
+    # get_by_is_number finds the cited standard; the stub search returns the rest.
+    retrieved = asyncio.run(_step_retrieve(analysis, "tender"))
+
+    assert [(s.is_number, s.relevance_score) for s in retrieved] == [
+        ("IS 2001", 1.0), ("IS 2002", 1.0), ("IS 2003", 0.5),
+    ]
+    assert retrieved[0].semantic_score == 1.0
+    req = analysis.requirements[0]
+    assert analysis.metadata["requirement_candidates"][req.id][stds["IS 2001"].id] == 1.0
+
+
+def test_hybrid_scores_are_unchanged(registry, monkeypatch) -> None:
+    """4. Scores already in [0, 1] (hybrid) pass through untouched."""
+    analysis, stds = _lexical_setup(
+        registry, monkeypatch,
+        {"luminaire": [("IS 2001", 0.86), ("IS 2002", 0.43), ("IS 2003", 0.72)]},
+        [("LED luminaire for street lighting.", None)],
+    )
+    req = analysis.requirements[0]
+
+    retrieved = asyncio.run(_step_retrieve(analysis, "tender"))
+
+    assert [(s.is_number, s.relevance_score) for s in retrieved] == [
+        ("IS 2001", 0.86), ("IS 2003", 0.72), ("IS 2002", 0.43),
+    ]
+    assert analysis.metadata["requirement_candidates"][req.id] == {
+        stds["IS 2001"].id: 0.86, stds["IS 2002"].id: 0.43, stds["IS 2003"].id: 0.72,
+    }
+
+
+def test_lexical_scaling_keeps_raw_retrieval_order(registry, monkeypatch) -> None:
+    """
+    5. Order across requirements still follows the raw score. IS 2004 tops its
+    own query (display 1.0) but has the lowest raw score, so it stays last.
+    """
+    analysis, _ = _lexical_setup(
+        registry, monkeypatch,
+        {
+            "luminaire": [("IS 2001", 30.0), ("IS 2002", 25.0)],
+            "warranty": [("IS 2004", 20.0)],
+        },
+        [("LED luminaire for street lighting.", None), ("Five-year warranty required.", None)],
+    )
+
+    retrieved = asyncio.run(_step_retrieve(analysis, "tender"))
+
+    assert [s.is_number for s in retrieved] == ["IS 2001", "IS 2002", "IS 2004"]
+    assert [s.relevance_score for s in retrieved] == pytest.approx([1.0, 25.0 / 30.0, 1.0])

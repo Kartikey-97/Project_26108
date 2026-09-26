@@ -388,6 +388,13 @@ async def _step_retrieve(
 
         result = registry.retrieval_service.search_standards(query)
 
+        # Lexical scores are unbounded weighted sums; the shared copy's
+        # relevance_score reaches the API and must be in [0, 1], as hybrid's
+        # already is. Scale by this query's top score, as hybrid does for its
+        # lexical part. Hybrid scores are <= 1, so the divisor leaves them as-is.
+        top_score = max((c.score or 0.0 for c in result.candidates), default=0.0)
+        display_divisor = max(1.0, top_score)
+
         req_candidates = requirement_candidates[req.id]
         req_exact_ids = exact_ids_by_req[req.id]
         for candidate in result.candidates:
@@ -395,13 +402,16 @@ async def _step_retrieve(
             score = candidate.score or 0.0
             # An exact citation keeps its 1.0, as it does in the global list;
             # lexical scores are unnormalised and must not overwrite it.
+            # Raw scores here: this map is the AI/ML engine's input.
             if sid not in req_exact_ids and score > req_candidates.get(sid, -1.0):
                 req_candidates[sid] = score
             if sid in seen_ids:
                 continue  # already added via exact-match pass; skip
+            # Ordering and the cap below use the raw score; only the display
+            # copy's relevance_score is scaled.
             if sid not in semantic_scores or score > semantic_scores[sid]:
                 semantic_scores[sid] = score
-                candidate.standard.relevance_score = score
+                candidate.standard.relevance_score = score / display_divisor
                 semantic_stds[sid] = candidate.standard
 
     # Sort by best score descending, then extend exact-match list
