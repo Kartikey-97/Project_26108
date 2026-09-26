@@ -139,6 +139,77 @@ def test_spaced_colon_and_hyphen_citation_becomes_a_requirement() -> None:
 
 
 # ===========================================================================
+# Part / section designation
+# ===========================================================================
+
+def _parts(text: str) -> list[tuple]:
+    return [
+        (r["is_number"], r["part_section"], r["year"], r["designation"], r["citation"])
+        for r in scan_is_references(text)
+    ]
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("as per IS 10322 (Part 5/Sec 3)",
+     [("IS 10322", "Part 5/Sec 3", None, "IS 10322 : Part 5 : Sec 3", "IS 10322 (Part 5/Sec 3)")]),
+    ("as per IS 10322 (Part 5 : Sec 3)",
+     [("IS 10322", "Part 5 : Sec 3", None, "IS 10322 : Part 5 : Sec 3", "IS 10322 (Part 5 : Sec 3)")]),
+    ("as per IS 10322 (Part 5/Sec 3) : 2012",
+     [("IS 10322", "Part 5/Sec 3", 2012, "IS 10322 : Part 5 : Sec 3", "IS 10322 (Part 5/Sec 3) : 2012")]),
+    ("conforming to IS 1554 : Part 1 : 1988",
+     [("IS 1554", "Part 1", 1988, "IS 1554 : Part 1", "IS 1554 : Part 1 : 1988")]),
+    ("conforming to IS 1554 (Part 1) : 1988",
+     [("IS 1554", "Part 1", 1988, "IS 1554 : Part 1", "IS 1554 (Part 1) : 1988")]),
+    ("conforming to IS 1554 : Part 1",
+     [("IS 1554", "Part 1", None, "IS 1554 : Part 1", "IS 1554 : Part 1")]),
+    ("conforming to IS 1554 : Part 2 : 2010",
+     [("IS 1554", "Part 2", 2010, "IS 1554 : Part 2", "IS 1554 : Part 2 : 2010")]),
+    ("luminaires to IS 10322 : Part 5 : Sec 3 : 2012",
+     [("IS 10322", "Part 5 : Sec 3", 2012, "IS 10322 : Part 5 : Sec 3", "IS 10322 : Part 5 : Sec 3 : 2012")]),
+    ("CABLES TO IS 1554 : PART 1 : 1988",
+     [("IS 1554", "PART 1", 1988, "IS 1554 : Part 1", "IS 1554 : PART 1 : 1988")]),
+    ("luminaires to IS 10322 (Part 5/Section 3)",
+     [("IS 10322", "Part 5/Section 3", None, "IS 10322 : Part 5 : Sec 3", "IS 10322 (Part 5/Section 3)")]),
+    # Not translated: the Hindi part stays base-only.
+    ("केबल IS 1554 (भाग 1) : 1988",
+     [("IS 1554", "भाग 1", 1988, "IS 1554", "IS 1554 (भाग 1) : 1988")]),
+    ("IS 269 (latest edition)",
+     [("IS 269", "latest edition", None, "IS 269", "IS 269 (latest edition)")]),
+    # A year after a colon is not mistaken for a part, and a dangling "Part"
+    # leaves the citation at its base.
+    ("as per IS 732 : 2019", [("IS 732", None, 2019, "IS 732", "IS 732 : 2019")]),
+    ("as per IS 1554 : Part", [("IS 1554", None, None, "IS 1554", "IS 1554")]),
+    ("to IS 1554 :\n Part 1 : 1988", [("IS 1554", "Part 1", 1988, "IS 1554 : Part 1", "IS 1554 : Part 1 : 1988")]),
+    # Ranges are not narrowed to their first member.
+    ("as per IS 9000 : Part 2 : Sec 1 to 4", [("IS 9000", "Part 2", None, "IS 9000 : Part 2", "IS 9000 : Part 2")]),
+    ("as per IS 1944 : Part 1 and 2", [("IS 1944", None, None, "IS 1944", "IS 1944")]),
+    ("as per IS 10322 (Part 5/Sec 1 to 3)",
+     [("IS 10322", "Part 5/Sec 1 to 3", None, "IS 10322", "IS 10322 (Part 5/Sec 1 to 3)")]),
+])
+def test_part_and_section_designation(text, expected) -> None:
+    assert _parts(text) == expected
+
+
+@pytest.mark.parametrize("text, designation", [
+    ("IS 2062", "IS 2062"), ("IS:2062", "IS 2062"), ("IS-2062", "IS 2062"),
+    ("IS2062", "IS 2062"), ("IS : 2062 - 2011", "IS 2062"), ("IS 2062-2011", "IS 2062"),
+])
+def test_unqualified_citations_keep_the_base_designation(text, designation) -> None:
+    assert [r["designation"] for r in scan_is_references(text)] == [designation]
+
+
+@pytest.mark.parametrize("value, base", [
+    ("IS 10322 : Part 5 : Sec 3", "IS 10322"),
+    ("IS 1554 : Part 1", "IS 1554"),
+    ("IS 2062", "IS 2062"),
+    ("IS/IEC 60947", "IS/IEC 60947"),
+])
+def test_base_is_number(value, base) -> None:
+    from kartikey.document_processing.extractor import base_is_number
+    assert base_is_number(value) == base
+
+
+# ===========================================================================
 # Every caller sees the same result
 # ===========================================================================
 

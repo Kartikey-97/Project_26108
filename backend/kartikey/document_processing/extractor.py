@@ -201,6 +201,10 @@ def _extract_docx(path: Path) -> str:
 #   IS 2062:2011 Amd.4
 #   IS 269 (latest edition)
 #   IS:2062   IS-2062   IS2062   IS : 2062 - 2011   IS 2062-2011
+#   IS 1554 : Part 1 : 1988   IS 10322 : Part 5 : Sec 3   (the catalogue's own form)
+#
+# A range ("Part 1 and 2", "Sec 1 to 4") is not narrowed to its first member:
+# the designation stops at the last level cited unambiguously.
 #
 # A year after "-" or "–" must look like one (19xx/20xx, not part of a longer
 # number), so "IS 1239-1" does not read its part number as a year. After ":"
@@ -224,7 +228,9 @@ _IS_REFERENCE_PATTERN = re.compile(
     r"\b(?-i:IS)\s*[:\-–]?\s*"       # "IS" — uppercase, whole word — then " ", ":", "-" or nothing
     r"(\d+)(?!\d)"                    # IS number
     rf"(?!\s*(?:{_PROSE_QUANTITY_UNIT}))"  # not a measured quantity
-    r"(?:\s*\(([^)]+)\))?"            # optional (Part N/Sec M)
+    r"(?:\s*\(([^)]+)\)"              # optional (Part N/Sec M) …
+    r"|\s*:\s*(Part\s*\d+(?!\d|\s*(?:to|and|&)\s*\d)"             # … or : Part N
+    r"(?:\s*:\s*Sec(?:tion)?\s*\d+(?!\d|\s*(?:to|and|&)\s*\d))?))?"  # [: Sec M] — not a range
     r"(?:\s*(?::|[\-–](?=\s*(?:19|20)\d{2}(?!\d)))\s*(\d{4}))?"  # optional :YYYY or -YYYY year
     r"(?:\s+Amd\.?\s*(\d+))?",        # optional Amd.N
     re.IGNORECASE,
@@ -240,22 +246,68 @@ def scan_is_references(text: str) -> list[dict]:
     step (AI/ML) does the authoritative extraction with semantic understanding.
 
     Returns a list of dicts with keys:
-      matched_text, is_number, part_section, year, amendment_number, char_offset
+      matched_text, citation, is_number, part_section, designation, year,
+      amendment_number, char_offset
+
+    `is_number` is always the base number ("IS 10322"). `designation` is the
+    catalogue form of what was cited — "IS 10322 : Part 5 : Sec 3" when a
+    Latin-script part is given, otherwise the base number. `citation` is the
+    tender's own wording with whitespace collapsed.
 
     `char_offset` is where the reference starts in `text`. Pair it with
     `clause_at()` to recover the sentence the citation sits in.
     """
     results = []
     for match in _IS_REFERENCE_PATTERN.finditer(text):
+        part_section = match.group(2) or match.group(3)
+        matched_text = match.group(0).strip()
         results.append({
-            "matched_text": match.group(0).strip(),
+            "matched_text": matched_text,
+            "citation": " ".join(matched_text.split()),
             "is_number": f"IS {match.group(1)}",
-            "part_section": match.group(2),
-            "year": int(match.group(3)) if match.group(3) else None,
-            "amendment_number": int(match.group(4)) if match.group(4) else None,
+            "part_section": part_section,
+            "designation": _designation(match.group(1), part_section),
+            "year": int(match.group(4)) if match.group(4) else None,
+            "amendment_number": int(match.group(5)) if match.group(5) else None,
             "char_offset": match.start(),
         })
     return results
+
+
+# "Part 5/Sec 3", "Part 5 : Sec 3", "Part 1" — the only part forms given a
+# catalogue designation. Anything else in the brackets ("latest edition",
+# "भाग 1") leaves the citation at its base number, as before.
+_PART_SECTION = re.compile(
+    r"^\s*Part\s*(\d+)\s*(?:[/:,]\s*Sec(?:tion)?\s*(\d+))?\s*$", re.IGNORECASE,
+)
+
+
+def _designation(number: str, part_section: str | None) -> str:
+    """
+    The cited standard in the catalogue's own spelling: "IS N", "IS N : Part P"
+    or "IS N : Part P : Sec S". StandardsStore matches that exactly and falls
+    back to the whole family when the catalogue has no such part.
+    """
+    base = f"IS {number}"
+    m = _PART_SECTION.match(part_section or "")
+    if not m:
+        return base
+    designation = f"{base} : Part {m.group(1)}"
+    if m.group(2):
+        designation += f" : Sec {m.group(2)}"
+    return designation
+
+
+_BASE_IS_NUMBER = re.compile(r"\s*IS\s*[:\-–]?\s*(\d+)")
+
+
+def base_is_number(is_reference: str) -> str:
+    """
+    "IS 10322 : Part 5 : Sec 3" -> "IS 10322". A value that is already a base
+    number, or is not an "IS N" reference at all, is returned unchanged.
+    """
+    m = _BASE_IS_NUMBER.match(is_reference)
+    return f"IS {m.group(1)}" if m else is_reference
 
 
 # ===========================================================================

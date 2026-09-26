@@ -287,9 +287,9 @@ async def _step_extract(analysis: Analysis) -> str:
                     text=ref["matched_text"],
                     normalized_text=ref["matched_text"],
                     category=RequirementCategory.TECHNICAL_SPECIFICATION,
-                    is_reference=ref["is_number"],
+                    is_reference=ref["designation"],
                     cited_year=ref["year"],
-                    cited_designation=ref["matched_text"],
+                    cited_designation=ref["citation"],
                     extraction_confidence=0.6,
                 )
                 for ref in is_refs
@@ -326,6 +326,7 @@ async def _step_retrieve(
 
     from kartikey.orchestration.knowledge_registry import get_registry
     from kshiraj.knowledge.retrieval_service import RetrievalQuery
+    from kartikey.document_processing.extractor import base_is_number
 
     registry = get_registry()
     retrieved_standards: list[Standard] = []
@@ -373,7 +374,10 @@ async def _step_retrieve(
             product_context = f"[{' | '.join(context_parts)}] "
 
     for req in analysis.requirements:
-        base_query = req.is_reference if req.is_reference else req.text
+        # is_reference may name a part ("IS 10322 : Part 5 : Sec 3"); the lexical
+        # search still gets the base number, as it always has — the part's
+        # tokens would pull in unrelated parts of other standards.
+        base_query = base_is_number(req.is_reference) if req.is_reference else req.text
         query_text = f"{product_context}{base_query}"
         
         query = RetrievalQuery(

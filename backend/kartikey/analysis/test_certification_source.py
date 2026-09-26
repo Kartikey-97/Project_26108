@@ -262,9 +262,11 @@ def test_i_procurement_qco_matches_finding_certification(store, monkeypatch) -> 
     for f in findings:
         assert by_req[f.requirement_id]["qco_notified"] == _cert(f)["qco_notified"]
 
-    # The IS 10322 citation: Part 1 is listed first, the CRS part is QCO-notified.
+    # The IS 10322 citation. Since the cited part is preserved it resolves to
+    # Part 5 : Sec 3 and leads the applicable list; order independence of the
+    # QCO flag itself is covered by test_e above.
     cited = next(f for f in findings if any(
         s.is_number == "IS 10322 : Part 5 : Sec 3" for s in f.applicable_standards
     ))
-    assert cited.applicable_standards[0].is_number == "IS 10322 : Part 1"
+    assert cited.applicable_standards[0].is_number == "IS 10322 : Part 5 : Sec 3"
     assert by_req[cited.requirement_id]["qco_notified"] is True
