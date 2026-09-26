@@ -11,7 +11,7 @@ This report validates the accuracy of the deployed StandIQ AI Engine (`/recommen
 | **Recall@3** | 0.0% |
 | **Recall@5** | 0.0% |
 | **MRR (Mean Reciprocal Rank)** | 0.000 |
-| **Avg. Pipeline Latency** | 0.609s |
+| **Avg. Pipeline Latency** | 5.081s |
 
 ## 🔍 Detailed Results
 
