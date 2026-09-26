@@ -94,6 +94,51 @@ def test_rejected_quantity_does_not_backtrack_to_a_shorter_number() -> None:
 
 
 # ===========================================================================
+# Separator and year formats
+# ===========================================================================
+
+@pytest.mark.parametrize("text, expected", [
+    ("Steel conforming to IS:2062", [("IS:2062", "IS 2062", None, None, None)]),
+    ("Steel conforming to IS-2062", [("IS-2062", "IS 2062", None, None, None)]),
+    ("Steel conforming to IS2062", [("IS2062", "IS 2062", None, None, None)]),
+    ("Steel shall conform to IS : 2062 - 2011.", [("IS : 2062 - 2011", "IS 2062", None, 2011, None)]),
+    ("Steel shall conform to IS 2062-2011.", [("IS 2062-2011", "IS 2062", None, 2011, None)]),
+    ("Steel shall conform to IS 2062 – 2011.", [("IS 2062 – 2011", "IS 2062", None, 2011, None)]),
+    ("Steel shall conform to IS:2062:2011.", [("IS:2062:2011", "IS 2062", None, 2011, None)]),
+])
+def test_separator_and_year_formats(text, expected) -> None:
+    assert _refs(text) == expected
+
+
+def test_hyphenated_part_number_is_not_a_year() -> None:
+    assert _refs("Pipes to IS 1239-1 shall be used.") == [("IS 1239", "IS 1239", None, None, None)]
+
+
+@pytest.mark.parametrize("text", [
+    "WARRANTY IS: 5 YEARS",
+    "VOLTAGE IS - 230 V",
+    "VOLTAGE IS-230V",
+    "LENGTH IS:732 M",
+    "THIS2062",
+    "Analysis-2 shall follow.",
+])
+def test_separators_do_not_reopen_prose_false_positives(text) -> None:
+    assert scan_is_references(text) == []
+
+
+def test_spaced_colon_and_hyphen_citation_becomes_a_requirement() -> None:
+    """Previously produced no requirement at all; is_reference stays the base number."""
+    from kartikey.analysis.requirement_extractor import extract_requirements
+
+    requirements, _ = extract_requirements(
+        "a1", "Supply of structural steel sections. Steel shall conform to IS : 2062 - 2011.",
+    )
+    cited = [(r.is_reference, r.cited_year) for r in requirements if r.is_reference]
+
+    assert cited == [("IS 2062", 2011)]
+
+
+# ===========================================================================
 # Every caller sees the same result
 # ===========================================================================
 
