@@ -118,7 +118,7 @@ export function StandardComparisonModal({
     },
     {
       category: 'Procurement Applicability',
-      property: 'Role & Applicability Score',
+      property: 'Role & Retrieval Match',
       valA: `${stdA.relationshipRole ? stdA.relationshipRole.toUpperCase() : 'STANDARD'} (${stdA.applicabilityScore || '—'}% match)`,
       valB: `${stdB.relationshipRole ? stdB.relationshipRole.toUpperCase() : 'STANDARD'} (${stdB.applicabilityScore || '—'}% match)`,
       matchType: 'different',

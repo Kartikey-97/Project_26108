@@ -268,7 +268,7 @@ export function AnalysisPage({ analysisId, tab }: Props) {
                 {analysis.confidence > 0 && (
                   <>
                     <span>·</span>
-                    <Badge variant="teal">{analysis.confidence}% avg. confidence</Badge>
+                    <Badge variant="teal">{analysis.confidence}% avg. retrieval match</Badge>
                   </>
                 )}
               </div>

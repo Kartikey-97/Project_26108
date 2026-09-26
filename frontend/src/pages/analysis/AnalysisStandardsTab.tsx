@@ -446,11 +446,11 @@ export function AnalysisStandardsTab({ analysis, isReal = false, onSyncComplete 
                     </div>
                   </div>
 
-                  {/* Applicability score & decision buttons */}
+                  {/* Retrieval match & decision buttons */}
                   <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1.5 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-ink-100">
                     <div className="text-right">
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 block font-sans">
-                        Applicability score
+                        Retrieval match
                       </span>
                       <span className="font-mono text-sm font-bold text-ink-900 tabular-nums">
                         {standard.applicabilityScore != null ? `${standard.applicabilityScore}%` : '—'}
