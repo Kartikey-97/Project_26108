@@ -200,6 +200,11 @@ def _extract_docx(path: Path) -> str:
 #   IS 10322 (Part 5/Sec 3):2012
 #   IS 2062:2011 Amd.4
 #   IS 269 (latest edition)
+#   IS:2062   IS-2062   IS2062   IS : 2062 - 2011   IS 2062-2011
+#
+# A year after "-" or "–" must look like one (19xx/20xx, not part of a longer
+# number), so "IS 1239-1" does not read its part number as a year. After ":"
+# any four digits are taken, as before.
 #
 # And must not match ordinary prose, which is full of "is <number>":
 #   "voltage is 230 V", "warranty is 5 years"  — lower-case "is": the prefix is
@@ -216,11 +221,11 @@ _PROSE_QUANTITY_UNIT = (
     r"|mm|cm|km|m|kg|kv|kva|kw|ma|v|a|w|hz)\b"
 )
 _IS_REFERENCE_PATTERN = re.compile(
-    r"\b(?-i:IS)\s+"                 # "IS " prefix — uppercase, whole word
+    r"\b(?-i:IS)\s*[:\-–]?\s*"       # "IS" — uppercase, whole word — then " ", ":", "-" or nothing
     r"(\d+)(?!\d)"                    # IS number
     rf"(?!\s*(?:{_PROSE_QUANTITY_UNIT}))"  # not a measured quantity
     r"(?:\s*\(([^)]+)\))?"            # optional (Part N/Sec M)
-    r"(?:\s*:\s*(\d{4}))?"            # optional :YYYY year
+    r"(?:\s*(?::|[\-–](?=\s*(?:19|20)\d{2}(?!\d)))\s*(\d{4}))?"  # optional :YYYY or -YYYY year
     r"(?:\s+Amd\.?\s*(\d+))?",        # optional Amd.N
     re.IGNORECASE,
 )
