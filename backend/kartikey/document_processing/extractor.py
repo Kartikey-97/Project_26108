@@ -200,9 +200,25 @@ def _extract_docx(path: Path) -> str:
 #   IS 10322 (Part 5/Sec 3):2012
 #   IS 2062:2011 Amd.4
 #   IS 269 (latest edition)
+#
+# And must not match ordinary prose, which is full of "is <number>":
+#   "voltage is 230 V", "warranty is 5 years"  — lower-case "is": the prefix is
+#       matched case-sensitively, so only "IS" qualifies.
+#   "basis 230", "this 5", "Analysis 2"        — "is" inside a word: \b requires
+#       "IS" to start a word.
+#   "WARRANTY IS 5 YEARS", "LENGTH IS 732 M"   — ALL-CAPS prose, where case does
+#       not help: a number followed directly by a unit is a quantity, not a
+#       standard. A real citation is followed by ":", "(", punctuation or a word.
+# (?!\d) keeps the number whole, so a rejected "IS 230 V" cannot backtrack and
+# match "IS 23" instead. The rest of the pattern is case-insensitive as before.
+_PROSE_QUANTITY_UNIT = (
+    r"%|°|(?:years?|yrs?|months?|days?|hours?|hrs?|nos"
+    r"|mm|cm|km|m|kg|kv|kva|kw|ma|v|a|w|hz)\b"
+)
 _IS_REFERENCE_PATTERN = re.compile(
-    r"IS\s+"                         # "IS " prefix
-    r"(\d+)"                          # IS number
+    r"\b(?-i:IS)\s+"                 # "IS " prefix — uppercase, whole word
+    r"(\d+)(?!\d)"                    # IS number
+    rf"(?!\s*(?:{_PROSE_QUANTITY_UNIT}))"  # not a measured quantity
     r"(?:\s*\(([^)]+)\))?"            # optional (Part N/Sec M)
     r"(?:\s*:\s*(\d{4}))?"            # optional :YYYY year
     r"(?:\s+Amd\.?\s*(\d+))?",        # optional Amd.N
