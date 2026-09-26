@@ -339,7 +339,7 @@ export function StandardDetailPage({ standardId }: Props) {
 
               {standard.applicabilityScore !== undefined && (
                 <span className="text-[11px] font-mono text-ink-500">
-                  Analysis Applicability: <strong className="text-ink-900 font-bold">{standard.applicabilityScore}%</strong>
+                  Retrieval match (last analysis): <strong className="text-ink-900 font-bold">{standard.applicabilityScore}%</strong>
                 </span>
               )}
             </div>

@@ -223,13 +223,16 @@ async def analyze_procurement(request: Request) -> JSONResponse:
             "confidence": f.confidence,
             "provenance_source": "not_available",
         }
-        qco_notified = False
+        # The finding's own certification result, which considers every
+        # applicable standard — not just whichever happens to be listed first.
+        qco_notified = bool(
+            ((f.dimensions or {}).get("certification") or {}).get("qco_notified")
+        )
 
         if f.applicable_standards:
             std = f.applicable_standards[0]
             ev_chain["standard_code"] = std.designation
             ev_chain["standard_title"] = std.title
-            qco_notified = bool(getattr(std, "qco_notified", False))
 
             if std.id not in standards_intelligence_map:
                 # Currentness comes from the enrichment layer's assessment of

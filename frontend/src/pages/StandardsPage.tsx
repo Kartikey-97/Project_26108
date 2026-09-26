@@ -402,7 +402,7 @@ export function StandardsPage() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="rounded border border-ink-200 bg-white px-2 py-1 text-xs text-ink-700 focus:border-teal-500 focus:outline-none font-medium"
               >
-                <option value="relevance">Sort: Relevance / Applicability</option>
+                <option value="relevance">Sort: Relevance</option>
                 <option value="current-first">Sort: Current First</option>
                 <option value="recent-update">Sort: Recently Updated</option>
               </select>

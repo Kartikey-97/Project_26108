@@ -64,6 +64,7 @@ export function ReportsPage() {
   const [typeFilter, setTypeFilter] = useState<ReportType | 'all'>('all');
   const [previewReport, setPreviewReport] = useState<Report | null>(null);
   const [isEmailing, setIsEmailing] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -77,6 +78,47 @@ export function ReportsPage() {
       alert('Failed to send email. Check backend logs.');
     } finally {
       setIsEmailing(null);
+    }
+  };
+
+  // Real reports download the backend-generated PDF. Seeded demo reports have no
+  // backend analysis, so they keep the browser print flow.
+  const handleDownloadPdf = async (report: Report) => {
+    if (!report.id.startsWith('real-')) {
+      setPreviewReport(report);
+      setTimeout(() => window.print(), 100);
+      return;
+    }
+    setIsDownloading(report.id);
+    let url: string | null = null;
+    try {
+      const res = await fetch(`${API_ROOT}/analyses/${encodeURIComponent(report.analysisId)}/report/pdf`, { headers: { 'X-API-Key': API_KEY } });
+      if (!res.ok) {
+        let message = `Failed to download PDF (${res.status}).`;
+        try {
+          const body = await res.json();
+          message = body?.detail?.message || body?.message || message;
+        } catch {
+          // non-JSON error body; keep the generic message
+        }
+        throw new Error(message);
+      }
+      const blob = await res.blob();
+      url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `StandIQ-Report-${report.analysisId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to download PDF.');
+    } finally {
+      if (url) {
+        const objectUrl = url;
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      }
+      setIsDownloading(null);
     }
   };
 
@@ -261,7 +303,7 @@ export function ReportsPage() {
                         </div>
                         <div className="mt-4 grid grid-cols-3 gap-2">
                           <Button variant="secondary" size="sm" leftIcon={<Eye size={13} />} onClick={() => setPreviewReport(report)}>View</Button>
-                          <Button variant="secondary" size="sm" leftIcon={<Download size={13} />} onClick={(e) => { e.stopPropagation(); setPreviewReport(report); setTimeout(() => window.print(), 100); }}>PDF</Button>
+                          <Button variant="secondary" size="sm" disabled={isDownloading === report.id} leftIcon={<Download size={13} />} onClick={(e) => { e.stopPropagation(); handleDownloadPdf(report); }}>{isDownloading === report.id ? '...' : 'PDF'}</Button>
                           <Button variant="secondary" size="sm" disabled={isEmailing === report.id} leftIcon={<Send size={13} />} onClick={(e) => { e.stopPropagation(); handleEmailReport(report.id, report.analysisId); }}>{isEmailing === report.id ? '...' : 'Email'}</Button>
                         </div>
                       </Card>
@@ -345,7 +387,7 @@ export function ReportsPage() {
                         </div>
                         <div className="mt-4 grid grid-cols-3 gap-2">
                           <Button variant="secondary" size="sm" leftIcon={<Eye size={13} />} onClick={() => setPreviewReport(report)}>View</Button>
-                          <Button variant="secondary" size="sm" leftIcon={<Download size={13} />} onClick={(e) => { e.stopPropagation(); setPreviewReport(report); setTimeout(() => window.print(), 100); }}>PDF</Button>
+                          <Button variant="secondary" size="sm" disabled={isDownloading === report.id} leftIcon={<Download size={13} />} onClick={(e) => { e.stopPropagation(); handleDownloadPdf(report); }}>{isDownloading === report.id ? '...' : 'PDF'}</Button>
                           <Button variant="secondary" size="sm" disabled={isEmailing === report.id} leftIcon={<Send size={13} />} onClick={(e) => { e.stopPropagation(); handleEmailReport(report.id, report.analysisId); }}>{isEmailing === report.id ? '...' : 'Email'}</Button>
                         </div>
                       </Card>
@@ -372,14 +414,14 @@ export function ReportsPage() {
       {/* Document-Style Report Preview Modal */}
       <AnimatePresence>
         {previewReport && (
-          <ReportPreviewModal report={previewReport} onClose={() => setPreviewReport(null)} isEmailing={isEmailing} handleEmailReport={handleEmailReport} />
+          <ReportPreviewModal report={previewReport} onClose={() => setPreviewReport(null)} isEmailing={isEmailing} handleEmailReport={handleEmailReport} isDownloading={isDownloading} handleDownloadPdf={handleDownloadPdf} />
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function ReportPreviewModal({ report, onClose, isEmailing, handleEmailReport }: { report: Report; onClose: () => void; isEmailing: string | null; handleEmailReport: (rId: string, aId: string) => void }) {
+function ReportPreviewModal({ report, onClose, isEmailing, handleEmailReport, isDownloading, handleDownloadPdf }: { report: Report; onClose: () => void; isEmailing: string | null; handleEmailReport: (rId: string, aId: string) => void; isDownloading: string | null; handleDownloadPdf: (report: Report) => void }) {
   const analysis = getAnalysisById(report.analysisId);
   
   // Dynamic Data Computation
@@ -437,10 +479,11 @@ function ReportPreviewModal({ report, onClose, isEmailing, handleEmailReport }: 
             <Button
               variant="secondary"
               size="sm"
+              disabled={isDownloading === report.id}
               leftIcon={<Download size={14} />}
-              onClick={() => window.print()}
+              onClick={() => handleDownloadPdf(report)}
             >
-              Export PDF
+              {isDownloading === report.id ? 'Downloading...' : 'Export PDF'}
             </Button>
             <Button
               variant="primary"

@@ -256,12 +256,12 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
                 </div>
               </div>
 
-              {/* Applicability Score & Human Decision Pill */}
+              {/* Retrieval Match & Human Decision Pill */}
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex items-center gap-2 rounded-lg bg-ivory-100/80 px-3 py-1.5 border border-ink-200/80">
                   <div className="text-right">
                     <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-500">
-                      Applicability Score
+                      Retrieval Match
                     </span>
                     <span className="font-mono text-base font-bold text-ink-900 tabular-nums">
                       {primaryStandard.applicabilityScore != null
@@ -272,8 +272,8 @@ export function AnalysisOverviewTab({ analysis, isReal = false }: Props) {
                   <div className="h-7 w-px bg-ink-200 mx-1" />
                   <span className="text-[11px] text-teal-800 font-medium">
                     {primaryStandard.applicabilityScore != null && primaryStandard.applicabilityScore >= 70
-                          ? 'Strong match'
-                          : 'Relevant match'}
+                          ? 'Strong retrieval match'
+                          : 'Relevant retrieval match'}
                   </span>
                 </div>
 

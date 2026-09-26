@@ -58,9 +58,11 @@ def extract_requirements(
             text=text,
             normalized_text=text,
             category=RequirementCategory.TECHNICAL_SPECIFICATION,
-            is_reference=ref["is_number"],
+            # The catalogue form of what was cited, part and section included,
+            # so lookups resolve the cited part rather than its whole family.
+            is_reference=ref["designation"],
             cited_year=ref["year"],
-            cited_designation=None,
+            cited_designation=ref["citation"],
             location=None,  # Could potentially extract context clause, but keep it simple
             extracted_at=datetime.now(tz=timezone.utc),
             extraction_confidence=0.95
@@ -78,8 +80,9 @@ def extract_requirements(
 
             # Check if this bucket item happens to contain an IS reference
             bucket_refs = scan_is_references(text)
-            is_ref = bucket_refs[0]["is_number"] if bucket_refs else None
+            is_ref = bucket_refs[0]["designation"] if bucket_refs else None
             cited_year = bucket_refs[0]["year"] if bucket_refs else None
+            cited_designation = bucket_refs[0]["citation"] if bucket_refs else None
 
             req = Requirement(
                 id=str(uuid.uuid4()),
@@ -89,7 +92,7 @@ def extract_requirements(
                 category=category,
                 is_reference=is_ref,
                 cited_year=cited_year,
-                cited_designation=None,
+                cited_designation=cited_designation,
                 location=field.source_clause,
                 extracted_at=datetime.now(tz=timezone.utc),
                 extraction_confidence=0.85

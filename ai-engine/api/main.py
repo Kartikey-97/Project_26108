@@ -148,7 +148,12 @@ class AimlRequest(BaseModel):
     analysis_id: str
     extracted_text: str
     requirements: List[Requirement]
+    # Pooled across requirements; accepted for compatibility, never reasoned over.
     retrieved_standards: List[Standard]
+    # requirement_id -> the standards retrieved for that requirement only, with
+    # that requirement's own scores. The sole reasoning input per requirement;
+    # a requirement with no entry has no candidates.
+    requirement_candidates: Dict[str, List[Standard]] = Field(default_factory=dict)
 
 class AimlFinding(BaseModel):
     finding_id: str

@@ -261,6 +261,71 @@ class TestCorrectCitationsAreLeftAlone:
 
 
 # ===========================================================================
+# Several materials for one attribute
+# ===========================================================================
+
+MIXED_CLAUSE = "PVC insulation to IS 694 and XLPE insulated cables to IS 7098 : Part 1."
+
+
+class TestSeveralMaterialsForOneAttribute:
+    """
+    One clause can specify two products: "PVC insulation to IS 694 and XLPE
+    insulated cables to IS 7098". Which material belongs to which standard is
+    not something the text states, so neither standard may be flagged for the
+    other's material — and neither may be reported as matching either.
+    """
+
+    @pytest.mark.parametrize("is_number, title", [
+        ("IS 694", PVC_694),
+        ("IS 7098 : Part 1", XLPE_7098),
+    ])
+    def test_neither_standard_is_flagged_or_matched(
+        self, cable_catalogue, is_number, title,
+    ) -> None:
+        result = check_scope(_req(MIXED_CLAUSE), _std(is_number, title))
+
+        assert result.checked is False
+        assert result.mismatch is False
+
+    def test_the_note_says_why_it_was_not_assessed(self, cable_catalogue) -> None:
+        std = _std("IS 694", PVC_694, year=2010)
+        note = check_scope(_req(MIXED_CLAUSE), std).note
+
+        assert "more than one" in note
+        assert "PVC" in note and "XLPE" in note
+        assert std.designation in note
+        assert "not assessed" in note
+
+    def test_a_repeated_single_material_is_still_assessed(self, cable_catalogue) -> None:
+        result = check_scope(
+            _req("PVC insulated cables with PVC insulation to IS 694."),
+            _std("IS 694", PVC_694),
+        )
+        assert result.checked is True
+        assert result.mismatch is False
+
+    def test_a_single_material_is_still_assessed_normally(self, cable_catalogue) -> None:
+        match = check_scope(_req("PVC insulated cables to IS 694."), _std("IS 694", PVC_694))
+        mismatch = check_scope(_req(CABLE_TENDER), _std("IS 1554 : Part 1", PVC_1554))
+
+        assert (match.checked, match.mismatch) == (True, False)
+        assert (mismatch.checked, mismatch.mismatch) == (True, True)
+        assert mismatch.required_material and "XLPE" in mismatch.required_material.upper()
+
+    def test_the_mixed_clause_does_not_produce_wrong_scope(self, cable_catalogue) -> None:
+        from shared.models import Verdict
+        from kartikey.analysis.compliance import run_compliance_checks
+
+        for is_number, title in (("IS 694", PVC_694), ("IS 7098 : Part 1", XLPE_7098)):
+            result = run_compliance_checks(
+                Requirement(analysis_id="a1", text=MIXED_CLAUSE, is_reference=is_number),
+                _std(is_number, title),
+            )
+            assert result.scope_check.mismatch is False
+            assert result.suggested_verdict is not Verdict.WRONG_SCOPE
+
+
+# ===========================================================================
 # The vocabulary is the catalogue's, not the module's
 # ===========================================================================
 

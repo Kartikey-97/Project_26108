@@ -287,9 +287,9 @@ async def _step_extract(analysis: Analysis) -> str:
                     text=ref["matched_text"],
                     normalized_text=ref["matched_text"],
                     category=RequirementCategory.TECHNICAL_SPECIFICATION,
-                    is_reference=ref["is_number"],
+                    is_reference=ref["designation"],
                     cited_year=ref["year"],
-                    cited_designation=ref["matched_text"],
+                    cited_designation=ref["citation"],
                     extraction_confidence=0.6,
                 )
                 for ref in is_refs
@@ -326,10 +326,21 @@ async def _step_retrieve(
 
     from kartikey.orchestration.knowledge_registry import get_registry
     from kshiraj.knowledge.retrieval_service import RetrievalQuery
+    from kartikey.document_processing.extractor import base_is_number
 
     registry = get_registry()
     retrieved_standards: list[Standard] = []
     seen_ids: set[str] = set()
+
+    # requirement_id -> {standard_id: best score retrieved for THAT requirement}.
+    # The global list below is deduplicated across requirements, which loses
+    # which requirement retrieved which standard. This map keeps it, so
+    # findings assembly can refuse to attach a standard to a requirement it was
+    # never retrieved for. Recorded before the global dedup on purpose.
+    requirement_candidates: dict[str, dict[str, float]] = {
+        req.id: {} for req in analysis.requirements
+    }
+    exact_ids_by_req: dict[str, set[str]] = {req.id: set() for req in analysis.requirements}
 
     # IS-number exact lookup pass
     for req in analysis.requirements:
@@ -337,6 +348,8 @@ async def _step_retrieve(
             continue
         matches = registry.standards_store.get_by_is_number(req.is_reference)
         for std in matches:
+            requirement_candidates[req.id][std.id] = 1.0
+            exact_ids_by_req[req.id].add(std.id)
             if std.id not in seen_ids:
                 seen_ids.add(std.id)
                 # An explicit citation is a perfect match by definition
@@ -361,7 +374,10 @@ async def _step_retrieve(
             product_context = f"[{' | '.join(context_parts)}] "
 
     for req in analysis.requirements:
-        base_query = req.is_reference if req.is_reference else req.text
+        # is_reference may name a part ("IS 10322 : Part 5 : Sec 3"); the lexical
+        # search still gets the base number, as it always has — the part's
+        # tokens would pull in unrelated parts of other standards.
+        base_query = base_is_number(req.is_reference) if req.is_reference else req.text
         query_text = f"{product_context}{base_query}"
         
         query = RetrievalQuery(
@@ -372,19 +388,39 @@ async def _step_retrieve(
 
         result = registry.retrieval_service.search_standards(query)
 
+        # Lexical scores are unbounded weighted sums; the shared copy's
+        # relevance_score reaches the API and must be in [0, 1], as hybrid's
+        # already is. Scale by this query's top score, as hybrid does for its
+        # lexical part. Hybrid scores are <= 1, so the divisor leaves them as-is.
+        top_score = max((c.score or 0.0 for c in result.candidates), default=0.0)
+        display_divisor = max(1.0, top_score)
+
+        req_candidates = requirement_candidates[req.id]
+        req_exact_ids = exact_ids_by_req[req.id]
         for candidate in result.candidates:
             sid = candidate.standard.id
+            score = candidate.score or 0.0
+            # An exact citation keeps its 1.0, as it does in the global list;
+            # lexical scores are unnormalised and must not overwrite it.
+            # Raw scores here: this map is the AI/ML engine's input.
+            if sid not in req_exact_ids and score > req_candidates.get(sid, -1.0):
+                req_candidates[sid] = score
             if sid in seen_ids:
                 continue  # already added via exact-match pass; skip
-            score = candidate.score or 0.0
+            # Ordering and the cap below use the raw score; only the display
+            # copy's relevance_score is scaled.
             if sid not in semantic_scores or score > semantic_scores[sid]:
                 semantic_scores[sid] = score
-                candidate.standard.relevance_score = score
+                candidate.standard.relevance_score = score / display_divisor
                 semantic_stds[sid] = candidate.standard
 
     # Sort by best score descending, then extend exact-match list
     sorted_semantic = sorted(semantic_stds.values(), key=lambda s: semantic_scores[s.id], reverse=True)
     retrieved_standards.extend(sorted_semantic)
+
+    # Stored on the analysis rather than returned so the return type — which
+    # other callers of this step depend on — is unchanged. _step_enrich reads it.
+    analysis.metadata["requirement_candidates"] = requirement_candidates
 
     logger.info(
         "_step_retrieve: found %d distinct standards across %d requirements. analysis_id=%s",
@@ -431,7 +467,9 @@ async def _step_analyze(
         analysis_id=analysis.id,
         extracted_text=extracted_text,
         requirements=analysis.requirements,
+        # Pooled list, sent for compatibility only — not a reasoning input.
         retrieved_standards=retrieved_standards,
+        requirement_candidates=_candidate_standards_by_requirement(analysis),
     )
     
     try:
@@ -450,6 +488,63 @@ async def _step_analyze(
         analysis.metadata["analysis_mode"] = "fallback"
         analysis.metadata["degraded_reason"] = f"AI/ML service unavailable: {exc.message}"
         return None
+
+
+def _candidate_standards_by_requirement(analysis: Analysis) -> dict[str, list[Standard]]:
+    """
+    Build each requirement's own reasoning input from the candidate map that
+    _step_retrieve recorded: that requirement's standards only, each copied
+    with that requirement's retrieval score, cited standards first and then
+    highest score first.
+
+    The score on the pooled `retrieved_standards` copies is the best score seen
+    across *all* requirements, so it is deliberately not used here. semantic_score
+    is 1.0 for a standard this requirement cites exactly (as the exact-match pass
+    has always set it) and None otherwise.
+
+    No map means no candidates for anyone — never a fallback to the pool.
+    """
+    from kartikey.orchestration.knowledge_registry import get_registry
+
+    raw = analysis.metadata.get("requirement_candidates")
+    if not isinstance(raw, dict):
+        logger.warning(
+            "_step_analyze: no requirement_candidates recorded for analysis_id=%s; "
+            "every requirement is sent with no candidate standards.",
+            analysis.id,
+        )
+        raw = {}
+
+    store = get_registry().standards_store
+    by_requirement: dict[str, list[Standard]] = {}
+
+    for req in analysis.requirements:
+        scores = raw.get(req.id) or {}
+        cited_ids = (
+            {s.id for s in store.get_by_is_number(req.is_reference)}
+            if req.is_reference else set()
+        )
+        candidates: list[Standard] = []
+        for sid, score in scores.items():
+            std = store.get_by_id(sid)
+            if std is None:
+                logger.warning(
+                    "_step_analyze: candidate standard_id=%s for requirement_id=%s "
+                    "is not in the store — skipped.", sid, req.id,
+                )
+                continue
+            candidates.append(std.model_copy(update={
+                "relevance_score": float(score),
+                "semantic_score": 1.0 if sid in cited_ids else None,
+            }))
+        # Cited standards first, then by this requirement's score — the same
+        # ordering the global list has always used.
+        candidates.sort(key=lambda s: (
+            s.id not in cited_ids, -(s.relevance_score or 0.0), s.is_number,
+        ))
+        by_requirement[req.id] = candidates
+
+    return by_requirement
 
 
 # ===========================================================================
@@ -487,12 +582,25 @@ async def _step_enrich(
     # We fetch all evidence here; a production DB would use IN queries.
     evidence_lookup = {ev.id: ev for ev in registry.evidence_store.list_all()}
 
+    # Set by _step_retrieve. Absent only when enrichment runs without a
+    # retrieval pass; then no requirement has candidates and nothing the AI/ML
+    # proposed is attached — there is no unscoped fallback on this path.
+    requirement_candidates = analysis.metadata.get("requirement_candidates")
+    if not isinstance(requirement_candidates, dict):
+        if aiml_response is not None and analysis.requirements:
+            logger.warning(
+                "_step_enrich: no requirement_candidates for analysis_id=%s; "
+                "AI/ML standard mappings will all be rejected.", analysis.id,
+            )
+        requirement_candidates = {}
+
     findings = assemble_findings(
         analysis=analysis,
         retrieved_standards=retrieved_standards,
         aiml_response=aiml_response,
         standards_lookup=standards_lookup,
         evidence_lookup=evidence_lookup,
+        requirement_candidates=requirement_candidates,
     )
     analysis.findings = findings
 
@@ -511,12 +619,29 @@ async def _step_enrich(
         _profile = {}
         if hasattr(analysis, 'product_profile') and analysis.product_profile:
             _profile = analysis.product_profile if isinstance(analysis.product_profile, dict) else {}
-        _is_nums = []
-        for std in (retrieved_standards or []):
-            if hasattr(std, 'designation') and std.designation:
-                _is_nums.append(std.designation)
-            elif hasattr(std, 'is_number') and std.is_number:
-                _is_nums.append(std.is_number)
+        # IS numbers genuinely on this tender: standards applicable to a
+        # requirement, plus the catalogue standards each requirement cites
+        # (resolved as the exact-match retrieval pass resolves them, so a cited
+        # standard counts even when the AI/ML found nothing applicable).
+        # Merely retrieved candidates are excluded — an IS-number match is
+        # reported as a hard fact about the tender. is_number, not designation:
+        # designation carries ":<year>", which never equals a QCO key.
+        _is_nums: list[str] = []
+        _seen_is: set[str] = set()
+
+        def _add_is(std) -> None:
+            num = getattr(std, "is_number", None)
+            if num and num not in _seen_is:
+                _seen_is.add(num)
+                _is_nums.append(num)
+
+        for f in findings:
+            for std in f.applicable_standards:
+                _add_is(std)
+        for req in analysis.requirements:
+            if req.is_reference:
+                for std in registry.standards_store.get_by_is_number(req.is_reference):
+                    _add_is(std)
         _qco_results = check_qco_applicability(
             product_profile=_profile,
             matched_is_numbers=_is_nums,

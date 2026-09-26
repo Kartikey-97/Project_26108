@@ -13,6 +13,7 @@ Fixes:
 
 import logging
 import os
+import re
 import uuid
 
 from src.reasoning.providers.ml import MLReasoner
@@ -45,6 +46,69 @@ def _classify_requirement(text: str) -> str:
     if any(k in text_lower for k in ["cct", "color temp", "colour temp", "kelvin", " k "]):
         return "optical"
     return "general"
+
+
+def _is_base(designation: str) -> str:
+    """
+    Base IS number for comparison: whitespace-free, casefolded, cut at the first
+    part/year separator. "IS 1554 : Part 1" and "IS 1554:1988" give "is1554";
+    "IS 15544" stays distinct, which the old substring test did not.
+    """
+    return re.split(r"[:(]", re.sub(r"\s+", "", designation).casefold())[0]
+
+
+def _ids_for_is_number(designation: str, candidates: list) -> list:
+    base = _is_base(designation)
+    return [s.id for s in candidates if _is_base(s.is_number) == base]
+
+
+def _select_candidate_ids(res: dict, verdict: str, req, candidates: list) -> list:
+    """
+    Turn a provider result into applicable standard IDs, drawn only from this
+    requirement's candidates. Selections outside the candidate set are dropped,
+    never replaced, so an invalid selection cannot widen the result.
+
+    Precedence, first one the provider expressed wins:
+      1. applicable_standard_ids — authoritative, including an explicit [].
+      2. matched_is_number       — a string names a standard; null means none.
+      3. neither (e.g. the mock) — a "justified" verdict is taken to refer to the
+         requirement's own citation, if that citation is among its candidates.
+    An explicit empty answer from 1 or 2 is never overridden by the citation.
+    """
+    candidate_ids = {s.id for s in candidates}
+
+    if "applicable_standard_ids" in res:
+        proposed = res.get("applicable_standard_ids") or []
+        if not isinstance(proposed, list):
+            proposed = []
+        selected = []
+        for sid in proposed:
+            if sid in candidate_ids and sid not in selected:
+                selected.append(sid)
+        rejected = [sid for sid in proposed if sid not in candidate_ids]
+        if rejected:
+            logger.warning(
+                "Dropped %d non-candidate standard ID(s) for requirement_id=%s: %s",
+                len(rejected), req.id, rejected,
+            )
+        return selected
+
+    if "matched_is_number" in res:
+        matched_is = res.get("matched_is_number")
+        if isinstance(matched_is, str) and matched_is.strip().lower() not in ("", "null", "none"):
+            selected = _ids_for_is_number(matched_is, candidates)
+            if not selected:
+                logger.warning(
+                    "matched_is_number=%r for requirement_id=%s is not among its "
+                    "%d candidate(s) — no standard selected.",
+                    matched_is, req.id, len(candidates),
+                )
+            return selected
+        return []
+
+    if verdict == "justified" and req.is_reference:
+        return _ids_for_is_number(req.is_reference, candidates)
+    return []
 
 
 class Analyzer:
@@ -105,11 +169,16 @@ class Analyzer:
             # 1. Classify requirement type
             req_type = _classify_requirement(req.text)
 
+            # Only the standards retrieved for THIS requirement, with its own
+            # scores. request.retrieved_standards pools every requirement's
+            # candidates and must never be reasoned over for a single one.
+            candidates = list(request.requirement_candidates.get(req.id, []))
+
             # 2. ML/LLM reasoning with richer context
             res = self.provider.analyze(
                 req_text=req.text,
                 req_type=req_type,
-                standards=request.retrieved_standards,
+                standards=candidates,
                 is_reference=req.is_reference,
                 cited_year=req.cited_year,
             )
@@ -119,24 +188,12 @@ class Analyzer:
             action = res.get("action", "Manually verify specification against standards.")
             raw_conf = float(res.get("confidence", 0.5))
             conf = 0.70 + (raw_conf * 0.29)
-            
-            matched_is = res.get("matched_is_number")
-            matched_ids = res.get("applicable_standard_ids", [])
-            
-            if not matched_ids and matched_is and isinstance(matched_is, str) and matched_is.strip().lower() != "null":
-                matched_is_lower = matched_is.strip().lower()
-                for s in request.retrieved_standards:
-                    if matched_is_lower in s.is_number.lower():
-                        matched_ids.append(s.id)
-            
-            # Fallback: if justified and we have a reference, assume the reference is what matched
-            if not matched_ids and verdict == "justified" and req.is_reference:
-                req_ref_lower = req.is_reference.strip().lower()
-                matched_ids = [s.id for s in request.retrieved_standards if req_ref_lower in s.is_number.lower()]
+
+            matched_ids = _select_candidate_ids(res, verdict, req, candidates)
 
             # 3. Deterministic currentness check on the SELECTED standard(s)
             outdated_stds = [
-                s for s in request.retrieved_standards
+                s for s in candidates
                 if s.id in matched_ids
                 and s.status.lower() in ("superseded", "withdrawn", "cancelled")
             ]
