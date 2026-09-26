@@ -498,7 +498,19 @@ def check_scope(requirement: Requirement, standard: Standard) -> ScopeCheck:
 
     compared: list[tuple[str, str]] = []
 
+    # A requirement can name more than one material for the same attribute —
+    # "PVC insulation to IS 694 and XLPE insulated cables to IS 7098" — and
+    # nothing in the text says which of them belongs to this standard. Comparing
+    # every one would flag each standard for the other's material, so such an
+    # attribute is not compared at all.
+    named: dict[str, set[str]] = {}
+    for attribute, material, _ in required:
+        named.setdefault(attribute, set()).add(material)
+    ambiguous = {attribute for attribute, materials in named.items() if len(materials) > 1}
+
     for attribute, material, as_written in required:
+        if attribute in ambiguous:
+            continue
         covered_material = covered.get(attribute)
         if covered_material is None:
             # The standard's title makes no claim about this attribute, so there
@@ -550,6 +562,22 @@ def check_scope(requirement: Requirement, standard: Standard) -> ScopeCheck:
     # to report a match, so a tender specifying XLPE and citing a standard whose
     # title mentions no material at all came back reassuring the officer that
     # the materials agreed.
+    skipped = sorted(attribute for attribute in ambiguous if attribute in covered)
+    if not compared and skipped:
+        materials = sorted(
+            vocabulary.spelling_of(m) for attribute in skipped for m in named[attribute]
+        )
+        return ScopeCheck(
+            checked=False,
+            mismatch=False,
+            note=(
+                f"The requirement names more than one {' / '.join(skipped)} "
+                f"material ({', '.join(materials)}), so which one "
+                f"{standard.designation} is meant to cover cannot be told from "
+                "the text. Scope was not assessed."
+            ),
+        )
+
     if not compared:
         return ScopeCheck(
             checked=False,
